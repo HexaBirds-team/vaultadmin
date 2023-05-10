@@ -1,0 +1,135 @@
+{
+  "project_info": {
+    "project_number": "184728826666",
+    "firebase_url": "https://valt-security-default-rtdb.firebaseio.com",
+    "project_id": "valt-security",
+    "storage_bucket": "valt-security.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184728826666:android:412082342c66af59672453",
+        "android_client_info": {
+          "package_name": "com.example.provider_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184728826666-1jj66fq697s8gnc2m8i24qarkc3j0vl8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.provider_app",
+            "certificate_hash": "d85978ac631031695f3870c7b1eddb2f2b415d69"
+          }
+        },
+        {
+          "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu50E4Ei7uernSZWxELhOERKB2UA5CPlE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "184728826666-k41h6ehgpbbemgth2fvavccmucgnb5gp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.providerApp.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184728826666:android:a92d8a9758d699a1672453",
+        "android_client_info": {
+          "package_name": "com.example.valt_security"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184728826666-neei0rqfr8r53f8cb82sbkj0dr3ep1t3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.valt_security",
+            "certificate_hash": "d1686b76fe83a5bf9a809780860a28ab6d2809df"
+          }
+        },
+        {
+          "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu50E4Ei7uernSZWxELhOERKB2UA5CPlE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "184728826666-k41h6ehgpbbemgth2fvavccmucgnb5gp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.providerApp.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184728826666:android:d96030db1c4d1bd0672453",
+        "android_client_info": {
+          "package_name": "com.example.valt_security_admin_panel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu50E4Ei7uernSZWxELhOERKB2UA5CPlE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "184728826666-k41h6ehgpbbemgth2fvavccmucgnb5gp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.providerApp.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
