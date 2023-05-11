@@ -9,8 +9,10 @@ import '../helpers/base_getters.dart';
 import '../helpers/style_sheet.dart';
 
 class ProviderTile extends StatefulWidget {
-  const ProviderTile({super.key, required this.provider});
+  const ProviderTile(
+      {super.key, required this.provider, this.color = AppColors.whiteColor});
   final ProvidersInformationClass provider;
+  final Color color;
 
   @override
   State<ProviderTile> createState() => _ProviderTileState();
@@ -33,7 +35,12 @@ class _ProviderTileState extends State<ProviderTile> {
     decodeLocation();
     return Container(
       padding: EdgeInsets.all(10.sp),
-      decoration: WidgetDecoration.containerDecoration_1(context),
+      decoration: BoxDecoration(
+          color: widget.color,
+          border: Border.all(color: AppColors.blackColor.withOpacity(0.1)),
+
+          // boxShadow:  [addContainerShadow()] ,
+          borderRadius: BorderRadius.circular(10.r)),
       width: AppServices.getScreenWidth(context),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

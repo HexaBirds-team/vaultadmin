@@ -52,9 +52,12 @@ class ProvidersInformationClass {
       category,
       description,
       createdAt,
-      token;
 
-  bool isGunAvailable, isApproved, isBlocked;
+      // address,
+      token;
+  GuardApprovalStatus isApproved;
+
+  bool isGunAvailable, isBlocked;
   String latitude, longitude;
   List<GuardServices> services;
   List<DocsClass> documents;
@@ -68,6 +71,7 @@ class ProvidersInformationClass {
       this.isGunAvailable,
       this.city,
       this.latitude,
+      // this.address,
       this.longitude,
       this.services,
       this.isApproved,
@@ -97,11 +101,19 @@ class ProvidersInformationClass {
             json["Location"] == null || json['Location'].toString() == "NA"
                 ? ""
                 : json["Location"].toString().split(",").last,
+        // address = FunctionsController().getLocation(
+        //     json["Location"] == null || json['Location'].toString() == "NA"
+        //         ? ""
+        //         : json["Location"].toString().split(",").first,
+        //     json["Location"] == null || json['Location'].toString() == "NA"
+        //         ? ""
+        //         : json["Location"].toString().split(",").last),
         services = json['services'] == null
             ? []
             : FunctionsController()
                 .getServices(json['services'] as Map<Object?, Object?>),
-        isApproved = json['isApproved'].toString() == "true" ? true : false,
+        isApproved = GuardApprovalStatus.values.firstWhere(
+            (element) => element.name == json['isApproved'].toString()),
         createdAt = json['CreatedAt'].toString(),
         category = json['Category'].toString(),
         isBlocked = json['isBlocked'].toString() == "true",
@@ -240,17 +252,11 @@ class NotificationModel {
 }
 
 class BannersClass {
-  String banner, description, details, address, phone, name;
+  String banner;
   String bannerId;
-  BannersClass(this.banner, this.bannerId, this.description, this.details,
-      this.address, this.phone, this.name);
+  BannersClass(this.banner, this.bannerId);
   BannersClass.fromBanner(Map<Object?, Object?> banner, this.bannerId)
-      : banner = banner['banner'].toString(),
-        description = banner['description'].toString(),
-        details = banner['details'].toString(),
-        address = banner['address'].toString(),
-        phone = banner['phone'].toString(),
-        name = banner['name'].toString();
+      : banner = banner['banner'].toString();
 }
 
 class ReviewsModel {

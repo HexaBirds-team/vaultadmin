@@ -1,7 +1,5 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors
 
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -21,13 +19,13 @@ import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_text.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
+import 'package:valt_security_admin_panel/models/enums.dart';
 
-import '../../controllers/admin_callback_controller.dart';
 import '../../controllers/app_data_controller.dart';
 import '../../controllers/app_functions.dart';
+import '../../controllers/auth_controller.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
-import '../../models/app_models.dart';
 import '../drawer_handler/admin_drawer.dart';
 import '../managers/request_manager.dart';
 
@@ -41,87 +39,17 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
 
-  final _adminController = AdminCallbacksController();
-  // final firebasedatabase = FirebaseDatabase.instance;
-  // final _streamer = AppDataStreamer();
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  bool isGuardFetch = true;
-  bool isUserFetch = true;
-  bool isBookingFetch = true;
-  int newGuardsIndex = 0;
-  int newUsersIndex = 0;
-  int newBookingsIndex = 0;
-
-  Query getUrl() {
-    final path = database
-        .ref("Providers")
-        .orderByChild("isApproved")
-        .equalTo(false)
-        // .once();
-        .limitToFirst(8);
-    return path;
-  }
-
-  getGuardLength() async {
-    final path = await database
-        .ref("Providers")
-        .orderByChild("isApproved")
-        .equalTo(false)
-        .once();
-
-    if (!mounted) return;
-    setState(() {
-      newGuardsIndex = path.snapshot.children.length;
-      isGuardFetch = false;
-    });
-    // .limitToFirst(8);
-    return path.snapshot.children.length;
-  }
-
-  getUsersLength() async {
-    final path = await database.ref("Users").once();
-
-    if (!mounted) return;
-    setState(() {
-      newUsersIndex = path.snapshot.children.length;
-      isUserFetch = false;
-    });
-    // .limitToFirst(8);
-    return path.snapshot.children.length;
-  }
-
-  getBookingsLength() async {
-    final path = await database.ref("Bookings").once();
-
-    if (!mounted) return;
-    setState(() {
-      newBookingsIndex = path.snapshot.children.length;
-      isBookingFetch = false;
-    });
-    // .limitToFirst(8);
-    return path.snapshot.children.length;
-  }
-
-  Query getusersUrl() {
-    final path = database.ref("Users").limitToFirst(8);
-    return path;
-  }
-
-  Query getBookingsUrl() {
-    final path = database.ref("Bookings").limitToFirst(5);
-    return path;
-  }
-
+  // function to decode location
   Placemark? location;
-  decodeLocation(String lat, String lng) async {
+  decodeLocation(String city, String lat, String lng) async {
     if (!await rebuild()) return;
     location = lat == ""
         ? null
         : await FunctionsController()
             .decodeLocation(double.parse(lat), double.parse(lng));
-
     setState(() {});
   }
 
@@ -139,6 +67,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final data = Provider.of<AppDataController>(context);
+    final userList = data.getAllUsers;
+    final bookingsList = data.getBookings;
+
+    final approvedGuard = data.getAllProviders
+        .where((element) => element.isApproved == GuardApprovalStatus.approved)
+        .toList();
+    final pendingGuard = data.getAllProviders
+        .where((element) => element.isApproved == GuardApprovalStatus.pending)
+        .toList();
+
+    final complaintsList = data.getAllComplaints;
     return Scaffold(
       key: _key,
       drawer: Drawer(
@@ -159,7 +99,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ]),
       body: WillPopScope(
         onWillPop: () async {
-          print(_key.currentState!.isDrawerOpen);
           if (_key.currentState!.isDrawerOpen) {
             _key.currentState!.closeDrawer();
             return false;
@@ -177,51 +116,37 @@ class _AdminDashboardState extends State<AdminDashboard> {
             AppServices.addHeight(30.h),
             Row(
               children: [
-                Consumer<AppDataController>(builder: (context, data, child) {
-                  final userList = data.getAllUsers;
-                  return TotalServicesTiles(
-                      ontap: () => AppServices.pushTo(
-                          context, const AllUserManagerView()),
-                      total: userList.length.toString(),
-                      title: "Users",
-                      icon: AppIcons.profileIcon);
-                }),
+                TotalServicesTiles(
+                    ontap: () =>
+                        AppServices.pushTo(context, const AllUserManagerView()),
+                    total: userList.length.toString(),
+                    title: "Users",
+                    icon: AppIcons.profileIcon),
                 AppServices.addWidth(10.w),
-                Consumer<AppDataController>(builder: (context, data, child) {
-                  final userList = data.getAllProviders
-                      .where((element) => element.isApproved == true)
-                      .toList();
-                  return TotalServicesTiles(
-                      ontap: () => AppServices.pushTo(
-                          context, const AdminProviderManager()),
-                      total: userList.length.toString(),
-                      title: "Guards",
-                      icon: AppIcons.localPoliceIcon);
-                }),
+                TotalServicesTiles(
+                    ontap: () => AppServices.pushTo(
+                        context, const AdminProviderManager()),
+                    total: approvedGuard.length.toString(),
+                    title: "Guards",
+                    icon: AppIcons.localPoliceIcon)
               ],
             ),
             AppServices.addHeight(10.h),
             Row(
               children: [
-                Consumer<AppDataController>(builder: (context, data, child) {
-                  final bookingList = data.getBookings;
-                  return TotalServicesTiles(
-                      ontap: () =>
-                          AppServices.pushTo(context, const BookingManager()),
-                      total: bookingList.length.toString(),
-                      title: "Bookings",
-                      icon: AppIcons.fileIcon);
-                }),
+                TotalServicesTiles(
+                    ontap: () =>
+                        AppServices.pushTo(context, const BookingManager()),
+                    total: bookingsList.length.toString(),
+                    title: "Bookings",
+                    icon: AppIcons.fileIcon),
                 AppServices.addWidth(10.w),
-                Consumer<AppDataController>(builder: (context, data, child) {
-                  final complaints = data.getAllComplaints;
-                  return TotalServicesTiles(
-                      ontap: () => AppServices.pushTo(
-                          context, const ComplaintsTabBarView()),
-                      total: complaints.length.toString(),
-                      title: "Complaints",
-                      icon: AppIcons.documentsIcon);
-                }),
+                TotalServicesTiles(
+                    ontap: () => AppServices.pushTo(
+                        context, const ComplaintsTabBarView()),
+                    total: complaintsList.length.toString(),
+                    title: "Complaints",
+                    icon: AppIcons.documentsIcon)
               ],
             ),
             AppServices.addHeight(40.h),
@@ -231,125 +156,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     context, const AdminRequestManagerView())),
             AppServices.addHeight(15.h),
             SizedBox(
-              height: 180.sp,
-              child: Stack(
-                children: [
-                  FirebaseAnimatedList(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      physics: BouncingScrollPhysics(),
-                      query: getUrl(),
-                      itemBuilder: (context, snapshot, animation, i) {
-                        if (i > 0) {
-                          isGuardFetch = true;
-                        }
-                        if (i == 0 && isGuardFetch == true) {
-                          getGuardLength();
-                        }
-                        ProvidersInformationClass profile =
-                            ProvidersInformationClass.fromUser(
-                                snapshot.value as Map<Object?, Object?>,
-                                snapshot.key.toString());
-                        decodeLocation(profile.latitude, profile.longitude);
-
-                        return NewGuardsTile(
-                            profile: profile, location: location);
-                      }),
-                  newGuardsIndex == 0
-                      ? Container(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset(
-                                AppIcons.emptyIcon,
-                                height: 70.sp,
-                              ),
-                              AppServices.addHeight(10.h),
-                              Text("No Data Found",
-                                  style: GetTextTheme.sf18_bold),
-                              Text(
-                                  "There are no pending requests for new joinee.",
-                                  style: GetTextTheme.sf14_regular)
-                            ],
-                          ),
-                        )
-                      : const SizedBox()
-                ],
-              ),
-            ),
-            AppServices.addHeight(35.h),
-            titleBar("New Users",
-                () => AppServices.pushTo(context, const AllUserManagerView())),
-            AppServices.addHeight(15.h),
-            SizedBox(
-              height: 180.sp,
-              child: Stack(
-                children: [
-                  FirebaseAnimatedList(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    query: getusersUrl(),
-                    itemBuilder: (context, snapshot, animation, i) {
-                      if (i > 0) {
-                        isUserFetch = false;
-                      }
-                      if (i == 0 && isUserFetch == true) {
-                        getUsersLength();
-                      }
-                      UserInformationClass profile =
-                          UserInformationClass.fromUser(
-                              snapshot.value as Map<Object?, Object?>,
-                              snapshot.key.toString());
-
-                      return NewUsersTile(profile: profile);
-                    },
-                  ),
-                  newUsersIndex == 0
-                      ? Container(
-                          alignment: Alignment.center,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.asset(
-                                AppIcons.emptyIcon,
-                                height: 70.sp,
-                              ),
-                              AppServices.addHeight(10.h),
-                              Text("No Data Found",
-                                  style: GetTextTheme.sf18_bold),
-                              Text("There are no new users available.",
-                                  style: GetTextTheme.sf14_regular)
-                            ],
-                          ),
-                        )
-                      : const SizedBox()
-                ],
-              ),
-            ),
-            AppServices.addHeight(35.h),
-            titleBar("New Bookings",
-                () => AppServices.pushTo(context, const BookingManager())),
-            AppServices.addHeight(15.h),
-            Stack(
-              children: [
-                FirebaseAnimatedList(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    query: getBookingsUrl(),
-                    itemBuilder: (context, snapshot, animation, i) {
-                      if (i > 0) {
-                        isBookingFetch = true;
-                      }
-                      if (i == 0 && isBookingFetch == true) {
-                        getBookingsLength();
-                      }
-                      BookingsClass booking = BookingsClass.fromBooking(
-                          snapshot.value as Map<Object?, Object?>,
-                          snapshot.key.toString());
-                      return NewBookingsTile(booking: booking);
-                    }),
-                newBookingsIndex == 0
+                height: 180.sp,
+                child: pendingGuard.isEmpty
                     ? Container(
                         alignment: Alignment.center,
                         child: Column(
@@ -362,14 +170,91 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             AppServices.addHeight(10.h),
                             Text("No Data Found",
                                 style: GetTextTheme.sf18_bold),
-                            Text("There are no new bookings available.",
+                            Text(
+                                "There are no pending requests for new joinee.",
                                 style: GetTextTheme.sf14_regular)
                           ],
                         ),
                       )
-                    : const SizedBox()
-              ],
-            )
+                    : ListView.builder(
+                        itemCount: pendingGuard.toList().length,
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, i) {
+                          final profile = pendingGuard[i];
+                          decodeLocation(profile.city, profile.latitude,
+                              profile.longitude);
+                          return NewGuardsTile(
+                              location: location,
+                              profile: profile,
+                              onApprove: () async => await AuthController()
+                                  .approveProfile(profile.uid, context),
+                              onReject: () async => await AuthController()
+                                  .rejectProfile(profile.uid, context));
+                        })),
+            AppServices.addHeight(35.h),
+            titleBar("New Users",
+                () => AppServices.pushTo(context, const AllUserManagerView())),
+            AppServices.addHeight(15.h),
+            SizedBox(
+                height: 180.sp,
+                child: userList.isEmpty
+                    ? Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Image.asset(
+                              AppIcons.emptyIcon,
+                              height: 70.sp,
+                            ),
+                            AppServices.addHeight(10.h),
+                            Text("No Data Found",
+                                style: GetTextTheme.sf18_bold),
+                            Text("There are no new users available.",
+                                style: GetTextTheme.sf14_regular)
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: userList.length,
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, i) {
+                          final profile = userList[i];
+                          return NewUsersTile(profile: profile);
+                        })),
+            AppServices.addHeight(35.h),
+            titleBar("New Bookings",
+                () => AppServices.pushTo(context, const BookingManager())),
+            AppServices.addHeight(15.h),
+            bookingsList.isEmpty
+                ? Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          AppIcons.emptyIcon,
+                          height: 70.sp,
+                        ),
+                        AppServices.addHeight(10.h),
+                        Text("No Data Found", style: GetTextTheme.sf18_bold),
+                        Text("There are no new bookings available.",
+                            style: GetTextTheme.sf14_regular)
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: bookingsList.length,
+                    itemBuilder: (context, i) {
+                      final booking = bookingsList[i];
+                      return NewBookingsTile(booking: booking);
+                    })
           ],
         )),
       ),

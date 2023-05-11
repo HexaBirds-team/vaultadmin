@@ -33,13 +33,24 @@ import 'package:valt_security_admin_panel/models/app_models.dart';
 import '../models/enums.dart';
 
 class AuthController {
-  approveProfile(String profileId, BuildContext context) async {
+  Future<bool> approveProfile(String profileId, BuildContext context) async {
     final db = Provider.of<AppDataController>(context, listen: false);
     db.setLoader(true);
     final path = database.ref('Providers/$profileId');
-    await path.update({"isApproved": true});
+    await path.update({"isApproved": GuardApprovalStatus.approved.name});
     db.updateApproval(profileId);
     db.setLoader(false);
+    return true;
+  }
+
+  Future<bool> rejectProfile(String profileId, BuildContext context) async {
+    final db = Provider.of<AppDataController>(context, listen: false);
+    db.setLoader(true);
+    final path = database.ref('Providers/$profileId');
+    await path.update({"isApproved": GuardApprovalStatus.rejected.name});
+    db.updateRejection(profileId);
+    db.setLoader(false);
+    return true;
   }
 
   approveAllProfile(List<String> profiles, BuildContext context) async {

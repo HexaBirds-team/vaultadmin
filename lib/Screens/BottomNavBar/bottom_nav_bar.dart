@@ -29,6 +29,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   late StreamSubscription<DatabaseEvent> complaintRef;
   late StreamSubscription<DatabaseEvent> bookingRef;
   late StreamSubscription<DatabaseEvent> reviewsEvent;
+  late StreamSubscription<DatabaseEvent> notificationRef;
 
   List<Widget> screens = [
     const AdminDashboard(),
@@ -53,21 +54,16 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   getListeneres() {
     final dataRef = database.ref("Providers");
-    final dataRef1 = database.ref("Users");
-    final complaintDataRef = database.ref("Complaints");
-    final bookingRefPath = database.ref("Bookings");
-    final reviewsRef = database.ref("Reviews");
+
+    AppDataStreamer().onGuardAdded(context);
 
     ref = dataRef.onChildChanged
         .listen((event) => AppDataStreamer().onProviderChanged(event, context));
-    userRef = dataRef1.onChildAdded
-        .listen((event) => AppDataStreamer().onUserAdded(event, context));
-    complaintRef = complaintDataRef.onChildAdded
-        .listen((event) => AppDataStreamer().onComplaintAdded(event, context));
-    bookingRef = bookingRefPath.onChildAdded
-        .listen((event) => AppDataStreamer().onBookingAdded(event, context));
-    reviewsEvent = reviewsRef.onChildAdded
-        .listen((event) => AppDataStreamer().onReviewAdded(context, event));
+    userRef = AppDataStreamer().userStream(context);
+    complaintRef = AppDataStreamer().complaintStream(context);
+    bookingRef = AppDataStreamer().bookingStream(context);
+    reviewsEvent = AppDataStreamer().onReviewAdded(context);
+    notificationRef = AppDataStreamer().notificationStream(context);
   }
 
   @override
@@ -76,6 +72,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
     ref.cancel();
     userRef.cancel();
     complaintRef.cancel();
+    bookingRef.cancel();
+    reviewsEvent.cancel();
+    notificationRef.cancel();
   }
 
   @override

@@ -1,5 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,9 +7,8 @@ import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dar
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/app_functions.dart';
-import 'package:valt_security_admin_panel/models/app_models.dart';
+import 'package:valt_security_admin_panel/models/enums.dart';
 
-import '../../../components/fancy_popus/awesome_dialogs.dart';
 import '../../../helpers/style_sheet.dart';
 import '../../components/expanded_btn.dart';
 import '../../components/loaders/full_screen_loader.dart';
@@ -29,37 +26,7 @@ class AdminRequestManagerView extends StatefulWidget {
 }
 
 class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
-  final _popUpController = FancyDialogController();
   final _authController = AuthController();
-  int guardsLength = 0;
-  bool isGuardFetch = true;
-
-  Query getUrl() {
-    final path =
-        database.ref("Providers").orderByChild("isApproved").equalTo(false);
-    return path;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getGuardsLength();
-  }
-
-  getGuardsLength() async {
-    final path = await database
-        .ref("Providers")
-        .orderByChild("isApproved")
-        .equalTo(false)
-        .once();
-
-    if (!mounted) return;
-    setState(() {
-      guardsLength = path.snapshot.children.length;
-      isGuardFetch = false;
-    });
-    return path.snapshot.children.length;
-  }
 
   Placemark? location;
   decodeLocation(String city, String lat, String lng) async {
@@ -86,147 +53,133 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context, listen: false);
-    final requests =
-        db.getAllProviders.where((e) => e.isApproved == false).toList();
+    final requests = db.getAllProviders
+        .where((e) => e.isApproved == GuardApprovalStatus.pending)
+        .toList();
     return Scaffold(
-      appBar: customAppBar(
-          context: context,
-          title: const Text("Manage Requests"),
-          action: [
-            PopupMenuButton(
-                initialValue: "",
-                onSelected: (value) => _authController.approveAllProfile(
-                    requests.map((e) => e.uid).toList(), context),
-                itemBuilder: (context) => [
-                      const PopupMenuItem(
-                          value: "approveAll", child: Text("Approve All")),
-                    ],
-                icon: Icon(Icons.more_vert, size: 25.sp))
-          ]),
-      body: Stack(
-        children: [
-          SafeArea(
-              child: FirebaseAnimatedList(
-                  shrinkWrap: true,
-                  // defaultChild: const OnViewLoader(),
-                  query: getUrl(),
-                  itemBuilder: (context, snapshot, animation, i) {
-                    if (i > 0) {
-                      isGuardFetch = true;
-                    }
-                    if (i == 0 && isGuardFetch == true) {
-                      getGuardsLength();
-                    }
-                    ProvidersInformationClass profile =
-                        ProvidersInformationClass.fromUser(
-                            snapshot.value as Map<Object?, Object?>,
-                            snapshot.key.toString());
-                    decodeLocation(
-                        profile.city, profile.latitude, profile.longitude);
-                    return InkWell(
-                      onTap: () => AppServices.pushTo(
-                          context, GuardProfileView(providerDetails: profile)),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 15.w, vertical: 5.h),
-                        padding: EdgeInsets.all(10.sp),
-                        decoration: WidgetDecoration.containerDecoration_1(
-                            context,
-                            enableShadow: true),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                    height: 80,
-                                    width: 80,
-                                    child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(10.r),
-                                        child: WidgetImplimentor()
-                                            .addNetworkImage(
-                                                url: profile.profileImage,
-                                                fit: BoxFit.cover))),
-                                AppServices.addWidth(15.w),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(profile.name,
-                                          style: GetTextTheme.sf18_bold),
-                                      AppServices.addHeight(5.h),
-                                      Text(
-                                          location == null
-                                              ? "Address : Not Available"
-                                              : "Address : ${location!.street}, ${location!.subLocality}, ${location!.locality}, ${location!.administrativeArea}",
-                                          style: GetTextTheme.sf12_regular),
-                                      AppServices.addHeight(5.h),
-                                      Text(
-                                          "qualification : ${profile.qualification}",
-                                          style: GetTextTheme.sf14_bold
-                                              .copyWith(
-                                                  color: AppColors.primary1)),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5),
-                                child: Divider()),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: SizedBox(
-                                        child: ButtonOneExpanded(
-                                            showBorder: true,
-                                            onPressed: () => {},
-                                            btnText: "Cancel",
-                                            enableColor: true,
-                                            disableGradient: true,
-                                            btnColor: AppColors.whiteColor,
-                                            btnTextColor: true,
-                                            btnTextClr: AppColors.primary1))),
-                                AppServices.addWidth(10.w),
-                                Expanded(
-                                    child: SizedBox(
-                                        child: ButtonOneExpanded(
-                                            onPressed: () =>
-                                                _authController.approveProfile(
-                                                    profile.uid, context),
-                                            btnText: "Approve"))),
-                              ],
-                            )
-                          ],
+        appBar: customAppBar(
+            context: context,
+            title: const Text("Manage Requests"),
+            action: [
+              PopupMenuButton(
+                  initialValue: "",
+                  onSelected: (value) => _authController.approveAllProfile(
+                      requests.map((e) => e.uid).toList(), context),
+                  itemBuilder: (context) => [
+                        const PopupMenuItem(
+                            value: "approveAll", child: Text("Approve All")),
+                      ],
+                  icon: Icon(Icons.more_vert, size: 25.sp))
+            ]),
+        body: Stack(
+          children: [
+            requests.isEmpty
+                ? Container(
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          AppIcons.emptyIcon,
+                          height: 70.sp,
                         ),
-                      ),
-                    );
-                  })),
-          guardsLength == 0
-              ? Container(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        AppIcons.emptyIcon,
-                        height: 70.sp,
-                      ),
-                      AppServices.addHeight(10.h),
-                      Text("No Data Found", style: GetTextTheme.sf18_bold),
-                      Text("There are no pending requests for new joinee.",
-                          style: GetTextTheme.sf14_regular)
-                    ],
-                  ),
-                )
-              : const SizedBox(),
-          Consumer<AppDataController>(
-              builder: (context, data, child) =>
-                  data.appLoading ? const FullScreenLoader() : const SizedBox())
-        ],
-      ),
-    );
+                        AppServices.addHeight(10.h),
+                        Text("No Data Found", style: GetTextTheme.sf18_bold),
+                        Text("There are no pending requests for new joinee.",
+                            style: GetTextTheme.sf14_regular)
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: requests.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, i) {
+                      final profile = requests[i];
+                      decodeLocation(
+                          profile.city, profile.latitude, profile.longitude);
+                      return InkWell(
+                        onTap: () => AppServices.pushTo(context,
+                            GuardProfileView(providerDetails: profile)),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: 15.w, vertical: 5.h),
+                          padding: EdgeInsets.all(10.sp),
+                          decoration: WidgetDecoration.containerDecoration_1(
+                              context,
+                              enableShadow: true),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                      height: 80,
+                                      width: 80,
+                                      child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10.r),
+                                          child: WidgetImplimentor()
+                                              .addNetworkImage(
+                                                  url: profile.profileImage,
+                                                  fit: BoxFit.cover))),
+                                  AppServices.addWidth(15.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(profile.name,
+                                            style: GetTextTheme.sf18_bold),
+                                        AppServices.addHeight(5.h),
+                                        Text(
+                                            location == null
+                                                ? "Address : Not Available"
+                                                : "Address : ${location!.street}, ${location!.subLocality}, ${location!.locality}, ${location!.administrativeArea}",
+                                            style: GetTextTheme.sf12_regular),
+                                        AppServices.addHeight(5.h),
+                                        Text(
+                                            "qualification : ${profile.qualification}",
+                                            style: GetTextTheme.sf14_bold
+                                                .copyWith(
+                                                    color: AppColors.primary1)),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 5),
+                                  child: Divider()),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: SizedBox(
+                                          child: ButtonOneExpanded(
+                                              showBorder: true,
+                                              onPressed: () => {},
+                                              btnText: "Cancel",
+                                              enableColor: true,
+                                              disableGradient: true,
+                                              btnColor: AppColors.whiteColor,
+                                              btnTextColor: true,
+                                              btnTextClr: AppColors.primary1))),
+                                  AppServices.addWidth(10.w),
+                                  Expanded(
+                                      child: SizedBox(
+                                          child: ButtonOneExpanded(
+                                              onPressed: () => _authController
+                                                  .approveProfile(
+                                                      profile.uid, context),
+                                              btnText: "Approve"))),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+            db.appLoading ? const FullScreenLoader() : const SizedBox()
+          ],
+        ));
   }
 }

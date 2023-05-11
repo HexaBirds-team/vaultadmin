@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   getStuff() async {
     final db = Provider.of<AppDataController>(context, listen: false);
-    await _functions.getProviders(context);
+    // await _functions.getProviders(context);
     await _functions.getUserCategory(context);
     final data = await database.ref("Admin").get();
     db.setAdminDetails(data.value as Map<Object?, Object?>);

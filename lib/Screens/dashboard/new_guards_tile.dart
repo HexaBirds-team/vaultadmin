@@ -6,20 +6,23 @@ import 'package:geocoding/geocoding.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../../controllers/auth_controller.dart';
 import '../../controllers/widget_creator.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
 
 class NewGuardsTile extends StatelessWidget {
   ProvidersInformationClass profile;
-  Placemark? location;
   bool isPopUpButton;
+  Function onApprove;
+  Function onReject;
+  Placemark? location;
   NewGuardsTile(
       {super.key,
       required this.profile,
-      this.location,
-      this.isPopUpButton = true});
+      this.isPopUpButton = true,
+      required this.onApprove,
+      required this.onReject,
+      this.location});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +67,7 @@ class NewGuardsTile extends StatelessWidget {
                             AppServices.addHeight(3.h),
                             Text(
                                 location == null
-                                    ? "Address : NA"
+                                    ? "Not Available"
                                     : "${location!.street}, ${location!.subLocality}, ${location!.locality}, ${location!.administrativeArea}",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -90,10 +93,11 @@ class NewGuardsTile extends StatelessWidget {
                         iconSize: 20.sp,
                         padding: const EdgeInsets.all(0),
                         color: AppColors.whiteColor,
-                        onSelected: (value) {
+                        onSelected: (value) async {
                           if (value == "approve") {
-                            AuthController()
-                                .approveProfile(profile.uid, context);
+                            onApprove();
+                          } else {
+                            onReject();
                           }
                         },
                         itemBuilder: (context) => [

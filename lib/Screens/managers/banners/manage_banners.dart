@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -28,16 +30,9 @@ class _ManageBannersState extends State<ManageBanners> {
     return path;
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getBannersLength();
-  }
-
   getBannersLength() async {
     final path = await database.ref("Banners").once();
 
-    if (!mounted) return;
     setState(() {
       bannersLength = path.snapshot.children.length;
       isBannersFetch = false;
@@ -74,10 +69,12 @@ class _ManageBannersState extends State<ManageBanners> {
                       shrinkWrap: true,
                       query: getUrl(),
                       itemBuilder: (context, snapshot, animation, i) {
-                        if (i > 0) {
+                        if (bannersLength >= 1) {
                           isBannersFetch = true;
                         }
-                        if (i == 0 && isBannersFetch == true) {
+                        if (i == 0 &&
+                            bannersLength < 1 &&
+                            isBannersFetch == true) {
                           getBannersLength();
                         }
                         BannersClass banner = BannersClass.fromBanner(
@@ -114,7 +111,9 @@ class _ManageBannersState extends State<ManageBanners> {
                                       context: context,
                                       builder: (context) => DeleteBannerDialog(
                                           id: banner.bannerId.toString(),
-                                          banner: banner.banner)),
+                                          banner: banner.banner)).then(
+                                      (value) =>
+                                          setState(() => bannersLength--)),
                                   child: Container(
                                     margin: EdgeInsets.only(top: 5.sp),
                                     padding: EdgeInsets.all(8.sp),

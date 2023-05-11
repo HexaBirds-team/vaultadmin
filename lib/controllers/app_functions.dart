@@ -33,6 +33,18 @@ class FunctionsController {
     }
   }
 
+  getLocation(String lat, String lng) async {
+    Placemark? location;
+    location = lat == ""
+        ? null
+        : await FunctionsController()
+            .decodeLocation(double.parse(lat), double.parse(lng));
+
+    return location == null
+        ? ""
+        : "${location.street}, ${location.subLocality}, ${location.locality}, ${location.administrativeArea}";
+  }
+
   Future<String> uploadImageToStorage(
     File imageFile,
   ) async {
@@ -221,26 +233,26 @@ class FunctionsController {
 //     }
 //   }
 
-  Future<List<ProvidersInformationClass>> getProviders(
-      BuildContext context) async {
-    final db = Provider.of<AppDataController>(context, listen: false);
-    final path = database.ref("Providers");
+  // Future<List<ProvidersInformationClass>> getProviders(
+  //     BuildContext context) async {
+  //   final db = Provider.of<AppDataController>(context, listen: false);
+  //   final path = database.ref("Providers");
 
-    // final path2 = database.ref("Providers/services");
-    final snapshot = await path.get();
-    // final snapshot2 = await path2.get();
-    if (snapshot.exists) {
-      var myList = snapshot.children
-          .map((e) => ProvidersInformationClass.fromUser(
-              e.value as Map<Object?, Object?>, e.key.toString()))
-          .toList();
-      db.setProvidersData(myList);
+  //   // final path2 = database.ref("Providers/services");
+  //   final snapshot = await path.get();
+  //   // final snapshot2 = await path2.get();
+  //   if (snapshot.exists) {
+  //     var myList = snapshot.children
+  //         .map((e) => ProvidersInformationClass.fromUser(
+  //             e.value as Map<Object?, Object?>, e.key.toString()))
+  //         .toList();
+  //     db.setProvidersData(myList);
 
-      return myList;
-    } else {
-      return [];
-    }
-  }
+  //     return myList;
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
   List<GuardServices> getServices(Map<Object?, Object?> data) {
     List<GuardServices> snapshot = [];

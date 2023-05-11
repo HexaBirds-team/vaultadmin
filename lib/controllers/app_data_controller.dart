@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
+import 'package:valt_security_admin_panel/models/enums.dart';
 
 class AppDataController extends ChangeNotifier {
 //   /* Auth Credential Handler */
@@ -81,7 +82,18 @@ class AppDataController extends ChangeNotifier {
 
   updateApproval(String profileId) {
     int index = _providerList.indexWhere((element) => element.uid == profileId);
-    _providerList[index].isApproved = true;
+    index == 0
+        ? _providerList.first.isApproved = GuardApprovalStatus.approved
+        : _providerList[index].isApproved = GuardApprovalStatus.approved;
+    notifyListeners();
+  }
+
+  updateRejection(String profileId) {
+    int index = _providerList.indexWhere((element) => element.uid == profileId);
+    print(index);
+    index == 0
+        ? _providerList.first.isApproved = GuardApprovalStatus.rejected
+        : _providerList[index].isApproved = GuardApprovalStatus.rejected;
     notifyListeners();
   }
 
@@ -177,6 +189,20 @@ class AppDataController extends ChangeNotifier {
 
   addAllReviews(List<ReviewsModel> reviews) {
     _reviews = reviews;
+    notifyListeners();
+  }
+
+  /* Notifications handler */
+  List<NotificationModel> _notifications = [];
+  List<NotificationModel> get getNotifications => _notifications;
+
+  addNotification(NotificationModel notification) {
+    _notifications.add(notification);
+    notifyListeners();
+  }
+
+  setNotifications(List<NotificationModel> notifications) {
+    _notifications = notifications;
     notifyListeners();
   }
 }
