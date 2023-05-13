@@ -52,8 +52,7 @@ class ProvidersInformationClass {
       category,
       description,
       createdAt,
-
-      // address,
+      experience,
       token;
   GuardApprovalStatus isApproved;
 
@@ -61,6 +60,7 @@ class ProvidersInformationClass {
   String latitude, longitude;
   List<GuardServices> services;
   List<DocsClass> documents;
+  double rating;
   ProvidersInformationClass(
       this.uid,
       this.name,
@@ -71,8 +71,9 @@ class ProvidersInformationClass {
       this.isGunAvailable,
       this.city,
       this.latitude,
-      // this.address,
+      this.experience,
       this.longitude,
+      this.rating,
       this.services,
       this.isApproved,
       this.createdAt,
@@ -101,13 +102,8 @@ class ProvidersInformationClass {
             json["Location"] == null || json['Location'].toString() == "NA"
                 ? ""
                 : json["Location"].toString().split(",").last,
-        // address = FunctionsController().getLocation(
-        //     json["Location"] == null || json['Location'].toString() == "NA"
-        //         ? ""
-        //         : json["Location"].toString().split(",").first,
-        //     json["Location"] == null || json['Location'].toString() == "NA"
-        //         ? ""
-        //         : json["Location"].toString().split(",").last),
+        experience = json['Experience'].toString(),
+        rating = double.parse(json['Ratings'].toString()),
         services = json['services'] == null
             ? []
             : FunctionsController()

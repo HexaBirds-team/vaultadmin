@@ -13,20 +13,7 @@ import '../helpers/base_getters.dart';
 import 'app_data_controller.dart';
 
 class AdminCallbacksController {
-  List<Color> categoryListColors = [
-    const Color(0xffBDCDD6),
-    const Color(0xffFFE7CC),
-    const Color(0xffCDE990),
-    const Color(0xffFFFBAC),
-    const Color(0xffE5B8F4),
-    const Color(0xffFFCACA),
-    const Color(0xffBDCDD6),
-    const Color(0xffFFE7CC),
-    const Color(0xffCDE990),
-    const Color(0xffFFFBAC),
-    const Color(0xffE5B8F4),
-    const Color(0xffFFCACA),
-  ];
+
 
   /* Manage Category Callbacks */
 

@@ -1,6 +1,7 @@
 class AppConfig {
   static const String appName = "Vault Admin";
-  static const String appLogo = "assets/logo.png";
+  static const String logoBlack = "assets/logo_black.png";
+  static const String logoWhite = "assets/logo_white.png";
   static const double screenWidth = 393;
   static const double screenHeight = 852;
   static const String firebaseMessagingKey =

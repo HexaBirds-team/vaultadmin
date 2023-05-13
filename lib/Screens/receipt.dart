@@ -33,7 +33,7 @@ class _ReceiptViewState extends State<ReceiptView> {
             children: [
               Align(
                   alignment: Alignment.center,
-                  child: Image.asset(AppConfig.appLogo, height: 50.h)),
+                  child: Image.asset(AppConfig.logoBlack, height: 50.h)),
               // const Center(
               //     child: Text("Vault Security", style: TextStyle(fontSize: 20))),
               const SizedBox(height: 10),

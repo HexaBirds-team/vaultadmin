@@ -17,6 +17,7 @@ import 'helpers/app_theme.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print(message.messageId);
+  
 }
 
 Future<void> main() async {

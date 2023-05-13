@@ -3,21 +3,22 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/Screens/receipt.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
 import 'package:valt_security_admin_panel/components/shimmers/booking_details_shimmer.dart';
+import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../../../controllers/app_functions.dart';
 import '../../../helpers/base_getters.dart';
 import '../../../helpers/style_sheet.dart';
 
 class BookingDetailsView extends StatefulWidget {
-  final String bookingId;
-  const BookingDetailsView({super.key, required this.bookingId});
+  final BookingsClass booking;
+  const BookingDetailsView({super.key, required this.booking});
 
   @override
   State<BookingDetailsView> createState() => _BookingDetailsViewState();
@@ -26,7 +27,7 @@ class BookingDetailsView extends StatefulWidget {
 class _BookingDetailsViewState extends State<BookingDetailsView> {
   String bookingId = "";
   BookingsClass? myBooking;
-  Map<Object?, Object?> userData = {};
+  late UserInformationClass userData;
   List<ProvidersInformationClass> guardsProfile = [];
   bool loading = false;
 
@@ -37,20 +38,20 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
   }
 
   getBookingDetails() async {
+    final db = Provider.of<AppDataController>(context, listen: false);
     loading = true;
-    var booking = await database.ref("Bookings/${widget.bookingId}").get();
-    var details = booking.value as Map<Object?, Object?>;
-    var user = await database.ref("Users/${details['UserId']}").get();
-    var guards = details['GuardId'] as List;
-    for (var guard in guards) {
-      await database.ref("Providers/$guard").get().then((value) => {
-            guardsProfile.add(ProvidersInformationClass.fromUser(
-                value.value as Map<Object?, Object?>, value.key.toString()))
-          });
+    myBooking = widget.booking;
+    bookingId = widget.booking.id;
+    userData = db.getAllUsers
+        .firstWhere((element) => element.uid == widget.booking.userId);
+    var guards = widget.booking.guards;
+
+    for (var guard in db.getAllProviders) {
+      if (guards.any((element) => element.split("/").first == guard.uid)) {
+        guardsProfile.add(guard);
+        print(guardsProfile.length);
+      }
     }
-    myBooking = BookingsClass.fromBooking(details, booking.key.toString());
-    userData = user.value as Map<Object?, Object?>;
-    bookingId = booking.key.toString();
     loading = false;
     if (!mounted) return;
     setState(() {});
@@ -81,7 +82,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       tileColor: AppColors.blackColor.withOpacity(0.07),
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(500.r),
-                        child: userData['ProfileImage'] == null
+                        child: userData.image == ""
                             ? Shimmer.fromColors(
                                 baseColor:
                                     AppColors.blackColor.withOpacity(0.1),
@@ -108,18 +109,18 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                             color: AppColors.blackColor),
                                       ),
                                     ),
-                                imageUrl: userData['ProfileImage'].toString(),
+                                imageUrl: userData.image,
                                 height: 50.sp,
                                 width: 50.sp,
                                 fit: BoxFit.cover),
                       ),
-                      title: Text(userData['Name'].toString(),
+                      title: Text(userData.username,
                           style: GetTextTheme.sf16_bold),
-                      subtitle: Text(userData['Number'].toString(),
-                          style: GetTextTheme.sf14_medium),
+                      subtitle:
+                          Text(userData.phone, style: GetTextTheme.sf14_medium),
                       trailing: IconButton(
                           onPressed: () {
-                            _makePhoneCall(userData['Number'].toString());
+                            _makePhoneCall(userData.phone);
                           },
                           icon: const Icon(Icons.phone,
                               color: AppColors.primary1)),
@@ -207,47 +208,69 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                       guardsProfile.length,
                       (i) {
                         var profile = guardsProfile[i];
-                        return ListTile(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.r)),
-                          tileColor: AppColors.blackColor.withOpacity(0.07),
-                          leading: ClipRRect(
-                            borderRadius: BorderRadius.circular(500.r),
-                            child: CachedNetworkImage(
-                                placeholder: (context, url) =>
-                                    Shimmer.fromColors(
-                                      baseColor:
-                                          AppColors.blackColor.withOpacity(0.1),
-                                      highlightColor: AppColors.blackColor
-                                          .withOpacity(0.02),
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: AppColors.blackColor),
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 10.sp),
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.r)),
+                            tileColor: AppColors.blackColor.withOpacity(0.07),
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(500.r),
+                              child: CachedNetworkImage(
+                                  placeholder: (context, url) =>
+                                      Shimmer.fromColors(
+                                        baseColor: AppColors.blackColor
+                                            .withOpacity(0.1),
+                                        highlightColor: AppColors.blackColor
+                                            .withOpacity(0.02),
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: AppColors.blackColor),
+                                        ),
                                       ),
-                                    ),
-                                imageUrl: profile.profileImage.toString(),
-                                height: 50.sp,
-                                width: 50.sp,
-                                fit: BoxFit.cover),
+                                  imageUrl: profile.profileImage.toString(),
+                                  height: 50.sp,
+                                  width: 50.sp,
+                                  fit: BoxFit.cover),
+                            ),
+                            title: Row(
+                              children: [
+                                Text(profile.name.toString(),
+                                    style: GetTextTheme.sf16_bold),
+                                widget.booking.guards
+                                        .firstWhere((element) =>
+                                            element.split("/").first ==
+                                            profile.uid)
+                                        .endsWith("rejected")
+                                    ? Text("   (Rejected)",
+                                        style: GetTextTheme.sf16_bold.copyWith(
+                                            color: AppColors.redColor))
+                                    : const SizedBox()
+                              ],
+                            ),
+                            subtitle: Consumer<AppDataController>(
+                                builder: (context, data, child) {
+                              final category = data.getUserCategories
+                                  .firstWhere(
+                                      (e) => e.categoryId == profile.category);
+                              return Text(category.name.toString(),
+                                  style: GetTextTheme.sf14_medium);
+                            }),
+                            trailing: TextButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.greenColor),
+                                ),
+                                onPressed: () => AppServices.pushTo(
+                                    context,
+                                    GuardProfileView(
+                                        providerDetails: profile,
+                                        showEditOptions: false)),
+                                child: Text("View Profile",
+                                    style: GetTextTheme.sf10_medium.copyWith(
+                                        color: AppColors.whiteColor))),
                           ),
-                          title: Text(profile.name.toString(),
-                              style: GetTextTheme.sf16_bold),
-                          subtitle: Text(profile.category.toString(),
-                              style: GetTextTheme.sf14_medium),
-                          trailing: TextButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    AppColors.greenColor),
-                              ),
-                              onPressed: () => AppServices.pushTo(
-                                  context,
-                                  GuardProfileView(
-                                      providerDetails: profile,
-                                      showEditOptions: false)),
-                              child: Text("View Profile",
-                                  style: GetTextTheme.sf10_medium
-                                      .copyWith(color: AppColors.whiteColor))),
                         );
                       },
                     ),

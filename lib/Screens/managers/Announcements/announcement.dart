@@ -206,7 +206,7 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       "title": _titleController.text.trim(),
       "body": _msgController.text.trim(),
       "ExpiryDate": expiryDate == null ? "" : expiryDate!.toIso8601String(),
-      "CreatedAt": DateTime.now().toIso8601String(),
+      "createdAt": DateTime.now().toIso8601String(),
       "receiver": receiverType.name,
     };
 
@@ -214,7 +214,7 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       "title": _titleController.text.trim(),
       "body": _msgController.text.trim(),
       "ExpiryDate": expiryDate == null ? "" : expiryDate!.toIso8601String(),
-      "CreatedAt": DateTime.now().toIso8601String(),
+      "createdAt": DateTime.now().toIso8601String(),
       "receiver": receiverType.name,
       "OfferCode": offerCode,
       "discount": _discountController.text

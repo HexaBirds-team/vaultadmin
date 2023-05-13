@@ -13,10 +13,12 @@ import 'package:valt_security_admin_panel/controllers/notification_controller.da
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 
 import '../../components/custom_appbar.dart';
+import '../../components/expanded_btn.dart';
 import '../../helpers/icons_and_images.dart';
 import '../../helpers/style_sheet.dart';
 import '../../models/app_models.dart';
 import '../../models/enums.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 
 class GuardProfileView extends StatefulWidget {
   bool showEditOptions;
@@ -296,7 +298,37 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                           ],
                         ),
                       );
-                    })
+                    }),
+            AppServices.addHeight(20.h),
+            ButtonOneExpanded(
+              onPressed: () {
+                final dialog = RatingDialog(
+                    initialRating: widget.providerDetails.rating,
+                    enableComment: false,
+                    title: Text(widget.providerDetails.name,
+                        textAlign: TextAlign.center,
+                        style: GetTextTheme.sf26_bold),
+                    submitButtonText: "Submit",
+                    image: CircleAvatar(
+                      radius: 50.r,
+                      backgroundColor: AppColors.whiteColor,
+                      backgroundImage:
+                          NetworkImage(widget.providerDetails.profileImage),
+                    ),
+                    starSize: 35.sp,
+                    message: Text("Set the ratings for this Security Guard",
+                        textAlign: TextAlign.center,
+                        style: GetTextTheme.sf16_medium),
+                    onSubmitted: (v) async {
+                      await database
+                          .ref("Providers/${widget.providerDetails.uid}")
+                          .update({"Ratings": v.rating});
+                    });
+                showDialog(context: context, builder: (context) => dialog);
+              },
+              btnText: "Set Ratings",
+            ),
+            AppServices.addHeight(20.h),
           ],
         )),
       ),

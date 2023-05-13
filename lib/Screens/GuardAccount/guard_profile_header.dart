@@ -32,7 +32,8 @@ class AccountHeader extends StatelessWidget {
             style: GetTextTheme.sf12_medium,
             children: [
               TextSpan(
-                  text: "3 Year Experience", style: GetTextTheme.sf12_regular)
+                  text: "${providerDetails.experience} Year Experience",
+                  style: GetTextTheme.sf12_regular)
             ])),
         // AppServices.addHeight(20.h),
         // Row(

@@ -35,7 +35,7 @@ class AdminDrawerView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(AppConfig.appLogo, width: 80.sp),
+                Image.asset(AppConfig.logoBlack, width: 80.sp),
                 AppServices.addHeight(10.h),
                 Text(AppConfig.appName, style: GetTextTheme.sf22_bold)
               ],

@@ -18,8 +18,8 @@ class NewBookingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => AppServices.pushTo(
-          context, BookingDetailsView(bookingId: booking.id)),
+      onTap: () =>
+          AppServices.pushTo(context, BookingDetailsView(booking: booking)),
       child: Container(
         margin: EdgeInsets.only(bottom: 15.h),
         padding: EdgeInsets.all(10.sp),

@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Image.asset(AppConfig.appLogo,
+                      Image.asset(AppConfig.logoWhite,
                           height: 85.sp, width: 93.6.sp, fit: BoxFit.cover),
                       Text('VAULT\nSECURITIES',
                           textAlign: TextAlign.center,
