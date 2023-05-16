@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     children: [
                       Image.asset(AppConfig.logoWhite,
                           height: 85.sp, width: 93.6.sp, fit: BoxFit.cover),
-                      Text('VAULT\nSECURITIES',
+                      Text('VAULT\nADMIN',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.jockeyOne(
                               height: 1.0,
