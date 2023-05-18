@@ -220,18 +220,20 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       "discount": _discountController.text
     };
     final db = Provider.of<AppDataController>(context, listen: false);
-    db.setLoader(true);
-    if (type == AnnouncementType.announcement) {
-      await NotificationController().uploadNotification("Announcements", data);
-    } else {
-      if (_discountController.text.isEmpty || offerCode.isEmpty) {
-        MySnackBar.error(context, "Please complete the Offer's details");
-      } else {
-        await NotificationController().uploadNotification("Offers", couponData);
-      }
-    }
 
     if (_key.currentState!.validate()) {
+      db.setLoader(true);
+      if (type == AnnouncementType.announcement) {
+        await NotificationController()
+            .uploadNotification("Announcements", data);
+      } else {
+        if (_discountController.text.isEmpty || offerCode.isEmpty) {
+          MySnackBar.error(context, "Please complete the Offer's details");
+        } else {
+          await NotificationController()
+              .uploadNotification("Offers", couponData);
+        }
+      }
       if (receiverType == AnnouncementReceiverType.user) {
         List<UserInformationClass> users = db.getAllUsers;
         for (var user in users) {
@@ -244,9 +246,12 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       if (receiverType == AnnouncementReceiverType.guard) {
         List<ProvidersInformationClass> guards = db.getAllProviders;
         for (var guard in guards) {
-          guard.token == ""
+          guard.tokens == []
               ? null
-              : NotificationController().sendFCM(data, guard.token);
+              : {
+                  for (var token in guard.tokens)
+                    {NotificationController().sendFCM(data, token)}
+                };
         }
         db.setLoader(false);
       }

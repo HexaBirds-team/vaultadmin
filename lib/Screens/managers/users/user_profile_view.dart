@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
+import 'package:valt_security_admin_panel/components/shimmers/box_shimmer.dart';
 import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
@@ -62,7 +63,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                           await database
                               .ref("Users/${widget.user.uid}")
                               .update({"isBlocked": false}),
-                          setState(() => {isDisabled = false})
+                          setState(() => isDisabled = false)
                         };
                 },
                 icon: ImageGradient(
@@ -173,6 +174,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                                               imageUrl: document.image,
                                               height: 45.sp,
                                               width: 60.sp,
+                                              placeholder: (context, url) =>
+                                                  BoxShimmerView(),
                                               fit: BoxFit.cover),
                                         ),
                                       ),

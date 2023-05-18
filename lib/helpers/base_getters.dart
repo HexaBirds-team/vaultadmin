@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 
 class AppServices {
@@ -55,21 +56,6 @@ class AppServices {
   static keyboardUnfocus(BuildContext context) =>
       FocusScope.of(context).unfocus();
 
-  /* UI Scale Factor */
-  // static double scaleFactor(BuildContext context) {
-  //   if (getScreenWidth(context) > AppConfig.screenWidth) {
-  //     return AppConfig.screenWidth / getScreenWidth(context);
-  //   } else {
-  //     return getScreenWidth(context) / AppConfig.screenWidth;
-  //   }
-  // }
-
-  // static showToast(String msg) => Fluttertoast.showToast(
-  //     backgroundColor: AppColors.primary1,
-  //     gravity: ToastGravity.CENTER,
-  //     toastLength: Toast.LENGTH_LONG,
-  //     msg: msg);
-
   static bool isDarkMode(BuildContext context) {
     var brightness = Theme.of(context).brightness;
     return brightness == Brightness.dark;
@@ -86,5 +72,64 @@ class AppServices {
         color: AppColors.greyColor.withOpacity(opacity),
       ),
     );
+  }
+
+  // format iso String to Date
+  static formatDate(dateTime) => DateFormat('EE, MMM dd, yyyy')
+      .format(DateTime.parse(dateTime.toString()))
+      .toString();
+
+  // Age calculator
+  static experienceCalculation(DateTime date) {
+    var d = int.parse(DateFormat("dd").format(date));
+    var m = int.parse(DateFormat("MM").format(date));
+    var y = int.parse(DateFormat("yy").format(date));
+    var d1 = int.parse(DateFormat("dd").format(DateTime.now()));
+    var m1 = int.parse(DateFormat("MM").format(DateTime.now()));
+    var y1 = int.parse(DateFormat("yy").format(DateTime.now()));
+    var day = findDays(m1, y1);
+
+    String days = "";
+    String months = "";
+    String years = "";
+
+    if (d1 - d >= 0) {
+      days = "${d1 - d} Days";
+    } else {
+      days = "${d1 + day - d} Days";
+      m1 = m1 - 1;
+    }
+
+    if (m1 - m > 0) {
+      months = "${m1 - m} Months";
+    } else {
+      months = "${m1 + 12 - m} Months";
+      y1 = y1 - 1;
+    }
+
+    years = "${y1 - y} Years";
+    return "$years $months";
+  }
+
+  static int findDays(int m2, int y2) {
+    int day2;
+    if (m2 == 1 ||
+        m2 == 3 ||
+        m2 == 5 ||
+        m2 == 7 ||
+        m2 == 8 ||
+        m2 == 10 ||
+        m2 == 12) {
+      day2 = 31;
+    } else if (m2 == 4 || m2 == 6 || m2 == 9 || m2 == 11) {
+      day2 = 30;
+    } else {
+      if (y2 % 4 == 0) {
+        day2 = 29;
+      } else {
+        day2 = 28;
+      }
+    }
+    return day2;
   }
 }

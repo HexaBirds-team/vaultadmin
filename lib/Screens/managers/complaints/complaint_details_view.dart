@@ -43,7 +43,7 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
     return path;
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
     UserInformationClass user = db.getAllUsers

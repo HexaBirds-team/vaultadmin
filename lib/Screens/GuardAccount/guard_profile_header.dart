@@ -3,6 +3,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 import '../../../../helpers/base_getters.dart';
 import '../../../../helpers/style_sheet.dart';
@@ -13,6 +16,9 @@ class AccountHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final db = Provider.of<AppDataController>(context);
+    final category = db.getUserCategories
+        .firstWhere((e) => e.categoryId == providerDetails.category);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -28,22 +34,14 @@ class AccountHeader extends StatelessWidget {
         Text(providerDetails.name, style: GetTextTheme.sf16_bold),
         AppServices.addHeight(5.h),
         Text.rich(TextSpan(
-            text: "Gunman * ",
+            text: "${category.name} * ",
             style: GetTextTheme.sf12_medium,
             children: [
               TextSpan(
-                  text: "${providerDetails.experience} Year Experience",
+                  text:
+                      "${AppServices.experienceCalculation(DateFormat("dd-MM-yyyy").parse(providerDetails.experience))} Experience",
                   style: GetTextTheme.sf12_regular)
             ])),
-        // AppServices.addHeight(20.h),
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //   children: [
-        //     detailTile("3.2", "Rating"),
-        //     detailTile("102", "Reviews"),
-        //     detailTile("32", "Yrs Old")
-        //   ],
-        // )
       ],
     );
   }

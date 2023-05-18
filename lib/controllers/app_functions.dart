@@ -263,6 +263,15 @@ class FunctionsController {
     return snapshot;
   }
 
+  List<String> getTokens(Map<Object?, Object?> data) {
+    List<String> tokens = [];
+    data.forEach((key, value) {
+      print(key.toString());
+      tokens.add(key.toString());
+    });
+    return tokens;
+  }
+
   List<DocsClass> getDocs(List<Object?> data) {
     List<DocsClass> snapshot = [];
     for (var element in data) {

@@ -8,7 +8,7 @@ enum DocumentState {
   invalid,
 }
 
-enum BookingStatus { all, pending, accepted, completed }
+enum BookingStatus { all, pending, accepted, completed, cancelled }
 
 enum AnnouncementType { announcement, offer }
 
