@@ -61,7 +61,7 @@ class AppDataStreamer {
     return database
         .ref("Notifications")
         .orderByChild("receiver")
-        .equalTo(auth.currentUser!.uid)
+        .equalTo("Admin")
         .onValue
         .listen((event) {
       final data = event.snapshot.children;
