@@ -53,13 +53,15 @@ class ProvidersInformationClass {
       description,
       createdAt,
       experience,
-      token;
+      esicNumber,
+      pfNumber;
   GuardApprovalStatus isApproved;
 
   bool isGunAvailable, isBlocked;
   String latitude, longitude;
   List<GuardServices> services;
   List<DocsClass> documents;
+  List<String> tokens;
   double rating;
   ProvidersInformationClass(
       this.uid,
@@ -69,6 +71,8 @@ class ProvidersInformationClass {
       this.dateOfBirth,
       this.profileImage,
       this.isGunAvailable,
+      this.esicNumber,
+      this.pfNumber,
       this.city,
       this.latitude,
       this.experience,
@@ -77,7 +81,7 @@ class ProvidersInformationClass {
       this.services,
       this.isApproved,
       this.createdAt,
-      this.token,
+      this.tokens,
       this.description,
       this.isBlocked,
       this.category,
@@ -115,17 +119,25 @@ class ProvidersInformationClass {
         isBlocked = json['isBlocked'].toString() == "true",
         description =
             json['description'] == null ? "" : json['description'].toString(),
-        token = json['msgToken'].toString(),
+        esicNumber =
+            json['esicNumber'] == null ? "" : json['esicNumber'].toString(),
+        pfNumber = json['pfNumber'] == null ? "" : json['pfNumber'].toString(),
+        tokens = json['msgToken'] == null
+            ? []
+            : FunctionsController()
+                .getTokens(json['msgToken'] as Map<Object?, Object?>),
         documents = json["docs"] == null
             ? []
             : FunctionsController().getDocs(json['docs'] as List<Object?>);
 }
 
 class GuardServices {
-  String title, serviceId;
-  GuardServices(this.title, this.serviceId);
+  String title, serviceId, categoryId;
+  GuardServices(this.title, this.serviceId, this.categoryId);
   GuardServices.fromService(Map<Object?, Object?> json, this.serviceId)
-      : title = json['title'].toString();
+      : title = json['name'].toString(),
+        categoryId =
+            json['categoryId'] == null ? "" : json['categoryId'].toString();
 }
 
 class DocsClass {

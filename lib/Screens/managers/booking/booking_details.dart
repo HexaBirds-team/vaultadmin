@@ -157,7 +157,9 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                             Text("Booking Date & Time",
                                 style: GetTextTheme.sf14_regular),
                             AppServices.addHeight(10.h),
-                            Text(myBooking!.reportingDate,
+                            Text(
+                                AppServices.formatDate(
+                                    myBooking!.reportingDate),
                                 style: GetTextTheme.sf16_medium),
                             Text(myBooking!.reportingTime,
                                 style: GetTextTheme.sf14_regular),
@@ -204,76 +206,101 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                     AppServices.addHeight(20.h),
                     Text("Guards List", style: GetTextTheme.sf16_bold),
                     AppServices.addHeight(10.h),
-                    ...List.generate(
-                      guardsProfile.length,
-                      (i) {
-                        var profile = guardsProfile[i];
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 10.sp),
-                          child: ListTile(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.r)),
-                            tileColor: AppColors.blackColor.withOpacity(0.07),
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(500.r),
-                              child: CachedNetworkImage(
-                                  placeholder: (context, url) =>
-                                      Shimmer.fromColors(
-                                        baseColor: AppColors.blackColor
-                                            .withOpacity(0.1),
-                                        highlightColor: AppColors.blackColor
-                                            .withOpacity(0.02),
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: AppColors.blackColor),
-                                        ),
+                    guardsProfile.isEmpty
+                        ? Text("Not Available",
+                            textAlign: TextAlign.center,
+                            style: GetTextTheme.sf20_bold)
+                        : Column(
+                            children: [
+                              ...List.generate(
+                                guardsProfile.length,
+                                (i) {
+                                  var profile = guardsProfile[i];
+                                  return Padding(
+                                    padding: EdgeInsets.only(bottom: 10.sp),
+                                    child: ListTile(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.r)),
+                                      tileColor: AppColors.blackColor
+                                          .withOpacity(0.07),
+                                      leading: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(500.r),
+                                        child: CachedNetworkImage(
+                                            placeholder: (context, url) =>
+                                                Shimmer.fromColors(
+                                                  baseColor: AppColors
+                                                      .blackColor
+                                                      .withOpacity(0.1),
+                                                  highlightColor: AppColors
+                                                      .blackColor
+                                                      .withOpacity(0.02),
+                                                  child: Container(
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: AppColors
+                                                                .blackColor),
+                                                  ),
+                                                ),
+                                            imageUrl:
+                                                profile.profileImage.toString(),
+                                            height: 50.sp,
+                                            width: 50.sp,
+                                            fit: BoxFit.cover),
                                       ),
-                                  imageUrl: profile.profileImage.toString(),
-                                  height: 50.sp,
-                                  width: 50.sp,
-                                  fit: BoxFit.cover),
-                            ),
-                            title: Row(
-                              children: [
-                                Text(profile.name.toString(),
-                                    style: GetTextTheme.sf16_bold),
-                                widget.booking.guards
-                                        .firstWhere((element) =>
-                                            element.split("/").first ==
-                                            profile.uid)
-                                        .endsWith("rejected")
-                                    ? Text("   (Rejected)",
-                                        style: GetTextTheme.sf16_bold.copyWith(
-                                            color: AppColors.redColor))
-                                    : const SizedBox()
-                              ],
-                            ),
-                            subtitle: Consumer<AppDataController>(
-                                builder: (context, data, child) {
-                              final category = data.getUserCategories
-                                  .firstWhere(
-                                      (e) => e.categoryId == profile.category);
-                              return Text(category.name.toString(),
-                                  style: GetTextTheme.sf14_medium);
-                            }),
-                            trailing: TextButton(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      AppColors.greenColor),
-                                ),
-                                onPressed: () => AppServices.pushTo(
-                                    context,
-                                    GuardProfileView(
-                                        providerDetails: profile,
-                                        showEditOptions: false)),
-                                child: Text("View Profile",
-                                    style: GetTextTheme.sf10_medium.copyWith(
-                                        color: AppColors.whiteColor))),
+                                      title: Row(
+                                        children: [
+                                          Text(profile.name.toString(),
+                                              style: GetTextTheme.sf16_bold),
+                                          widget.booking.guards
+                                                  .firstWhere((element) =>
+                                                      element
+                                                          .split("/")
+                                                          .first ==
+                                                      profile.uid)
+                                                  .endsWith("rejected")
+                                              ? Text("   (Rejected)",
+                                                  style: GetTextTheme.sf16_bold
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .redColor))
+                                              : const SizedBox()
+                                        ],
+                                      ),
+                                      subtitle: Consumer<AppDataController>(
+                                          builder: (context, data, child) {
+                                        final category = data.getUserCategories
+                                            .firstWhere((e) =>
+                                                e.categoryId ==
+                                                profile.category);
+                                        return Text(category.name.toString(),
+                                            style: GetTextTheme.sf14_medium);
+                                      }),
+                                      trailing: TextButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    AppColors.greenColor),
+                                          ),
+                                          onPressed: () => AppServices.pushTo(
+                                              context,
+                                              GuardProfileView(
+                                                  providerDetails: profile,
+                                                  showEditOptions: false)),
+                                          child: Text("View Profile",
+                                              style: GetTextTheme.sf10_medium
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .whiteColor))),
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
                           ),
-                        );
-                      },
-                    ),
                     AppServices.addHeight(40.h),
                     ButtonOneExpanded(
                         onPressed: () => AppServices.pushTo(

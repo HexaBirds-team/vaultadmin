@@ -82,7 +82,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                     .ref(
                                         "Providers/${widget.providerDetails.uid}")
                                     .update({"isBlocked": false}),
-                                setState(() => {isDisabled = false})
+                                setState(() => isDisabled = false)
                               };
                       },
                       icon: ImageGradient(
@@ -137,9 +137,10 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                     : widget.providerDetails.description,
                 style: GetTextTheme.sf14_regular),
             AppServices.customDivider(5.h),
-            documentNumberTile("ESIC Number", ""),
+            documentNumberTile(
+                "ESIC Number", widget.providerDetails.esicNumber),
             AppServices.addHeight(5.h),
-            documentNumberTile("PF Number", ""),
+            documentNumberTile("PF Number", widget.providerDetails.pfNumber),
             AppServices.addHeight(20.h),
             Text("Documents", style: GetTextTheme.sf16_medium),
             AppServices.addHeight(10.h),
@@ -250,12 +251,13 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                                   ? FancyDialogController()
                                                       .confirmInvalidDocument(
                                                           context, () async {
-                                                      await NotificationController()
-                                                          .sendFCM(
-                                                              data,
-                                                              widget
-                                                                  .providerDetails
-                                                                  .token);
+                                                      for (var token in widget
+                                                          .providerDetails
+                                                          .tokens) {
+                                                        await NotificationController()
+                                                            .sendFCM(
+                                                                data, token);
+                                                      }
                                                       await NotificationController()
                                                           .uploadNotification(
                                                               "Notifications",

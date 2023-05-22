@@ -49,7 +49,9 @@ class NewBookingsTile extends StatelessWidget {
                                 horizontal: 10.w, vertical: 5.h),
                             decoration: BoxDecoration(
                                 color: booking.bookingStatus.toLowerCase() ==
-                                        "pending"
+                                            "pending" ||
+                                        booking.bookingStatus.toLowerCase() ==
+                                            "cancelled"
                                     ? AppColors.redColor.withOpacity(0.15)
                                     : AppColors.greenColor.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(10.r)),
@@ -57,7 +59,10 @@ class NewBookingsTile extends StatelessWidget {
                                 style: GetTextTheme.sf12_regular.copyWith(
                                     color:
                                         booking.bookingStatus.toLowerCase() ==
-                                                "pending"
+                                                    "pending" ||
+                                                booking.bookingStatus
+                                                        .toLowerCase() ==
+                                                    "cancelled"
                                             ? AppColors.redColor
                                             : AppColors.greenColor)),
                           ),
@@ -113,7 +118,7 @@ class NewBookingsTile extends StatelessWidget {
                       Expanded(
                           flex: 2,
                           child: Text(
-                              "${booking.reportingDate} At (${booking.reportingTime})",
+                              "${AppServices.formatDate(booking.reportingDate)} At (${booking.reportingTime})",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: GetTextTheme.sf14_medium)),
