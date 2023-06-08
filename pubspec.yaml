@@ -63,6 +63,7 @@ dependencies:
   barcode_widget: ^2.0.3
   percent_indicator: ^4.2.3
   flutter_rating_bar: ^4.0.1
+  cloud_firestore: ^4.7.1
 
 dev_dependencies:
   flutter_test:

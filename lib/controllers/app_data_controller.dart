@@ -97,16 +97,6 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
-//   updateOrgLikes(bool add, String profileId) {
-//     int index = _orgList.indexWhere((element) => element.orgId == profileId);
-//     if (add) {
-//       _orgList[index].likes += 1;
-//     } else {
-//       _orgList[index].likes -= 1;
-//     }
-//   }
-
-//   /* All Users List */
   List<UserInformationClass> _users = [];
   List<UserInformationClass> get getAllUsers => _users;
 
@@ -149,9 +139,19 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
+  addService(ServiceClass service) {
+    _services.add(service);
+    notifyListeners();
+  }
+
   updateServices(String id, ServiceClass data) {
     int index = _services.indexWhere((element) => element.serviceId == id);
     _services[index] = data;
+    notifyListeners();
+  }
+
+  removeService(String id) {
+    _services.removeWhere((element) => element.serviceId == id);
     notifyListeners();
   }
 
@@ -170,10 +170,10 @@ class AppDataController extends ChangeNotifier {
   }
 
 /* Admin Details */
-  Map<Object?, Object?>? _admin;
-  Map<Object?, Object?> get adminDetails => _admin!;
+  Map<String, dynamic>? _admin;
+  Map<String, dynamic> get adminDetails => _admin!;
 
-  setAdminDetails(Map<Object?, Object?> data) {
+  setAdminDetails(Map<String, dynamic> data) {
     _admin = data;
     notifyListeners();
   }
@@ -203,6 +203,60 @@ class AppDataController extends ChangeNotifier {
 
   setNotifications(List<NotificationModel> notifications) {
     _notifications = notifications;
+    notifyListeners();
+  }
+
+  /* banners handler */
+  List<BannersClass> _banners = [];
+  List<BannersClass> get getBanners => _banners;
+
+  setBanners(List<BannersClass> banners) {
+    _banners = banners;
+    notifyListeners();
+  }
+
+  addBanner(BannersClass banner) {
+    _banners.add(banner);
+    notifyListeners();
+  }
+
+  deleteBanner(String bannerId) {
+    _banners.removeWhere((element) => element.bannerId == bannerId);
+    notifyListeners();
+  }
+
+  /* subscriptions handler */
+  List<SubscriptionClass> _subscriptions = [];
+  List<SubscriptionClass> get getSubscriptions => _subscriptions;
+
+  setSubscriptions(List<SubscriptionClass> data) {
+    _subscriptions = data;
+    notifyListeners();
+  }
+
+  updateSubscriptions(String id, String amount) {
+    final i = _subscriptions.indexWhere((element) => element.id == id);
+    _subscriptions[i].amount = amount;
+    notifyListeners();
+  }
+
+  /* service area handler */
+  List<ServiceAreaClass> _serviceArea = [];
+  List<ServiceAreaClass> get getserviceArea => _serviceArea;
+
+  setServiceArea(List<ServiceAreaClass> data) {
+    _serviceArea = data;
+    notifyListeners();
+  }
+
+  addServiceArea(ServiceAreaClass data) {
+    _serviceArea.add(data);
+    notifyListeners();
+  }
+
+  updateServiceArea(String id, String pincode) {
+    int i = _serviceArea.indexWhere((element) => element.id == id);
+    _serviceArea[i].pincode = pincode;
     notifyListeners();
   }
 }

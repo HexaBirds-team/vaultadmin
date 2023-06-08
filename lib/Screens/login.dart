@@ -3,15 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:valt_security_admin_panel/Screens/BottomNavBar/bottom_nav_bar.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/components/simple_textfield.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
-import 'package:valt_security_admin_panel/controllers/app_settings_controller.dart';
 import 'package:valt_security_admin_panel/controllers/data_validation_controller.dart';
-import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import '../../helpers/app_theme.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
@@ -35,6 +32,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final db = Provider.of<AppDataController>(context);
     return GestureDetector(
       onTap: () => AppServices.keyboardUnfocus(context),
       child: Scaffold(
@@ -68,7 +66,7 @@ class _LoginViewState extends State<LoginView> {
                       label: "Password",
                     ),
                     AppServices.addHeight(45.h),
-                    loading
+                    db.appLoading
                         ? const OnViewLoader()
                         : ButtonOneExpanded(
                             onPressed: () => onContinue(),
@@ -83,27 +81,8 @@ class _LoginViewState extends State<LoginView> {
   }
 
   onContinue() async {
-    final db = Provider.of<AppDataController>(context, listen: false);
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        loading = true;
-      });
-      final path = await database.ref('Admin').get();
-      final data = path.value as Map<Object?, Object?>;
-      if (data['username'].toString() == _name.text &&
-          data['password'].toString() == _password.text) {
-        db.setAdminDetails(data);
-        await preference.setBool("isLogin", true);
-        AppServices.pushAndRemove(BottomNavBar(), context);
-        setState(() {
-          loading = false;
-        });
-      } else {
-        setState(() {
-          loading = false;
-        });
-        MySnackBar.error(context, "Username or password doesn't match");
-      }
+      await FirebaseController(context).onLogin(_name.text, _password.text);
     } else {
       null;
     }

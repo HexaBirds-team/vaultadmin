@@ -2,22 +2,20 @@
 
 import 'dart:async';
 
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_icon.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/components/pop_ups/add_service_dialog.dart';
 import 'package:valt_security_admin_panel/components/pop_ups/edit_service_dialog.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
+import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
-import 'package:valt_security_admin_panel/models/app_models.dart';
 
 import '../../components/expanded_btn.dart';
-import '../../controllers/stream_controller.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
 
@@ -29,18 +27,10 @@ class ServiceManager extends StatefulWidget {
 }
 
 class _ServiceManagerState extends State<ServiceManager> {
-  final dataStreamer = AppDataStreamer();
-
-  late StreamSubscription<DatabaseEvent> ref;
-
-  getServiceUrl() {
-    final path = database.ref("Services");
-    return path;
-  }
-
-  bool loading = false;
   @override
   Widget build(BuildContext context) {
+    final db = Provider.of<AppDataController>(context);
+    final services = db.getAllServices;
     return Scaffold(
       appBar: customAppBar(
           autoLeading: true,
@@ -56,14 +46,11 @@ class _ServiceManagerState extends State<ServiceManager> {
                 icon: const Icon(Icons.add))
           ]),
       body: SafeArea(
-          child: FirebaseAnimatedList(
+          child: ListView.builder(
+              itemCount: services.length,
               shrinkWrap: true,
-              defaultChild: const OnViewLoader(),
-              query: getServiceUrl(),
-              itemBuilder: (context, snapshot, animation, i) {
-                ServiceClass data = ServiceClass.fromService(
-                    snapshot.value as Map<Object?, Object?>,
-                    snapshot.key.toString());
+              itemBuilder: (context, i) {
+                final data = services[i];
                 return ListTile(
                   title: Text(data.name, style: GetTextTheme.sf18_medium),
                   leading: Container(
@@ -106,7 +93,7 @@ class _ServiceManagerState extends State<ServiceManager> {
                                               "Are you sure you want to delete this service?",
                                               style: GetTextTheme.sf18_bold),
                                           AppServices.addHeight(10.h),
-                                          loading
+                                          db.appLoading
                                               ? const Center(
                                                   child: OnViewLoader())
                                               : Row(
@@ -153,14 +140,6 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   Future<void> deleteService(String id) async {
-    setState(() => loading = true);
-    try {
-      await database.ref("Services/$id").remove();
-      setState(() => loading = false);
-      AppServices.popView(context);
-    } catch (e) {
-      setState(() => loading = false);
-      print(e);
-    }
+    FirebaseController(context).deleteService(id);
   }
 }

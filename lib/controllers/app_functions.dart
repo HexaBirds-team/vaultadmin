@@ -1,38 +1,15 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
 import '../helpers/style_sheet.dart';
-import 'app_data_controller.dart';
-
-final FirebaseAuth auth = FirebaseAuth.instance;
-final FirebaseDatabase database = FirebaseDatabase.instance;
-final FirebaseStorage storage = FirebaseStorage.instance;
-FirebaseMessaging messaging = FirebaseMessaging.instance;
+import 'firebase_controller.dart';
 
 class FunctionsController {
-  getUserCategory(BuildContext context) async {
-    final db = Provider.of<AppDataController>(context, listen: false);
-    final snapshot = await database.ref("Categories").get();
-    if (snapshot.exists) {
-      final data = snapshot.children;
-      db.setUserCategoryList(data
-          .map((e) => CategoryClass.fromCategory(
-              e.value as Map<Object?, Object?>, e.key.toString()))
-          .toList());
-    }
-  }
-
   getLocation(String lat, String lng) async {
     Placemark? location;
     location = lat == ""
@@ -150,10 +127,6 @@ class FunctionsController {
       "X",
       "Y",
       "Z"
-      // "_",
-      // "%",
-      // "\$",
-      // "-"
     ];
 
     String id = "";
@@ -190,125 +163,13 @@ class FunctionsController {
     return ratingCount / reviewModel.length;
   }
 
-  static getReviews(BuildContext context) async {
-    final db = Provider.of<AppDataController>(context, listen: false);
-    final path = database.ref("Reviews");
-    final snapshot = await path.get();
-    db.addAllReviews(snapshot.children
-        .map((e) => ReviewsModel.fromJson(
-            e.value as Map<Object?, Object?>, e.key.toString()))
-        .toList());
-  }
-
-//   getUserProfile(BuildContext context) async {
-//     final database = Provider.of<AppDatabase>(context, listen: false);
-//     final path = _database.ref("users/${preference.getString("uid")}");
-//     final snapshot = await path.get();
-//     if (snapshot.exists) {
-//       database.setUserPersonalData(UserInformationClass.fromUser(
-//           snapshot.value as Map<Object?, Object?>));
-//     }
-//   }
-
-//   getOrganizationProfile(BuildContext context) async {
-//     final database = Provider.of<AppDatabase>(context, listen: false);
-//     final path = _database.ref("organizations/${preference.getString("uid")}");
-//     final snapshot = await path.get();
-//     if (snapshot.exists) {
-//       database.setOrgInfoData(OrganizationProfileClass.fromOrg(
-//           snapshot.value as Map<Object?, Object?>, snapshot.key.toString()));
-//     }
-//   }
-
-//   getAllServicesList(BuildContext context) async {
-//     final database = Provider.of<AppDatabase>(context, listen: false);
-//     final path = _database.ref("services");
-//     final snapshot = await path.get();
-//     if (snapshot.exists) {
-//       print(snapshot.children);
-//       database.setServicesList(snapshot.children
-//           .map((e) => OrgServicesClass.fromService(
-//               e.value as Map<Object?, Object?>, e.key.toString()))
-//           .toList());
-//     }
-//   }
-
-  // Future<List<ProvidersInformationClass>> getProviders(
-  //     BuildContext context) async {
-  //   final db = Provider.of<AppDataController>(context, listen: false);
-  //   final path = database.ref("Providers");
-
-  //   // final path2 = database.ref("Providers/services");
-  //   final snapshot = await path.get();
-  //   // final snapshot2 = await path2.get();
-  //   if (snapshot.exists) {
-  //     var myList = snapshot.children
-  //         .map((e) => ProvidersInformationClass.fromUser(
-  //             e.value as Map<Object?, Object?>, e.key.toString()))
-  //         .toList();
-  //     db.setProvidersData(myList);
-
-  //     return myList;
-  //   } else {
-  //     return [];
-  //   }
-  // }
-
-  List<GuardServices> getServices(Map<Object?, Object?> data) {
-    List<GuardServices> snapshot = [];
-    data.forEach((key, value) {
-      snapshot.add(GuardServices.fromService(
-          value as Map<Object?, Object?>, key.toString()));
-    });
-    return snapshot;
-  }
-
-  List<String> getTokens(Map<Object?, Object?> data) {
+  List<String> getTokens(Map<String, dynamic> data) {
     List<String> tokens = [];
     data.forEach((key, value) {
       print(key.toString());
       tokens.add(key.toString());
     });
     return tokens;
-  }
-
-  List<DocsClass> getDocs(List<Object?> data) {
-    List<DocsClass> snapshot = [];
-    for (var element in data) {
-      snapshot.add(DocsClass.fromDocs(element as Map<Object?, Object?>));
-    }
-    return snapshot;
-  }
-
-  getComplaints(BuildContext context) async {
-    final db = Provider.of<AppDataController>(context, listen: false);
-    final path = database.ref("Complaints");
-    final snapshot = await path.get();
-    if (snapshot.exists) {
-      var complaintLists = snapshot.children
-          .map((e) => ComplaintsClass.fromComplaint(
-              e.value as Map<Object?, Object?>, e.key.toString()))
-          .toList();
-      db.setComplaintsData(complaintLists);
-    } else {
-      null;
-    }
-  }
-
-  getBookings(BuildContext context) async {
-    final db = Provider.of<AppDataController>(context, listen: false);
-    final path = database.ref("Bookings");
-    final snapshot = await path.get();
-    if (snapshot.exists) {
-      var bookingLists = snapshot.children
-          .map((e) => BookingsClass.fromBooking(
-              e.value as Map<Object?, Object?>, e.key.toString()))
-          .toList();
-
-      db.setBookingsList(bookingLists);
-    } else {
-      null;
-    }
   }
 }
 

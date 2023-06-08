@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
+import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
 
 import '../../../../helpers/base_getters.dart';
+import '../../../controllers/firebase_controller.dart';
 import '../../../helpers/style_sheet.dart';
 
 class DeleteBannerDialog extends StatefulWidget {
@@ -68,7 +69,7 @@ class _DeleteBannerDialogState extends State<DeleteBannerDialog> {
     setState(() => isLoading = true);
     try {
       await storage.refFromURL(widget.banner).delete();
-      await database.ref("Banners/${widget.id}").remove();
+      await FirestoreApiReference.bannersPath.doc(widget.id).delete();
       setState(() => isLoading = false);
       AppServices.popView(context);
     } catch (e) {

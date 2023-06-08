@@ -7,8 +7,9 @@ import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile_hea
 import 'package:valt_security_admin_panel/Screens/managers/image_view.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/controllers/auth_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
 import 'package:valt_security_admin_panel/controllers/notification_controller.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 
@@ -33,6 +34,8 @@ class GuardProfileView extends StatefulWidget {
 class _GuardProfileViewState extends State<GuardProfileView> {
   bool isChanged = false;
   bool isDisabled = false;
+  List<DocsClass> documents = [];
+  List<GuardServices> services = [];
 
   @override
   void initState() {
@@ -40,11 +43,20 @@ class _GuardProfileViewState extends State<GuardProfileView> {
     setState(() {
       isDisabled = widget.providerDetails.isBlocked;
     });
+    getStuff();
+  }
+
+  getStuff() async {
+    documents = await FirebaseController(context)
+        .getGuardDocs(widget.providerDetails.uid);
+    services = await FirebaseController(context)
+        .getGuardServices(widget.providerDetails.uid);
+    if (!mounted) return;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final documents = widget.providerDetails.documents;
     return WillPopScope(
       onWillPop: () async {
         if (isChanged) {
@@ -70,10 +82,10 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                         !isDisabled
                             ? FancyDialogController().confirmBlockDialog(
                                 context, () async {
-                                final path = database.ref(
-                                    "Providers/${widget.providerDetails.uid}");
-                                await path.update(
-                                    {"isBlocked": true, "isOnline": false});
+                                await FirestoreApiReference.guardApi(
+                                        widget.providerDetails.uid)
+                                    .update(
+                                        {"isBlocked": true, "isOnline": false});
                                 setState(() => isDisabled = true);
                               },
                                 "Are you sure you want to block this guard?").show()
@@ -111,7 +123,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             Text("Services Offered", style: GetTextTheme.sf16_medium),
             AppServices.addHeight(5.h),
             ListView.builder(
-                itemCount: widget.providerDetails.services.length,
+                itemCount: services.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, i) {
@@ -122,7 +134,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                         Image.asset(AppIcons.bulletIcon,
                             height: 10.sp, width: 10.sp),
                         AppServices.addWidth(15.w),
-                        Text(widget.providerDetails.services[i].title,
+                        Text(services[i].title,
                             style: GetTextTheme.sf14_regular)
                       ],
                     ),
@@ -268,7 +280,8 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                                               widget
                                                                   .providerDetails
                                                                   .uid,
-                                                              i.toString(),
+                                                              document.id
+                                                                  .toString(),
                                                               v,
                                                               context)
                                                           .then((value) =>

@@ -1,12 +1,10 @@
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
-
 import 'enums.dart';
 
 class CategoryClass {
   String name, image, categoryId;
 
   CategoryClass(this.name, this.image, this.categoryId);
-  CategoryClass.fromCategory(Map<Object?, Object?> json, this.categoryId)
+  CategoryClass.fromCategory(Map<String, dynamic> json, this.categoryId)
       : name = json["name"].toString(),
         image = json['image'].toString();
 }
@@ -14,7 +12,7 @@ class CategoryClass {
 class UserInformationClass {
   String username, phone, image, uid, token, dateOfBirth, gender, aadharNo;
   bool isBlocked;
-  List<DocsClass> documents;
+  // List<DocsClass> documents;
   UserInformationClass(
       this.username,
       this.phone,
@@ -24,9 +22,9 @@ class UserInformationClass {
       this.token,
       this.gender,
       this.dateOfBirth,
-      this.documents,
+      // this.documents,
       this.aadharNo);
-  UserInformationClass.fromUser(Map<Object?, Object?> json, this.uid)
+  UserInformationClass.fromUser(Map<String, dynamic> json, this.uid)
       : username = json['Name'].toString(),
         phone = json["Number"].toString(),
         isBlocked = json['isBlocked'].toString() == "true",
@@ -35,9 +33,9 @@ class UserInformationClass {
         dateOfBirth =
             json['dateOfBirth'] == null ? "" : json['dateOfBirth'].toString(),
         aadharNo = json['aadharNo'] == null ? "" : json['aadharNo'].toString(),
-        documents = json["documents"] == null
-            ? []
-            : FunctionsController().getDocs(json['documents'] as List<Object?>),
+        // documents = json["documents"] == null
+        //     ? []
+        //     : FunctionsController().getDocs(json['documents'] as List<Object?>),
         image = json["ProfileImage"].toString();
 }
 
@@ -59,9 +57,9 @@ class ProvidersInformationClass {
 
   bool isGunAvailable, isBlocked;
   String latitude, longitude;
-  List<GuardServices> services;
-  List<DocsClass> documents;
-  List<String> tokens;
+  // List<GuardServices> services;
+  // List<DocsClass> documents;
+  List<dynamic> tokens;
   double rating;
   ProvidersInformationClass(
       this.uid,
@@ -78,15 +76,16 @@ class ProvidersInformationClass {
       this.experience,
       this.longitude,
       this.rating,
-      this.services,
+      // this.services,
       this.isApproved,
       this.createdAt,
       this.tokens,
       this.description,
       this.isBlocked,
-      this.category,
-      this.documents);
-  ProvidersInformationClass.fromUser(Map<Object?, Object?> json, this.uid)
+      this.category
+      // this.documents
+      );
+  ProvidersInformationClass.fromUser(Map<String, dynamic> json, this.uid)
       : name = json['name'].toString(),
         phone = json['phone'].toString(),
         qualification = json['qualification'].toString(),
@@ -108,10 +107,10 @@ class ProvidersInformationClass {
                 : json["Location"].toString().split(",").last,
         experience = json['Experience'].toString(),
         rating = double.parse(json['Ratings'].toString()),
-        services = json['services'] == null
-            ? []
-            : FunctionsController()
-                .getServices(json['services'] as Map<Object?, Object?>),
+        // services = json['services'] == null
+        //     ? []
+        //     : FunctionsController()
+        //         .getServices(json['services'] as Map<Object?, Object?>),
         isApproved = GuardApprovalStatus.values.firstWhere(
             (element) => element.name == json['isApproved'].toString()),
         createdAt = json['CreatedAt'].toString(),
@@ -122,29 +121,27 @@ class ProvidersInformationClass {
         esicNumber =
             json['esicNumber'] == null ? "" : json['esicNumber'].toString(),
         pfNumber = json['pfNumber'] == null ? "" : json['pfNumber'].toString(),
-        tokens = json['msgToken'] == null
-            ? []
-            : FunctionsController()
-                .getTokens(json['msgToken'] as Map<Object?, Object?>),
-        documents = json["docs"] == null
-            ? []
-            : FunctionsController().getDocs(json['docs'] as List<Object?>);
+        tokens = json['msgToken'] ?? [];
+
+  // documents = json["docs"] == null
+  //     ? []
+  //     : FunctionsController().getDocs(json['docs'] as List<Object?>);
 }
 
 class GuardServices {
   String title, serviceId, categoryId;
   GuardServices(this.title, this.serviceId, this.categoryId);
-  GuardServices.fromService(Map<Object?, Object?> json, this.serviceId)
+  GuardServices.fromService(Map<String, dynamic> json, this.serviceId)
       : title = json['name'].toString(),
         categoryId =
             json['categoryId'] == null ? "" : json['categoryId'].toString();
 }
 
 class DocsClass {
-  String name, image;
+  String name, image, id;
   DocumentState status;
-  DocsClass(this.name, this.image, this.status);
-  DocsClass.fromDocs(Map<Object?, Object?> json)
+  DocsClass(this.name, this.image, this.status, this.id);
+  DocsClass.fromDocs(Map<String, dynamic> json, this.id)
       : image = json['document'] == null ? "" : json['document'].toString(),
         status = json['documentState'] == null
             ? DocumentState.posted
@@ -156,24 +153,44 @@ class DocsClass {
 class ServiceClass {
   String name, categoryId, serviceId;
   ServiceClass(this.categoryId, this.name, this.serviceId);
-  ServiceClass.fromService(Map<Object?, Object?> json, this.serviceId)
+  ServiceClass.fromService(Map<String, dynamic> json, this.serviceId)
       : name = json['name'].toString(),
         categoryId = json['categoryId'].toString();
 }
 
 class ComplaintsClass {
-  String complaintId, bookingRef, complaint, complaintBy, createdOn, type;
+  String id;
+  String name;
+  String complaint;
+  String complaintId;
+  String complaintBy;
+  String createdBy;
+  String type;
+  String bookingRef;
+  String createdOn;
   ComplaintStatus status;
-  ComplaintsClass(this.complaintId, this.bookingRef, this.complaint,
-      this.complaintBy, this.createdOn, this.status, this.type);
-  ComplaintsClass.fromComplaint(Map<Object?, Object?> json, this.complaintId)
-      : bookingRef = json['bookingRef'].toString(),
-        complaint = json['complaint'].toString(),
-        complaintBy = json['createdBy'].toString(),
-        createdOn = json['createdOn'].toString(),
+  ComplaintsClass(
+      this.id,
+      this.name,
+      this.complaint,
+      this.type,
+      this.bookingRef,
+      this.createdOn,
+      this.status,
+      this.complaintId,
+      this.complaintBy,
+      this.createdBy);
+  ComplaintsClass.fromComplaint(Map<String, dynamic> json, this.id)
+      : name = json["userName"].toString(),
+        complaint = json["complaint"].toString(),
+        type = json["type"].toString(),
+        bookingRef = json["bookingRef"].toString(),
+        createdOn = json["createdOn"].toString(),
+        complaintId = json['complaintId'].toString(),
+        complaintBy = json['complaintBy'].toString(),
+        createdBy = json['createdBy'].toString(),
         status = ComplaintStatus.values
-            .firstWhere((element) => element.name == json['status'].toString()),
-        type = json['type'].toString();
+            .firstWhere((element) => element.name == json['status'].toString());
 }
 
 class BookingsClass {
@@ -213,7 +230,7 @@ class BookingsClass {
       this.bookingCategory,
       this.bookingCategoryImg,
       this.lng);
-  BookingsClass.fromBooking(Map<Object?, Object?> json, this.id)
+  BookingsClass.fromBooking(Map<dynamic, dynamic> json, this.id)
       : address = json['Address'].toString(),
         category = json['BookingCategory'].toString(),
         bookingStatus = json['BookingStatus'].toString(),
@@ -239,10 +256,17 @@ class SubscriptionClass {
   String id, amount, plan, type;
   SubscriptionClass(this.id, this.amount, this.plan, this.type);
 
-  SubscriptionClass.fromSubscription(Map<Object?, Object?> json, this.id)
+  SubscriptionClass.fromSubscription(Map<String, dynamic> json, this.id)
       : amount = json['amount'].toString(),
         plan = json['plan'].toString(),
         type = json['planType'].toString();
+}
+
+class ServiceAreaClass {
+  String id, pincode;
+  ServiceAreaClass(this.id, this.pincode);
+  ServiceAreaClass.fromJson(Map<String, dynamic> json, this.id)
+      : pincode = json['pincode'];
 }
 
 class NotificationModel {
@@ -263,7 +287,7 @@ class BannersClass {
   String banner;
   String bannerId;
   BannersClass(this.banner, this.bannerId);
-  BannersClass.fromBanner(Map<Object?, Object?> banner, this.bannerId)
+  BannersClass.fromBanner(Map<String, dynamic> banner, this.bannerId)
       : banner = banner['banner'].toString();
 }
 
@@ -277,7 +301,7 @@ class ReviewsModel {
   DateTime createdAt;
   ReviewsModel(this.id, this.name, this.description, this.profileImage,
       this.ratings, this.senderId, this.createdAt);
-  ReviewsModel.fromJson(Map<Object?, Object?> json, this.id)
+  ReviewsModel.fromJson(Map<String, dynamic> json, this.id)
       : name = json["Name"].toString(),
         description = json["Description"].toString(),
         profileImage = json["ProfileImage"].toString(),

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../../controllers/admin_callback_controller.dart';
+import '../../controllers/firebase_controller.dart';
 import '../../controllers/data_validation_controller.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
@@ -25,7 +25,6 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
   final _serviceController = TextEditingController();
   final _validator = DataValidationController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
-  final _adminCallbacks = AdminCallbacksController();
 
   var dropdownValue;
 
@@ -37,8 +36,8 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
 
   getStuff() {
     final db = Provider.of<AppDataController>(context, listen: false);
-    CategoryClass category = db.getUserCategories.firstWhere(
-        (element) => element.categoryId == widget.service.categoryId);
+    CategoryClass category = db.getUserCategories.firstWhere((element) =>
+        element.categoryId.trim() == widget.service.categoryId.trim());
     setState(() {
       dropdownValue = category;
       _serviceController.text = widget.service.name;
@@ -116,14 +115,14 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
 // categoryId
 
   onUpdate(AppDataController value) async {
+    final adminCallbacks = FirebaseController(context);
     value.setLoader(true);
     if (_key.currentState!.validate()) {
       Map<String, dynamic> data = {
         "name": _serviceController.text,
         "categoryId": dropdownValue.categoryId
       };
-      await _adminCallbacks.updateService(
-          data, widget.service.serviceId, context);
+      await adminCallbacks.updateService(data, widget.service.serviceId);
       value.setLoader(false);
     } else {
       value.setLoader(false);

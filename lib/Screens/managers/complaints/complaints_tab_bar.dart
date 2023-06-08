@@ -51,7 +51,7 @@ class _ComplaintsTabBarViewState extends State<ComplaintsTabBarView>
           ComplaintsManager(status: ComplaintStatus.pending.name),
           ComplaintsManager(status: ComplaintStatus.processing.name),
           ComplaintsManager(status: ComplaintStatus.resolved.name),
-          ComplaintsManager(status: ComplaintStatus.canceled.name),
+          ComplaintsManager(status: ComplaintStatus.cancelled.name),
         ]));
   }
 }

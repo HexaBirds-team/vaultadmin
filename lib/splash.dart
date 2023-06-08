@@ -9,12 +9,13 @@ import 'package:valt_security_admin_panel/Screens/login.dart';
 import 'package:valt_security_admin_panel/app_config.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/controllers/app_settings_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 
 import 'controllers/app_data_controller.dart';
-import 'controllers/app_functions.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,8 +25,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final _functions = FunctionsController();
-
   @override
   void initState() {
     super.initState();
@@ -33,11 +32,18 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getStuff() async {
+    final firebase = FirebaseController(context);
     final db = Provider.of<AppDataController>(context, listen: false);
-    // await _functions.getProviders(context);
-    await _functions.getUserCategory(context);
-    final data = await database.ref("Admin").get();
-    db.setAdminDetails(data.value as Map<Object?, Object?>);
+    firebase.getServices();
+    await firebase.getUsersList();
+    await firebase.getGuardsList();
+    await firebase.getUserCategory();
+    await firebase.getBanners();
+    await firebase.getComplaints();
+    await firebase.getSubscriptions();
+    await firebase.getServiceArea();
+    final data = await FirestoreApiReference.adminPath.get();
+    db.setAdminDetails(data.data()!);
     bool islogin = await preference.getBool("isLogin") ?? false;
     AppServices.pushAndRemove(
         islogin ? BottomNavBar() : const LoginView(), context);

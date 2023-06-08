@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/managers/complaints/complaint_details_view.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 
 import '../../../helpers/base_getters.dart';
 import '../../../helpers/icons_and_images.dart';
@@ -15,45 +14,13 @@ import '../../../models/enums.dart';
 
 class ComplaintsManager extends StatefulWidget {
   String status;
-  ComplaintsManager({super.key, this.status = "Pending"});
+  ComplaintsManager({super.key, this.status = "pending"});
 
   @override
   State<ComplaintsManager> createState() => _ComplaintsManagerState();
 }
 
 class _ComplaintsManagerState extends State<ComplaintsManager> {
-  int complaintsLength = 0;
-  bool isComplaintFetch = true;
-
-  getComplaintsQuery() {
-    final path = database
-        .ref("Complaints")
-        .orderByChild("status")
-        .equalTo(widget.status.toString());
-    return path;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getComplainsLength();
-  }
-
-  getComplainsLength() async {
-    final path = await database
-        .ref("Complaints")
-        .orderByChild("status")
-        .equalTo(widget.status.toString())
-        .once();
-
-    if (!mounted) return;
-    setState(() {
-      complaintsLength = path.snapshot.children.length;
-      isComplaintFetch = false;
-    });
-    return path.snapshot.children.length;
-  }
-
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);

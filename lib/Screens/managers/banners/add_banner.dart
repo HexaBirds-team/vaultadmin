@@ -8,10 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
-import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
 
 import '../../../controllers/app_data_controller.dart';
+import '../../../controllers/firebase_controller.dart';
 import '../../../helpers/base_getters.dart';
 import '../../../helpers/icons_and_images.dart';
 import '../../../helpers/style_sheet.dart';
@@ -155,31 +154,10 @@ class _AddBannerBottomSheetState extends State<AddBannerBottomSheet> {
     setState(() {
       _bannerId = url;
     });
-    addBanner(db);
+    addBanner();
   }
 
-  Future<void> addBanner(AppDataController controller) async {
-    bool isValid = _bannerId != null;
-    if (isValid) {
-      // setState(() => isLoading = true);
-      try {
-        Map<String, dynamic> data = {
-          "banner": _bannerId,
-        };
-
-        await database.ref("Banners").push().set(data);
-
-        // setState(() {});
-        controller.setLoader(false);
-        AppServices.popView(context);
-      } catch (e) {
-        controller.setLoader(false);
-        print(e);
-      }
-    } else {
-      // setState(() => isLoading = false);
-      controller.setLoader(false);
-      MySnackBar.error(context, "Please select a banner.");
-    }
+  Future<void> addBanner() async {
+    await FirebaseController(context).addBanner(_bannerId);
   }
 }

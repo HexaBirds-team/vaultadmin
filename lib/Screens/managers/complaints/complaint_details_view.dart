@@ -9,8 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_icon.dart';
 import 'package:valt_security_admin_panel/components/simple_textfield.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/controllers/data_validation_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
 import '../../../../components/custom_appbar.dart';
@@ -30,20 +31,24 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
   final _msgController = TextEditingController();
 
   ComplaintStatus status = ComplaintStatus.resolved;
+  List<Map<String, dynamic>> complaints = [];
   @override
   void initState() {
     super.initState();
     setState(() {
       status = widget.data.status;
     });
+    getUrl();
   }
 
-  getUrl() {
-    final path = database.ref("Complaints/${widget.data.complaintId}/messages");
-    return path;
+  getUrl() async {
+    complaints = await FirebaseController(context)
+        .getComplaintMessages(widget.data.complaintId);
+    if (!mounted) return;
+    setState(() {});
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
     UserInformationClass user = db.getAllUsers
@@ -138,7 +143,7 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                                 color: AppColors.greyColor.withOpacity(0.6)),
                           ),
                           status == ComplaintStatus.resolved ||
-                                  status == ComplaintStatus.canceled
+                                  status == ComplaintStatus.cancelled
                               ? Text(
                                   status.name.replaceFirst(status.name[0],
                                       status.name[0].toUpperCase()),
@@ -150,7 +155,8 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                                   itemBuilder: (context) {
                                     return ComplaintStatus.values
                                         .where((element) =>
-                                            element != ComplaintStatus.canceled)
+                                            element !=
+                                            ComplaintStatus.cancelled)
                                         .map((e) {
                                       return PopupMenuItem(
                                         value: e,
@@ -167,9 +173,9 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                                               ? AppColors.yellowColor
                                               : AppColors.redColor)),
                                   onSelected: (v) async {
-                                    final path = database.ref(
-                                        "Complaints/${widget.data.complaintId}");
-                                    await path.update({"status": v.name});
+                                    await FirestoreApiReference.complaintsPath
+                                        .doc(widget.data.complaintId)
+                                        .update({"status": v.name});
 
                                     setState(() {
                                       status = v;
@@ -265,7 +271,7 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
         ),
       ),
       bottomNavigationBar: status == ComplaintStatus.resolved ||
-              status == ComplaintStatus.canceled
+              status == ComplaintStatus.cancelled
           ? null
           : Padding(
               padding: EdgeInsets.all(20.sp).copyWith(

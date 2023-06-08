@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 
 import '../../controllers/data_validation_controller.dart';
 import '../../helpers/base_getters.dart';
@@ -90,14 +90,10 @@ class _EditServiceAreaDialogState extends State<EditServiceAreaDialog> {
 // categoryId
 
   onUpdate(AppDataController value) async {
-    value.setLoader(true);
     if (_key.currentState!.validate()) {
-      final path = database.ref("ServiceAreas/${widget.id}");
-      await path.update({"pincode": _pinCodeController.text});
-      AppServices.popView(context);
-      value.setLoader(false);
+      FirebaseController(context)
+          .editServiceArea(_pinCodeController.text, widget.id);
     } else {
-      value.setLoader(false);
       null;
     }
   }

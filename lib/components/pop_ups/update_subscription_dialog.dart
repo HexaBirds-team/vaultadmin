@@ -7,7 +7,7 @@ import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart
 import 'package:valt_security_admin_panel/controllers/data_validation_controller.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../../controllers/admin_callback_controller.dart';
+import '../../controllers/firebase_controller.dart';
 import '../../controllers/app_data_controller.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
@@ -26,7 +26,6 @@ class UpdateSubscriptionDialog extends StatefulWidget {
 class _UpdateSubscriptionDialogState extends State<UpdateSubscriptionDialog> {
   TextEditingController amountController = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
-  final _adminCallbacks = AdminCallbacksController();
 
   @override
   void initState() {
@@ -87,10 +86,11 @@ class _UpdateSubscriptionDialogState extends State<UpdateSubscriptionDialog> {
   }
 
   onUpdate(AppDataController value) async {
+    final adminCallbacks = FirebaseController(context);
     value.setLoader(true);
     if (_key.currentState!.validate()) {
-      await _adminCallbacks.updateSubscription(
-          amountController.text, widget.data.id, context);
+      await adminCallbacks.updateSubscription(
+          amountController.text, widget.data.id);
       value.setLoader(false);
     } else {
       value.setLoader(false);
