@@ -8,7 +8,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../../controllers/admin_callback_controller.dart';
+import '../../controllers/firebase_controller.dart';
 import '../../controllers/app_data_controller.dart';
 import '../../controllers/app_functions.dart';
 import '../../controllers/data_validation_controller.dart';
@@ -30,7 +30,6 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
   final _name = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final _validator = DataValidationController();
-  final _adminCallbacks = AdminCallbacksController();
   final _appFunctions = FunctionsController();
 
   final _picker = ImagePicker();
@@ -39,6 +38,7 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
 
   @override
   Widget build(BuildContext context) {
+    final adminCallbacks = FirebaseController(context);
     final dt = Provider.of<AppDataController>(context);
 
     return Form(
@@ -63,7 +63,8 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
                   child: Container(
                       padding:
                           EdgeInsets.symmetric(horizontal: 15.w, vertical: 15),
-                      decoration: WidgetDecoration.containerDecoration_1(context),
+                      decoration:
+                          WidgetDecoration.containerDecoration_1(context),
                       child: Text("Choose Image",
                           style: GetTextTheme.sf14_regular)),
                 ),
@@ -121,7 +122,7 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
     value.setLoader(true);
     if (_key.currentState!.validate()) {
       var data = await getFormData();
-      await _adminCallbacks.addNewCategoryCallback(data, context);
+      await FirebaseController(context).addNewCategoryCallback(data);
       value.setLoader(false);
     } else {
       value.setLoader(false);

@@ -10,7 +10,6 @@ import 'package:valt_security_admin_panel/Screens/managers/request_manager.dart'
 import 'package:valt_security_admin_panel/Screens/reviews/reviews_view.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 
-import '../../controllers/app_functions.dart';
 import '../../controllers/notification_controller.dart';
 import '../../controllers/stream_controller.dart';
 import '../../helpers/base_getters.dart';
@@ -24,11 +23,7 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  late StreamSubscription<DatabaseEvent> ref;
-  late StreamSubscription<DatabaseEvent> userRef;
-  late StreamSubscription<DatabaseEvent> complaintRef;
   late StreamSubscription<DatabaseEvent> bookingRef;
-  late StreamSubscription<DatabaseEvent> reviewsEvent;
   late StreamSubscription<DatabaseEvent> notificationRef;
 
   List<Widget> screens = [
@@ -53,27 +48,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   getListeneres() {
-    final dataRef = database.ref("Providers");
-
-    AppDataStreamer().onGuardAdded(context);
-
-    ref = dataRef.onChildChanged
-        .listen((event) => AppDataStreamer().onProviderChanged(event, context));
-    userRef = AppDataStreamer().userStream(context);
-    complaintRef = AppDataStreamer().complaintStream(context);
     bookingRef = AppDataStreamer().bookingStream(context);
-    reviewsEvent = AppDataStreamer().onReviewAdded(context);
     notificationRef = AppDataStreamer().notificationStream(context);
   }
 
   @override
   void dispose() {
     super.dispose();
-    ref.cancel();
-    userRef.cancel();
-    complaintRef.cancel();
     bookingRef.cancel();
-    reviewsEvent.cancel();
     notificationRef.cancel();
   }
 

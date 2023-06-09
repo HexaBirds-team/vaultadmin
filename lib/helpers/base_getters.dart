@@ -83,10 +83,10 @@ class AppServices {
   static experienceCalculation(DateTime date) {
     var d = int.parse(DateFormat("dd").format(date));
     var m = int.parse(DateFormat("MM").format(date));
-    var y = int.parse(DateFormat("yy").format(date));
+    var y = int.parse(DateFormat("yyyy").format(date));
     var d1 = int.parse(DateFormat("dd").format(DateTime.now()));
     var m1 = int.parse(DateFormat("MM").format(DateTime.now()));
-    var y1 = int.parse(DateFormat("yy").format(DateTime.now()));
+    var y1 = int.parse(DateFormat("yyyy").format(DateTime.now()));
     var day = findDays(m1, y1);
 
     String days = "";
@@ -100,7 +100,7 @@ class AppServices {
       m1 = m1 - 1;
     }
 
-    if (m1 - m > 0) {
+    if (m1 - m >= 0) {
       months = "${m1 - m} Months";
     } else {
       months = "${m1 + 12 - m} Months";
@@ -108,7 +108,8 @@ class AppServices {
     }
 
     years = "${y1 - y} Years";
-    return "$years $months";
+
+    return "${years != "0 Years" ? years : ""} ${months != "0 Months" ? months : ""} ${years == "0 Years" && months == "0 Months" ? (days == "0 Days" ? "Fresher" : days) : ""}";
   }
 
   static int findDays(int m2, int y2) {

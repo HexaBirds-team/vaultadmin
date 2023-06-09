@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/shimmers/box_shimmer.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
@@ -25,6 +26,7 @@ class UserProfileView extends StatefulWidget {
 
 class _UserProfileViewState extends State<UserProfileView> {
   bool isDisabled = false;
+  List<DocsClass> documents = [];
   @override
   void initState() {
     super.initState();
@@ -35,13 +37,18 @@ class _UserProfileViewState extends State<UserProfileView> {
     });
   }
 
+  getDocuments() async {
+    documents = await FirebaseController(context).getUserDocs(widget.user.uid);
+    if (!mounted) return;
+    setState(() {});
+  }
+
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
 
   bool isChanged = false;
   @override
   Widget build(BuildContext context) {
-    final documents = widget.user.documents;
     final user = widget.user;
     return Scaffold(
       appBar: customAppBar(
@@ -55,13 +62,14 @@ class _UserProfileViewState extends State<UserProfileView> {
                   !isDisabled
                       ? FancyDialogController().confirmBlockDialog(context,
                           () async {
-                          final path = database.ref("Users/${widget.user.uid}");
-                          await path.update({"isBlocked": true});
+                          await FirestoreApiReference.usersPath
+                              .doc(widget.user.uid)
+                              .update({"isBlocked": true});
                           setState(() => isDisabled = true);
                         }, "Are you sure you want to block this user?").show()
                       : {
-                          await database
-                              .ref("Users/${widget.user.uid}")
+                          await FirestoreApiReference.usersPath
+                              .doc(widget.user.uid)
                               .update({"isBlocked": false}),
                           setState(() => isDisabled = false)
                         };

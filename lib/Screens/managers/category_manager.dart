@@ -9,7 +9,7 @@ import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 
 import '../../components/fancy_popus/awesome_dialogs.dart';
 import '../../components/pop_ups/add_category_dialog.dart';
-import '../../controllers/admin_callback_controller.dart';
+import '../../controllers/firebase_controller.dart';
 import '../../controllers/app_data_controller.dart';
 import '../../controllers/stream_controller.dart';
 import '../../controllers/widget_creator.dart';
@@ -26,25 +26,8 @@ class AdminCategoryManager extends StatefulWidget {
 
 class _AdminCategoryManagerState extends State<AdminCategoryManager> {
 
-  final dataStreamer = AppDataStreamer();
 
-  late StreamSubscription<DatabaseEvent> ref;
 
-  @override
-  void initState() {
-    super.initState();
-    final dataRef = database.ref("Categories");
-    ref = dataRef.onChildAdded
-        .listen((event) => dataStreamer.onCategoryAdded(event, context));
-    dataRef.onChildRemoved
-        .listen((event) => dataStreamer.onCategoryRemoved(event, context));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    ref.cancel();
-  }
 
   @override
   Widget build(BuildContext context) {

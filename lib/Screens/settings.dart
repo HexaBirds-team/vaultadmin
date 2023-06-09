@@ -6,8 +6,8 @@ import 'package:valt_security_admin_panel/components/expanded_btn.dart';
 import 'package:valt_security_admin_panel/components/loaders/full_screen_loader.dart';
 import 'package:valt_security_admin_panel/components/simple_textfield.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/controllers/data_validation_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 
 class SettingsView extends StatefulWidget {
@@ -80,13 +80,12 @@ class _SettingsViewState extends State<SettingsView> {
     if (_formKey.currentState!.validate()) {
       setState(() => loading = true);
       final db = Provider.of<AppDataController>(context, listen: false);
-      final path = database.ref("Admin");
-      await path.update({
+      await FirestoreApiReference.adminPath.update({
         "username": _namecontroller.text,
         "password": _passwordController.text
       }).then((value) async {
-        final snapshot = await path.get();
-        final data = snapshot.value as Map<Object?, Object?>;
+        final snapshot = await FirestoreApiReference.adminPath.get();
+        final data = snapshot.data()!;
         db.setAdminDetails(data);
         setState(() => loading = false);
       });

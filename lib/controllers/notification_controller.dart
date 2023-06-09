@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import '../app_config.dart';
 import 'app_data_controller.dart';
-import 'app_functions.dart';
 import 'app_settings_controller.dart';
 
 class NotificationController {

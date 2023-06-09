@@ -1,4 +1,4 @@
-enum ComplaintStatus { pending, processing, resolved, canceled }
+enum ComplaintStatus { pending, processing, resolved, cancelled }
 
 enum SubscriptionPlan { hourly, daily, monthly }
 
