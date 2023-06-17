@@ -10,6 +10,7 @@ import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import '../app_config.dart';
 import 'app_data_controller.dart';
 import 'app_settings_controller.dart';
+import 'firestore_api_reference.dart';
 
 class NotificationController {
   sendFCM(Map<String, dynamic> snapshot, String to) async {
@@ -103,7 +104,7 @@ class NotificationController {
     if (mToken == "" ||
         (db.adminDetails)['token'] == null ||
         (db.adminDetails['token'] != mToken)) {
-      await database.ref("Admin").update({"token": token});
+      await FirestoreApiReference.adminPath.update({"token": token});
       await preference.setString("Token", token);
     } else {
       null;
