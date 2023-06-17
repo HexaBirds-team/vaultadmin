@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'dart:io';
 
@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/models/app_models.dart';
 
 import '../../controllers/firebase_controller.dart';
 import '../../controllers/app_data_controller.dart';
@@ -18,14 +19,15 @@ import '../expanded_btn.dart';
 import '../loaders/on_view_loader.dart';
 import '../simple_textfield.dart';
 
-class AddNewCategoryPopUp extends StatefulWidget {
-  const AddNewCategoryPopUp({Key? key}) : super(key: key);
+class EditCategoryDialog extends StatefulWidget {
+  CategoryClass category;
+  EditCategoryDialog({Key? key, required this.category}) : super(key: key);
 
   @override
-  State<AddNewCategoryPopUp> createState() => _AddNewCategoryPopUpState();
+  State<EditCategoryDialog> createState() => _EditCategoryDialogState();
 }
 
-class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
+class _EditCategoryDialogState extends State<EditCategoryDialog> {
   /* Text Input controllers */
   final _name = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
@@ -35,6 +37,14 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
   final _picker = ImagePicker();
 
   CroppedFile? _pickedFile;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _name.text = widget.category.name;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +77,10 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
                 ),
                 AppServices.addWidth(10.w),
                 _pickedFile == null
-                    ? const SizedBox()
+                    ? Expanded(
+                        child: SizedBox(
+                            child: Text(widget.category.image.split("/").last,
+                                style: GetTextTheme.sf12_regular)))
                     : Expanded(
                         child: SizedBox(
                             child: Text(_pickedFile!.path.split('/').last,
@@ -110,16 +123,20 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
   Future<Map<String, dynamic>> getFormData() async {
     Map<String, dynamic> data = {
       "name": _name.text.trim(),
-      "image": await _appFunctions.uploadImageToStorage(File(_pickedFile!.path))
+      "image": _pickedFile == null
+          ? widget.category.image
+          : await _appFunctions.uploadImageToStorage(File(_pickedFile!.path),
+              url: widget.category.image)
     };
     return data;
   }
 
   onSubmit(AppDataController value) async {
     value.setLoader(true);
-    if (_key.currentState!.validate() && _pickedFile != null) {
+    if (_key.currentState!.validate()) {
       var data = await getFormData();
-      await FirebaseController(context).addNewCategoryCallback(data);
+      await FirebaseController(context)
+          .editCategoryCallBack(data, widget.category.categoryId);
       value.setLoader(false);
     } else {
       value.setLoader(false);

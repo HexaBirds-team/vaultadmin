@@ -158,8 +158,11 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                 style: GetTextTheme.sf14_regular),
                             AppServices.addHeight(10.h),
                             Text(
-                                AppServices.formatDate(
-                                    myBooking!.reportingDate),
+                                myBooking!.type == "daily"
+                                    ? AppServices.splitBookingDate(
+                                        myBooking!.reportingDate.toString())
+                                    : AppServices.formatDate(
+                                        myBooking!.reportingDate.toString()),
                                 style: GetTextTheme.sf16_medium),
                             Text(myBooking!.reportingTime,
                                 style: GetTextTheme.sf14_regular),

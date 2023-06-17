@@ -46,6 +46,13 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateCategory(CategoryClass category) {
+    int i = _userType
+        .indexWhere((element) => element.categoryId == category.categoryId);
+    _userType[i] = category;
+    notifyListeners();
+  }
+
   removeCategory(String categoryId) {
     _userType.removeWhere((element) => element.categoryId == categoryId);
     notifyListeners();
@@ -56,6 +63,24 @@ class AppDataController extends ChangeNotifier {
   List<ProvidersInformationClass> get getAllProviders => _providerList;
   setProvidersData(List<ProvidersInformationClass> data) {
     _providerList = data;
+    notifyListeners();
+  }
+
+  updateProviderAddress(String id, String address) {
+    int i = _providerList.indexWhere((element) => element.uid == id);
+    _providerList[i].address = address;
+    notifyListeners();
+  }
+
+  updateProviderBlockStatus(String id, bool isblock) {
+    int i = _providerList.indexWhere((element) => element.uid == id);
+    _providerList[i].isBlocked = isblock;
+    notifyListeners();
+  }
+
+  updateProviderRatings(String id, double rating) {
+    int i = _providerList.indexWhere((element) => element.uid == id);
+    _providerList[i].rating = rating;
     notifyListeners();
   }
 

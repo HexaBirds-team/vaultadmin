@@ -1,30 +1,23 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
 import '../helpers/style_sheet.dart';
 import 'firebase_controller.dart';
 
 class FunctionsController {
-  getLocation(String lat, String lng) async {
-    Placemark? location;
-    location = lat == ""
-        ? null
-        : await FunctionsController()
-            .decodeLocation(double.parse(lat), double.parse(lng));
+  Future<String> uploadImageToStorage(File imageFile, {String url = ""}) async {
+    if (url.isNotEmpty) {
+      await storage.refFromURL(url).delete();
+    }
 
-    return location == null
-        ? ""
-        : "${location.street}, ${location.subLocality}, ${location.locality}, ${location.administrativeArea}";
-  }
-
-  Future<String> uploadImageToStorage(
-    File imageFile,
-  ) async {
     final storageReference =
         storage.ref().child("Categories/${DateTime.now()}.jpg");
     final uploadTask = storageReference.putFile(imageFile);
@@ -57,10 +50,16 @@ class FunctionsController {
     }
   }
 
-  Future<Placemark> decodeLocation(double lat, double lng) async {
-    final placemark = await placemarkFromCoordinates(lat, lng);
-    final location = placemark.first;
-    return location;
+// function to convert latLng to address for user Readable.
+  Future<Placemark> convertLatLngToAddress(
+      double position1, double position2, BuildContext context) async {
+    final db = Provider.of<AppDataController>(context, listen: false);
+    db.setLoader(true);
+
+    final location = await placemarkFromCoordinates(position1, position2);
+    db.setLoader(false);
+
+    return location.first;
   }
 
   generateId() {

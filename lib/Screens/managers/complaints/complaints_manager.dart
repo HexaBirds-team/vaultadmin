@@ -8,7 +8,6 @@ import 'package:valt_security_admin_panel/Screens/managers/complaints/complaint_
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 
 import '../../../helpers/base_getters.dart';
-import '../../../helpers/icons_and_images.dart';
 import '../../../helpers/style_sheet.dart';
 import '../../../models/enums.dart';
 
@@ -31,22 +30,8 @@ class _ComplaintsManagerState extends State<ComplaintsManager> {
         child: Padding(
             padding: EdgeInsets.only(top: 10.sp),
             child: complaints.isEmpty
-                ? Container(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          AppIcons.emptyIcon,
-                          height: 70.sp,
-                        ),
-                        AppServices.addHeight(10.h),
-                        Text("No Data Found", style: GetTextTheme.sf18_bold),
-                        Text("There are no new complaints available.",
-                            style: GetTextTheme.sf14_regular)
-                      ],
-                    ),
-                  )
+                ? AppServices.getEmptyIcon(
+                    "There are no new complaints available.", "Complaints")
                 : ListView.builder(
                     itemCount: complaints.length,
                     shrinkWrap: true,

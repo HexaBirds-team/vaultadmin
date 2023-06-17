@@ -37,11 +37,12 @@ class _SplashScreenState extends State<SplashScreen> {
     firebase.getServices();
     await firebase.getUsersList();
     await firebase.getGuardsList();
-    await firebase.getUserCategory();
-    await firebase.getBanners();
+    firebase.getUserCategory();
+    firebase.getBanners();
     await firebase.getComplaints();
-    await firebase.getSubscriptions();
+    firebase.getSubscriptions();
     await firebase.getServiceArea();
+    await firebase.getBookings();
     final data = await FirestoreApiReference.adminPath.get();
     db.setAdminDetails(data.data()!);
     bool islogin = await preference.getBool("isLogin") ?? false;

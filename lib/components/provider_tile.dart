@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../controllers/app_functions.dart';
 import '../controllers/widget_creator.dart';
 import '../helpers/base_getters.dart';
 import '../helpers/style_sheet.dart';
@@ -19,20 +17,8 @@ class ProviderTile extends StatefulWidget {
 }
 
 class _ProviderTileState extends State<ProviderTile> {
-  Placemark? location;
-
-  decodeLocation() async {
-    location = widget.provider.latitude == ""
-        ? null
-        : await FunctionsController().decodeLocation(
-            double.parse(widget.provider.latitude),
-            double.parse(widget.provider.longitude));
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
-    decodeLocation();
     return Container(
       padding: EdgeInsets.all(10.sp),
       decoration: BoxDecoration(
@@ -62,10 +48,7 @@ class _ProviderTileState extends State<ProviderTile> {
               children: [
                 Text(widget.provider.name, style: GetTextTheme.sf18_bold),
                 AppServices.addHeight(6.h),
-                Text(
-                    location == null
-                        ? "Address : Not Available"
-                        : "Address : ${location!.street}, ${location!.subLocality}, ${location!.locality}, ${location!.administrativeArea}",
+                Text(widget.provider.address,
                     style: GetTextTheme.sf14_regular.copyWith(
                         color: AppColors.blackColor.withOpacity(0.4))),
                 AppServices.addHeight(2.h),

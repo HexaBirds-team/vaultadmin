@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
@@ -15,14 +14,13 @@ class NewGuardsTile extends StatelessWidget {
   bool isPopUpButton;
   Function onApprove;
   Function onReject;
-  Placemark? location;
+
   NewGuardsTile(
       {super.key,
       required this.profile,
       this.isPopUpButton = true,
       required this.onApprove,
-      required this.onReject,
-      this.location});
+      required this.onReject});
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +63,7 @@ class NewGuardsTile extends StatelessWidget {
                                 textAlign: TextAlign.center,
                                 style: GetTextTheme.sf14_medium),
                             AppServices.addHeight(3.h),
-                            Text(
-                                location == null
-                                    ? "Not Available"
-                                    : "${location!.street}, ${location!.subLocality}, ${location!.locality}, ${location!.administrativeArea}",
+                            Text(profile.address,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GetTextTheme.sf14_regular),

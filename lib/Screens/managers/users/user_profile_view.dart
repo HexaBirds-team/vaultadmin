@@ -117,23 +117,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                 user.aadharNo == "" ? "Not Available" : user.aadharNo),
             AppServices.addHeight(10.h),
             documents.isEmpty
-                ? Container(
-                    margin: EdgeInsets.only(top: 40.h),
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          AppIcons.emptyIcon,
-                          height: 70.sp,
-                        ),
-                        AppServices.addHeight(10.h),
-                        Text("No Data Found", style: GetTextTheme.sf18_bold),
-                        Text("Documents are not available for the user.",
-                            style: GetTextTheme.sf14_regular)
-                      ],
-                    ),
-                  )
+                ? AppServices.getEmptyIcon(
+                    "Documents are not available for the user.", "Documents")
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),

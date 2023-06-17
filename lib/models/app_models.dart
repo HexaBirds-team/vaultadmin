@@ -52,6 +52,7 @@ class ProvidersInformationClass {
       createdAt,
       experience,
       esicNumber,
+      address,
       pfNumber;
   GuardApprovalStatus isApproved;
 
@@ -82,6 +83,7 @@ class ProvidersInformationClass {
       this.tokens,
       this.description,
       this.isBlocked,
+      this.address,
       this.category
       // this.documents
       );
@@ -121,6 +123,7 @@ class ProvidersInformationClass {
         esicNumber =
             json['esicNumber'] == null ? "" : json['esicNumber'].toString(),
         pfNumber = json['pfNumber'] == null ? "" : json['pfNumber'].toString(),
+        address = "",
         tokens = json['msgToken'] ?? [];
 
   // documents = json["docs"] == null
@@ -230,7 +233,7 @@ class BookingsClass {
       this.bookingCategory,
       this.bookingCategoryImg,
       this.lng);
-  BookingsClass.fromBooking(Map<dynamic, dynamic> json, this.id)
+  BookingsClass.fromBooking(Map<String, dynamic> json, this.id)
       : address = json['Address'].toString(),
         category = json['BookingCategory'].toString(),
         bookingStatus = json['BookingStatus'].toString(),

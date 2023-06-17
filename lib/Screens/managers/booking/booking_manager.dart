@@ -5,8 +5,6 @@ import 'package:valt_security_admin_panel/components/search_textfield.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 
 import '../../../helpers/base_getters.dart';
-import '../../../helpers/icons_and_images.dart';
-import '../../../helpers/style_sheet.dart';
 import '../../../models/enums.dart';
 import '../../dashboard/new_bookings_tile.dart';
 
@@ -55,22 +53,8 @@ class _BookingManagerState extends State<BookingManager> {
               ))),
       body: SafeArea(
           child: bookings.isEmpty
-              ? Container(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        AppIcons.emptyIcon,
-                        height: 70.sp,
-                      ),
-                      AppServices.addHeight(10.h),
-                      Text("No Data Found", style: GetTextTheme.sf18_bold),
-                      Text("There are no new bookings available.",
-                          style: GetTextTheme.sf14_regular)
-                    ],
-                  ),
-                )
+              ? AppServices.getEmptyIcon(
+                  "There are no new bookings available.", "Bookings")
               : ListView.builder(
                   itemCount: bookings.length,
                   padding:

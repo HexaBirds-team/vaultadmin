@@ -8,7 +8,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
 import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
@@ -80,6 +82,27 @@ class FirebaseController {
               CategoryClass(data['name'], data['image'], value.id)));
 
       MySnackBar.success(context, "New category added successfully");
+      AppServices.popView(context);
+    } on FirebaseException catch (e) {
+      MySnackBar.error(context, e.message.toString());
+      AppServices.popView(context);
+    } on SocketException {
+      MySnackBar.info(context, "Internet Error");
+      AppServices.popView(context);
+    } catch (e) {
+      MySnackBar.error(context, e.toString());
+      AppServices.popView(context);
+    }
+  }
+
+  // function to edit  category
+  editCategoryCallBack(Map<String, dynamic> data, String id) async {
+    try {
+      await FirestoreApiReference.categoryPath.doc(id).update(data).then(
+          (value) => db()
+              .updateCategory(CategoryClass(data['name'], data['image'], id)));
+
+      MySnackBar.success(context, "category updated successfully");
       AppServices.popView(context);
     } on FirebaseException catch (e) {
       MySnackBar.error(context, e.message.toString());
@@ -258,6 +281,20 @@ class FirebaseController {
             .map((e) =>
                 ProvidersInformationClass.fromUser(e.data(), e.id.toString()))
             .toList());
+
+        for (var guard in db().getAllProviders) {
+          Placemark? place = guard.latitude == ""
+              ? null
+              : await FunctionsController().convertLatLngToAddress(
+                  double.parse(guard.latitude),
+                  double.parse(guard.longitude),
+                  context);
+          db().updateProviderAddress(
+              guard.uid,
+              place == null
+                  ? ""
+                  : '${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}');
+        }
       }
     } on FirebaseException catch (e) {
       MySnackBar.error(context, e.message.toString());
@@ -373,12 +410,12 @@ class FirebaseController {
   // function to get bookings
   getBookings() async {
     try {
-      final path = database.ref("Bookings");
+      final path = FirestoreApiReference.bookingsPath;
       final snapshot = await path.get();
-      if (snapshot.exists) {
-        var bookingLists = snapshot.children
+      if (snapshot.docs.isNotEmpty) {
+        var bookingLists = snapshot.docs
             .map((e) => BookingsClass.fromBooking(
-                e.value as Map<Object?, Object?>, e.key.toString()))
+                e.data as Map<String, dynamic>, e.id.toString()))
             .toList();
 
         db().setBookingsList(bookingLists);
@@ -386,11 +423,11 @@ class FirebaseController {
         null;
       }
     } on FirebaseException catch (e) {
-      MySnackBar.error(context, e.message.toString());
+      MySnackBar.error(context, "Bookings error\n${e.message.toString()}");
     } on SocketException {
       MySnackBar.info(context, "Internet Error");
     } catch (e) {
-      MySnackBar.error(context, e.toString());
+      MySnackBar.error(context, "Bookings error\n${e.toString()}");
     }
   }
 

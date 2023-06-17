@@ -48,7 +48,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   getListeneres() {
-    bookingRef = AppDataStreamer().bookingStream(context);
     notificationRef = AppDataStreamer().notificationStream(context);
   }
 

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/dashboard/new_bookings_tile.dart';
 import 'package:valt_security_admin_panel/Screens/dashboard/new_guards_tile.dart';
@@ -22,8 +21,8 @@ import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/models/enums.dart';
 
 import '../../controllers/app_data_controller.dart';
-import '../../controllers/app_functions.dart';
 import '../../controllers/auth_controller.dart';
+import '../../controllers/firebase_controller.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
 import '../drawer_handler/admin_drawer.dart';
@@ -43,15 +42,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
       FlutterLocalNotificationsPlugin();
 
   // function to decode location
-  Placemark? location;
-  decodeLocation(String city, String lat, String lng) async {
-    if (!await rebuild()) return;
-    location = lat == ""
-        ? null
-        : await FunctionsController()
-            .decodeLocation(double.parse(lat), double.parse(lng));
-    setState(() {});
-  }
 
   Future<bool> rebuild() async {
     if (!mounted) return false;
@@ -79,184 +69,151 @@ class _AdminDashboardState extends State<AdminDashboard> {
         .toList();
 
     final complaintsList = data.getAllComplaints;
-    return Scaffold(
-      key: _key,
-      drawer: Drawer(
-        shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.horizontal(right: Radius.circular(20.r))),
-        child: const AdminDrawerView(),
-      ),
-      appBar: customAppBar(
-          context: context,
-          title: const Text("Dashboard"),
-          autoLeading: true,
-          action: [
-            IconButton(
-                onPressed: () =>
-                    AppServices.pushTo(context, const SettingsView()),
-                icon: const Icon(Icons.settings))
-          ]),
-      body: WillPopScope(
-        onWillPop: () async {
-          if (_key.currentState!.isDrawerOpen) {
-            _key.currentState!.closeDrawer();
-            return false;
-          } else {
-            return await FancyDialogController().showWillPopMsg(context).show();
-          }
-        },
-        child: SafeArea(
-            child: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-          shrinkWrap: true,
-          children: [
-            Text("Hello, Admin", style: GetTextTheme.sf24_bold),
-            Text("Welcome back!", style: GetTextTheme.sf16_regular),
-            AppServices.addHeight(30.h),
-            Row(
-              children: [
-                TotalServicesTiles(
-                    ontap: () =>
-                        AppServices.pushTo(context, const AllUserManagerView()),
-                    total: userList.length.toString(),
-                    title: "Users",
-                    icon: AppIcons.profileIcon),
-                AppServices.addWidth(10.w),
-                TotalServicesTiles(
-                    ontap: () => AppServices.pushTo(
-                        context, const AdminProviderManager()),
-                    total: approvedGuard.length.toString(),
-                    title: "Guards",
-                    icon: AppIcons.localPoliceIcon)
-              ],
-            ),
-            AppServices.addHeight(10.h),
-            Row(
-              children: [
-                TotalServicesTiles(
-                    ontap: () =>
-                        AppServices.pushTo(context, const BookingManager()),
-                    total: bookingsList.length.toString(),
-                    title: "Bookings",
-                    icon: AppIcons.fileIcon),
-                AppServices.addWidth(10.w),
-                TotalServicesTiles(
-                    ontap: () => AppServices.pushTo(
-                        context, const ComplaintsTabBarView()),
-                    total: complaintsList.length.toString(),
-                    title: "Complaints",
-                    icon: AppIcons.documentsIcon)
-              ],
-            ),
-            AppServices.addHeight(40.h),
-            titleBar(
-                "New Guards",
-                () => AppServices.pushTo(
-                    context, const AdminRequestManagerView())),
-            AppServices.addHeight(15.h),
-            SizedBox(
-                height: 180.sp,
-                child: pendingGuard.isEmpty
-                    ? Container(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              AppIcons.emptyIcon,
-                              height: 70.sp,
-                            ),
-                            AppServices.addHeight(10.h),
-                            Text("No Data Found",
-                                style: GetTextTheme.sf18_bold),
-                            Text(
-                                "There are no pending requests for new joinee.",
-                                style: GetTextTheme.sf14_regular)
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: pendingGuard.toList().length,
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, i) {
-                          final profile = pendingGuard[i];
-                          decodeLocation(profile.city, profile.latitude,
-                              profile.longitude);
-                          return NewGuardsTile(
-                              location: location,
-                              profile: profile,
-                              onApprove: () async => await AuthController()
-                                  .approveProfile(profile.uid, context),
-                              onReject: () async => await AuthController()
-                                  .rejectProfile(profile.uid, context));
-                        })),
-            AppServices.addHeight(35.h),
-            titleBar("New Users",
-                () => AppServices.pushTo(context, const AllUserManagerView())),
-            AppServices.addHeight(15.h),
-            SizedBox(
-                height: 180.sp,
-                child: userList.isEmpty
-                    ? Container(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              AppIcons.emptyIcon,
-                              height: 70.sp,
-                            ),
-                            AppServices.addHeight(10.h),
-                            Text("No Data Found",
-                                style: GetTextTheme.sf18_bold),
-                            Text("There are no new users available.",
-                                style: GetTextTheme.sf14_regular)
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: userList.length,
-                        shrinkWrap: true,
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, i) {
-                          final profile = userList[i];
-                          return NewUsersTile(profile: profile);
-                        })),
-            AppServices.addHeight(35.h),
-            titleBar("New Bookings",
-                () => AppServices.pushTo(context, const BookingManager())),
-            AppServices.addHeight(15.h),
-            bookingsList.isEmpty
-                ? Container(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          AppIcons.emptyIcon,
-                          height: 70.sp,
-                        ),
-                        AppServices.addHeight(10.h),
-                        Text("No Data Found", style: GetTextTheme.sf18_bold),
-                        Text("There are no new bookings available.",
-                            style: GetTextTheme.sf14_regular)
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: bookingsList.length,
-                    itemBuilder: (context, i) {
-                      final booking = bookingsList[i];
-                      return NewBookingsTile(booking: booking);
-                    })
-          ],
-        )),
+    return RefreshIndicator.adaptive(
+      onRefresh: () async {
+        final firebase = FirebaseController(context);
+        await firebase.getUsersList();
+        await firebase.getGuardsList();
+        await firebase.getComplaints();
+        await firebase.getBookings();
+      },
+      child: Scaffold(
+        key: _key,
+        drawer: Drawer(
+          shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.horizontal(right: Radius.circular(20.r))),
+          child: const AdminDrawerView(),
+        ),
+        appBar: customAppBar(
+            context: context,
+            title: const Text("Dashboard"),
+            autoLeading: true,
+            action: [
+              IconButton(
+                  onPressed: () =>
+                      AppServices.pushTo(context, const SettingsView()),
+                  icon: const Icon(Icons.settings))
+            ]),
+        body: WillPopScope(
+          onWillPop: () async {
+            if (_key.currentState!.isDrawerOpen) {
+              _key.currentState!.closeDrawer();
+              return false;
+            } else {
+              return await FancyDialogController()
+                  .showWillPopMsg(context)
+                  .show();
+            }
+          },
+          child: SafeArea(
+              child: ListView(
+            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+            shrinkWrap: true,
+            children: [
+              Text("Hello, Admin", style: GetTextTheme.sf24_bold),
+              Text("Welcome back!", style: GetTextTheme.sf16_regular),
+              AppServices.addHeight(30.h),
+              Row(
+                children: [
+                  TotalServicesTiles(
+                      ontap: () => AppServices.pushTo(
+                          context, const AllUserManagerView()),
+                      total: userList.length.toString(),
+                      title: "Users",
+                      icon: AppIcons.profileIcon),
+                  AppServices.addWidth(10.w),
+                  TotalServicesTiles(
+                      ontap: () => AppServices.pushTo(
+                          context, const AdminProviderManager()),
+                      total: approvedGuard.length.toString(),
+                      title: "Guards",
+                      icon: AppIcons.localPoliceIcon)
+                ],
+              ),
+              AppServices.addHeight(10.h),
+              Row(
+                children: [
+                  TotalServicesTiles(
+                      ontap: () =>
+                          AppServices.pushTo(context, const BookingManager()),
+                      total: bookingsList.length.toString(),
+                      title: "Bookings",
+                      icon: AppIcons.fileIcon),
+                  AppServices.addWidth(10.w),
+                  TotalServicesTiles(
+                      ontap: () => AppServices.pushTo(
+                          context, const ComplaintsTabBarView()),
+                      total: complaintsList.length.toString(),
+                      title: "Complaints",
+                      icon: AppIcons.documentsIcon)
+                ],
+              ),
+              AppServices.addHeight(40.h),
+              titleBar(
+                  "New Guards",
+                  () => AppServices.pushTo(
+                      context, const AdminRequestManagerView())),
+              AppServices.addHeight(15.h),
+              SizedBox(
+                  height: 180.sp,
+                  child: pendingGuard.isEmpty
+                      ? AppServices.getEmptyIcon(
+                          "There are no pending requests for new joinee.",
+                          "Data")
+                      : ListView.builder(
+                          itemCount: pendingGuard.toList().length,
+                          shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, i) {
+                            final profile = pendingGuard[i];
+
+                            return NewGuardsTile(
+                                profile: profile,
+                                onApprove: () async => await AuthController()
+                                    .approveProfile(profile.uid, context),
+                                onReject: () async => await AuthController()
+                                    .rejectProfile(profile.uid, context));
+                          })),
+              AppServices.addHeight(35.h),
+              titleBar(
+                  "New Users",
+                  () =>
+                      AppServices.pushTo(context, const AllUserManagerView())),
+              AppServices.addHeight(15.h),
+              SizedBox(
+                  height: 180.sp,
+                  child: userList.isEmpty
+                      ? AppServices.getEmptyIcon(
+                          "There are no new users available", "User")
+                      : ListView.builder(
+                          itemCount: userList.length,
+                          shrinkWrap: true,
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, i) {
+                            final profile = userList[i];
+                            return NewUsersTile(profile: profile);
+                          })),
+              AppServices.addHeight(35.h),
+              titleBar("New Bookings",
+                  () => AppServices.pushTo(context, const BookingManager())),
+              AppServices.addHeight(15.h),
+              bookingsList.isEmpty
+                  ? AppServices.getEmptyIcon(
+                      "There are no new bookings available.", "Bookings")
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: bookingsList.length,
+                      itemBuilder: (context, i) {
+                        final booking = bookingsList[i];
+                        return NewBookingsTile(booking: booking);
+                      })
+            ],
+          )),
+        ),
       ),
     );
   }

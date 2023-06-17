@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
-import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/models/enums.dart';
 
 import '../../../helpers/style_sheet.dart';
@@ -15,7 +13,6 @@ import '../../components/loaders/full_screen_loader.dart';
 import '../../controllers/auth_controller.dart';
 import '../../controllers/widget_creator.dart';
 import '../../helpers/base_getters.dart';
-import '../../helpers/icons_and_images.dart';
 
 class AdminRequestManagerView extends StatefulWidget {
   const AdminRequestManagerView({Key? key}) : super(key: key);
@@ -27,16 +24,6 @@ class AdminRequestManagerView extends StatefulWidget {
 
 class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
   final _authController = AuthController();
-
-  Placemark? location;
-  decodeLocation(String city, String lat, String lng) async {
-    if (!await rebuild()) return;
-    location = lat == ""
-        ? null
-        : await FunctionsController()
-            .decodeLocation(double.parse(lat), double.parse(lng));
-    setState(() {});
-  }
 
   Future<bool> rebuild() async {
     if (!mounted) return false;
@@ -52,7 +39,7 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
 
   @override
   Widget build(BuildContext context) {
-    final db = Provider.of<AppDataController>(context, listen: false);
+    final db = Provider.of<AppDataController>(context);
     final requests = db.getAllProviders
         .where((e) => e.isApproved == GuardApprovalStatus.pending)
         .toList();
@@ -74,29 +61,14 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
         body: Stack(
           children: [
             requests.isEmpty
-                ? Container(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          AppIcons.emptyIcon,
-                          height: 70.sp,
-                        ),
-                        AppServices.addHeight(10.h),
-                        Text("No Data Found", style: GetTextTheme.sf18_bold),
-                        Text("There are no pending requests for new joinee.",
-                            style: GetTextTheme.sf14_regular)
-                      ],
-                    ),
-                  )
+                ? AppServices.getEmptyIcon(
+                    "There are no pending requests for new joinee.", "Data")
                 : ListView.builder(
                     itemCount: requests.length,
                     shrinkWrap: true,
                     itemBuilder: (context, i) {
                       final profile = requests[i];
-                      decodeLocation(
-                          profile.city, profile.latitude, profile.longitude);
+
                       return InkWell(
                         onTap: () => AppServices.pushTo(context,
                             GuardProfileView(providerDetails: profile)),
@@ -131,10 +103,7 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                         Text(profile.name,
                                             style: GetTextTheme.sf18_bold),
                                         AppServices.addHeight(5.h),
-                                        Text(
-                                            location == null
-                                                ? "Address : Not Available"
-                                                : "Address : ${location!.street}, ${location!.subLocality}, ${location!.locality}, ${location!.administrativeArea}",
+                                        Text(profile.address,
                                             style: GetTextTheme.sf12_regular),
                                         AppServices.addHeight(5.h),
                                         Text(
@@ -156,8 +125,11 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                       child: SizedBox(
                                           child: ButtonOneExpanded(
                                               showBorder: true,
-                                              onPressed: () => {},
-                                              btnText: "Cancel",
+                                              onPressed: () async =>
+                                                  await _authController
+                                                      .rejectProfile(
+                                                          profile.uid, context),
+                                              btnText: "Reject",
                                               enableColor: true,
                                               disableGradient: true,
                                               btnColor: AppColors.whiteColor,
@@ -167,9 +139,10 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                   Expanded(
                                       child: SizedBox(
                                           child: ButtonOneExpanded(
-                                              onPressed: () => _authController
-                                                  .approveProfile(
-                                                      profile.uid, context),
+                                              onPressed: () async =>
+                                                  await _authController
+                                                      .approveProfile(
+                                                          profile.uid, context),
                                               btnText: "Approve"))),
                                 ],
                               )

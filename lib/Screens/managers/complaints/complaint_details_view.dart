@@ -51,8 +51,12 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
-    UserInformationClass user = db.getAllUsers
-        .firstWhere((element) => element.uid == widget.data.complaintBy);
+    List<UserInformationClass> user = db.getAllUsers
+        .where((element) => element.uid == widget.data.createdBy)
+        .toList();
+    List<ProvidersInformationClass> guard = db.getAllProviders
+        .where((e) => e.uid == widget.data.createdBy)
+        .toList();
     return Scaffold(
       appBar: customAppBar(
         context: context,
@@ -83,16 +87,23 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                         child: CachedNetworkImage(
                             height: 70.sp,
                             width: 70.sp,
-                            imageUrl: user.image,
+                            imageUrl: widget.data.complaintBy == "user"
+                                ? user.first.image
+                                : guard.first.profileImage,
                             fit: BoxFit.cover)),
                     AppServices.addWidth(20.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(user.username, style: GetTextTheme.sf16_medium),
+                          Text(
+                              widget.data.complaintBy == "user"
+                                  ? user.first.username
+                                  : guard.first.name,
+                              style: GetTextTheme.sf16_medium),
                           AppServices.addHeight(5.h),
-                          Text("phone : ${user.phone}",
+                          Text(
+                              "phone : ${widget.data.complaintBy == "user" ? user.first.phone : guard.first.phone}",
                               style: GetTextTheme.sf14_regular
                                   .copyWith(color: AppColors.greyColor)),
                         ],
@@ -219,7 +230,6 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                 ],
               ),
             ),
-
             FirebaseAnimatedList(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -243,30 +253,7 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                       ],
                     ),
                   );
-                  // ListTile(
-                  //   title: Text(DateFormat("EEEE, MMMM dd, yyyy")
-                  //       .format(DateTime.parse(data['sentOn'].toString()))),
-                  //   subtitle: Text(data['msg'].toString()),
-                  // );
                 })
-
-            // Text.rich(
-            //   TextSpan(
-            //     text: "Admin:",
-            //     style: GetTextTheme.sf12_bold,
-            //     children: [
-            //       TextSpan(
-            //           text: " Monday, April 20, 2023",
-            //           style: GetTextTheme.sf12_regular),
-            //     ],
-            //   ),
-            // ),
-            // AppServices.addHeight(5.h),
-            // Text(
-            //   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce molestie dui sed feugiat aliquam. Nunc lorem enim, scelerisque et iaculis.",
-            //   style: GetTextTheme.sf14_regular,
-            // ),
-            // AppServices.addHeight(60.h),
           ],
         ),
       ),

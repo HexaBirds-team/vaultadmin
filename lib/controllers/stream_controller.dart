@@ -91,21 +91,21 @@ class AppDataStreamer {
   //   });
   // }
 
-  bookingStream(BuildContext context) {
-    return database.ref("Bookings").onValue.listen((event) {
-      final data = event.snapshot.children;
-      final db = Provider.of<AppDataController>(context, listen: false);
-      if (db.getBookings
-          .any((element) => element.id == event.snapshot.key.toString())) {
-        null;
-      } else {
-        db.setBookingsList(data
-            .map((e) => BookingsClass.fromBooking(
-                e.value as Map<Object?, Object?>, e.key.toString()))
-            .toList());
-      }
-    });
-  }
+  // bookingStream(BuildContext context) {
+  //   return database.ref("Bookings").onValue.listen((event) {
+  //     final data = event.snapshot.children;
+  //     final db = Provider.of<AppDataController>(context, listen: false);
+  //     if (db.getBookings
+  //         .any((element) => element.id == event.snapshot.key.toString())) {
+  //       null;
+  //     } else {
+  //       db.setBookingsList(data
+  //           .map((e) => BookingsClass.fromBooking(
+  //               e.value as Map<Object?, Object?>, e.key.toString()))
+  //           .toList());
+  //     }
+  //   });
+  // }
 
   // onReviewAdded(BuildContext context) {
   //   return database.ref("Reviews").onChildAdded.listen((event) {

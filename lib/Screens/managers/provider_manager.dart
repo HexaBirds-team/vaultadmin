@@ -7,7 +7,6 @@ import 'package:valt_security_admin_panel/models/enums.dart';
 import '../../../helpers/style_sheet.dart';
 import '../../components/provider_tile.dart';
 import '../../helpers/base_getters.dart';
-import '../../helpers/icons_and_images.dart';
 import '../GuardAccount/guard_profile.dart';
 
 class AdminProviderManager extends StatelessWidget {
@@ -33,22 +32,8 @@ class AdminProviderManager extends StatelessWidget {
             child: SizedBox(
               child: providersList.isEmpty
                   ? Center(
-                      child: Container(
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Image.asset(
-                            AppIcons.emptyIcon,
-                            height: 70.sp,
-                          ),
-                          AppServices.addHeight(10.h),
-                          Text("No Data Found", style: GetTextTheme.sf18_bold),
-                          Text("There are no data for joinee.",
-                              style: GetTextTheme.sf14_regular)
-                        ],
-                      ),
-                    ))
+                      child: AppServices.getEmptyIcon(
+                          "There are no data for joinee.", "Guard"))
                   : ListView.separated(
                       padding: EdgeInsets.symmetric(horizontal: 10.sp),
                       itemCount: providersList.length,

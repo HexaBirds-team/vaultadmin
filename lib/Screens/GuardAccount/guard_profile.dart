@@ -3,10 +3,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile_header.dart';
 import 'package:valt_security_admin_panel/Screens/managers/image_view.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
+import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/auth_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
@@ -33,16 +35,14 @@ class GuardProfileView extends StatefulWidget {
 
 class _GuardProfileViewState extends State<GuardProfileView> {
   bool isChanged = false;
-  bool isDisabled = false;
+
   List<DocsClass> documents = [];
   List<GuardServices> services = [];
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      isDisabled = widget.providerDetails.isBlocked;
-    });
+
     getStuff();
   }
 
@@ -57,6 +57,11 @@ class _GuardProfileViewState extends State<GuardProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    final db = Provider.of<AppDataController>(context);
+    final guard = db.getAllProviders
+        .firstWhere((e) => e.uid == widget.providerDetails.uid);
+
+    bool isDisabled = guard.isBlocked;
     return WillPopScope(
       onWillPop: () async {
         if (isChanged) {
@@ -75,6 +80,23 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             title: const SizedBox(),
             autoLeading: true,
             action: [
+              PopupMenuButton(
+                  iconSize: 30.sp,
+                  padding: const EdgeInsets.all(0),
+                  // color: AppColors.,`
+                  onSelected: (value) async {
+                    if (value == "approve") {
+                      await AuthController().approveProfile(guard.uid, context);
+                    } else {
+                      await AuthController().rejectProfile(guard.uid, context);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                        const PopupMenuItem(
+                            value: "approve", child: Text("Approve")),
+                        const PopupMenuItem(
+                            value: "reject", child: Text("Reject")),
+                      ]),
               widget.showEditOptions
                   ? IconButton(
                       splashRadius: 25,
@@ -82,19 +104,17 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                         !isDisabled
                             ? FancyDialogController().confirmBlockDialog(
                                 context, () async {
-                                await FirestoreApiReference.guardApi(
-                                        widget.providerDetails.uid)
+                                await FirestoreApiReference.guardApi(guard.uid)
                                     .update(
                                         {"isBlocked": true, "isOnline": false});
-                                setState(() => isDisabled = true);
+                                db.updateProviderBlockStatus(guard.uid, true);
                               },
                                 "Are you sure you want to block this guard?").show()
                             : {
-                                await database
-                                    .ref(
-                                        "Providers/${widget.providerDetails.uid}")
-                                    .update({"isBlocked": false}),
-                                setState(() => isDisabled = false)
+                                FirestoreApiReference.guardApi(guard.uid)
+                                    .update(
+                                        {"isBlocked": false, "isOnline": true}),
+                                db.updateProviderBlockStatus(guard.uid, false)
                               };
                       },
                       icon: ImageGradient(
@@ -117,7 +137,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 20.sp),
           children: [
-            AccountHeader(providerDetails: widget.providerDetails),
+            AccountHeader(providerDetails: guard),
             AppServices.addHeight(10.h),
             AppServices.customDivider(5.h),
             Text("Services Offered", style: GetTextTheme.sf16_medium),
@@ -143,37 +163,18 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             AppServices.customDivider(5.h),
             Text("Description", style: GetTextTheme.sf16_medium),
             AppServices.addHeight(10.h),
-            Text(
-                widget.providerDetails.description == ""
-                    ? "Not Available"
-                    : widget.providerDetails.description,
+            Text(guard.description == "" ? "Not Available" : guard.description,
                 style: GetTextTheme.sf14_regular),
             AppServices.customDivider(5.h),
-            documentNumberTile(
-                "ESIC Number", widget.providerDetails.esicNumber),
+            documentNumberTile("ESIC Number", guard.esicNumber),
             AppServices.addHeight(5.h),
-            documentNumberTile("PF Number", widget.providerDetails.pfNumber),
+            documentNumberTile("PF Number", guard.pfNumber),
             AppServices.addHeight(20.h),
             Text("Documents", style: GetTextTheme.sf16_medium),
             AppServices.addHeight(10.h),
             documents.isEmpty
-                ? Container(
-                    margin: EdgeInsets.only(top: 40.h),
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(
-                          AppIcons.emptyIcon,
-                          height: 70.sp,
-                        ),
-                        AppServices.addHeight(10.h),
-                        Text("No Data Found", style: GetTextTheme.sf18_bold),
-                        Text("Documents are not available for the guard.",
-                            style: GetTextTheme.sf14_regular)
-                      ],
-                    ),
-                  )
+                ? AppServices.getEmptyIcon(
+                    "Documents are not available for the guard.", "Documents")
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -187,7 +188,9 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                         decoration: BoxDecoration(
                             color: document.status == DocumentState.invalid
                                 ? AppColors.redColor.withOpacity(0.1)
-                                : AppColors.whiteColor,
+                                : document.status == DocumentState.valid
+                                    ? AppColors.greenColor.withOpacity(0.1)
+                                    : AppColors.whiteColor,
                             border: Border.all(
                                 color: AppColors.blackColor.withOpacity(0.1)),
                             boxShadow: [WidgetDecoration.addContainerShadow()],
@@ -256,8 +259,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                                 "createdAt": DateTime.now()
                                                     .toIso8601String(),
                                                 "notificationType": "KYC",
-                                                "receiver":
-                                                    widget.providerDetails.uid
+                                                "receiver": guard.uid
                                               };
                                               v == DocumentState.invalid
                                                   ? FancyDialogController()
@@ -297,7 +299,8 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                                               widget
                                                                   .providerDetails
                                                                   .uid,
-                                                              i.toString(),
+                                                              document.id
+                                                                  .toString(),
                                                               v,
                                                               context)
                                                           .then((value) =>
@@ -318,30 +321,29 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             ButtonOneExpanded(
               onPressed: () {
                 final dialog = RatingDialog(
-                    initialRating: widget.providerDetails.rating,
+                    initialRating: guard.rating,
                     enableComment: false,
-                    title: Text(widget.providerDetails.name,
+                    title: Text(guard.name,
                         textAlign: TextAlign.center,
                         style: GetTextTheme.sf26_bold),
                     submitButtonText: "Submit",
                     image: CircleAvatar(
                       radius: 50.r,
                       backgroundColor: AppColors.whiteColor,
-                      backgroundImage:
-                          NetworkImage(widget.providerDetails.profileImage),
+                      backgroundImage: NetworkImage(guard.profileImage),
                     ),
                     starSize: 35.sp,
                     message: Text("Set the ratings for this Security Guard",
                         textAlign: TextAlign.center,
                         style: GetTextTheme.sf16_medium),
                     onSubmitted: (v) async {
-                      await database
-                          .ref("Providers/${widget.providerDetails.uid}")
+                      await FirestoreApiReference.guardApi(guard.uid)
                           .update({"Ratings": v.rating});
+                      db.updateProviderRatings(guard.uid, v.rating);
                     });
                 showDialog(context: context, builder: (context) => dialog);
               },
-              btnText: "Set Ratings",
+              btnText: "Promote",
             ),
             AppServices.addHeight(20.h),
           ],

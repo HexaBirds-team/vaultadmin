@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -7,9 +6,7 @@ import 'package:valt_security_admin_panel/controllers/widget_creator.dart';
 
 import '../../../../helpers/style_sheet.dart';
 import '../../../controllers/app_data_controller.dart';
-import '../../../controllers/app_settings_controller.dart';
 import '../../../helpers/base_getters.dart';
-import '../../../helpers/icons_and_images.dart';
 
 class AllUserManagerView extends StatefulWidget {
   const AllUserManagerView({super.key});
@@ -19,11 +16,8 @@ class AllUserManagerView extends StatefulWidget {
 }
 
 class _AllUserManagerViewState extends State<AllUserManagerView> {
-  /* Firebase Instance */
-  final _auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<AppSettingsController>(context);
     final database = Provider.of<AppDataController>(context);
     final userList = database.getAllUsers;
     return Scaffold(
@@ -32,22 +26,8 @@ class _AllUserManagerViewState extends State<AllUserManagerView> {
       ),
       body: SafeArea(
           child: userList.isEmpty
-              ? Container(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        AppIcons.emptyIcon,
-                        height: 70.sp,
-                      ),
-                      AppServices.addHeight(10.h),
-                      Text("No Data Found", style: GetTextTheme.sf18_bold),
-                      Text("There are no new users available.",
-                          style: GetTextTheme.sf14_regular)
-                    ],
-                  ),
-                )
+              ? AppServices.getEmptyIcon(
+                  "There are no new users available.", "User")
               : GridView.builder(
                   itemCount: userList.length,
                   padding:

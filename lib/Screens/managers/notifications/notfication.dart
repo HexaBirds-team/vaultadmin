@@ -9,9 +9,15 @@ import '../../../helpers/base_getters.dart';
 import '../../../helpers/icons_and_images.dart';
 import '../../../helpers/style_sheet.dart';
 
-class NotificationsView extends StatelessWidget {
+class NotificationsView extends StatefulWidget {
   const NotificationsView({super.key});
 
+  @override
+  State<NotificationsView> createState() => _NotificationsViewState();
+}
+
+class _NotificationsViewState extends State<NotificationsView> {
+  List<int> index = [];
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
@@ -20,67 +26,63 @@ class NotificationsView extends StatelessWidget {
         appBar:
             customAppBar(context: context, title: const Text("Notifications")),
         body: notifications.isEmpty
-            ? Container(
-                alignment: Alignment.center,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      AppIcons.emptyIcon,
-                      height: 70.sp,
-                    ),
-                    AppServices.addHeight(10.h),
-                    Text("No Data Found", style: GetTextTheme.sf18_bold),
-                    Text("There are not any notifications yet.",
-                        style: GetTextTheme.sf14_regular)
-                  ],
-                ),
-              )
+            ? AppServices.getEmptyIcon(
+                "There are not any notifications yet.", "Notifications")
             : ListView.builder(
                 itemCount: notifications.length,
                 shrinkWrap: true,
                 itemBuilder: (context, i) {
                   final data = notifications[i];
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.sp)
-                        .copyWith(top: 15.sp),
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 5.sp),
-                      padding: EdgeInsets.only(bottom: 10.h),
-                      decoration: const BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(color: AppColors.greyColor))),
-                      child: Row(
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 13.w,
+                    ),
+                    child: ListTileTheme(
+                      contentPadding: const EdgeInsets.all(0),
+                      dense: true,
+                      child: ExpansionTile(
+                        subtitle: index.any((element) => element == i)
+                            ? null
+                            : Text(
+                                data.msg,
+                                maxLines: 2,
+                              ),
+                        onExpansionChanged: (v) {
+                          if (v) {
+                            index.add(i);
+                          } else {
+                            (index.remove(i));
+                          }
+                          setState(() {});
+                        },
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(data.title,
+                                  style: GetTextTheme.sf18_medium,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                            AppServices.addWidth(5.w),
+                            Text(
+                              CheckTimeAgo(data.time).timeAgo(),
+                              style: GetTextTheme.sf14_regular
+                                  .copyWith(color: AppColors.greyColor),
+                            )
+                          ],
+                        ),
+                        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                        expandedAlignment: Alignment.centerLeft,
+                        leading:
+                            Image.asset(AppIcons.documentsIcon, width: 28.w),
                         children: [
-                          Expanded(
-                              child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text.rich(TextSpan(
-                                  text: data.title,
-                                  style: GetTextTheme.sf16_bold,
-                                  children: [
-                                    TextSpan(
-                                        text: " ${data.msg}",
-                                        style: GetTextTheme.sf16_regular)
-                                  ])),
-                              AppServices.addHeight(5.h),
-                              Text(CheckTimeAgo(data.time).timeAgo(),
-                                  style: GetTextTheme.sf12_regular)
-                            ],
-                          )),
-                          AppServices.addWidth(15.w),
-                          Container(
-                            alignment: Alignment.center,
-                            height: 45.sp,
-                            width: 45.sp,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: AppColors.appGradientColor),
-                            child: Text(data.notificationType[0],
-                                style: GetTextTheme.sf22_bold
-                                    .copyWith(color: AppColors.whiteColor)),
+                          Text(
+                            data.msg,
+                            textAlign: TextAlign.start,
                           ),
+                          AppServices.addHeight(10.h)
                         ],
                       ),
                     ),

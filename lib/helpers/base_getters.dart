@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
+
+import 'icons_and_images.dart';
 
 class AppServices {
   /* Height and Width Factors */
@@ -79,6 +82,12 @@ class AppServices {
       .format(DateTime.parse(dateTime.toString()))
       .toString();
 
+  // function to split booking date
+  static String splitBookingDate(String bookingDate) {
+    var bookDate = bookingDate.split("to").map((e) => e);
+    return "${formatDate(bookDate.first)} To ${formatDate(bookDate.last)}";
+  }
+
   // Age calculator
   static experienceCalculation(DateTime date) {
     var d = int.parse(DateFormat("dd").format(date));
@@ -133,4 +142,21 @@ class AppServices {
     }
     return day2;
   }
+
+// empty icon widget
+  static getEmptyIcon(String message, String name) => Container(
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              AppIcons.emptyIcon,
+              height: 70.sp,
+            ),
+            AppServices.addHeight(10.h),
+            Text("No $name Found", style: GetTextTheme.sf18_bold),
+            Text(message, style: GetTextTheme.sf14_regular)
+          ],
+        ),
+      );
 }

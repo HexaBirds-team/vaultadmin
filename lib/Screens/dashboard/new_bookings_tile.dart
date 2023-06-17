@@ -118,7 +118,7 @@ class NewBookingsTile extends StatelessWidget {
                       Expanded(
                           flex: 2,
                           child: Text(
-                              "${AppServices.formatDate(booking.reportingDate)} At (${booking.reportingTime})",
+                              "${booking.type == "daily" ? AppServices.splitBookingDate(booking.reportingDate.toString()) : AppServices.formatDate(booking.reportingDate.toString())} At (${booking.reportingTime})",
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: GetTextTheme.sf14_medium)),

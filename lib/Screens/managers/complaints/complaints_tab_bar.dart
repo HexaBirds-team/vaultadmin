@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/Screens/managers/complaints/complaints_manager.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_text.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
-import 'package:valt_security_admin_panel/models/app_models.dart';
 
 import '../../../models/enums.dart';
 

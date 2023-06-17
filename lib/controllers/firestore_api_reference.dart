@@ -52,7 +52,7 @@ class FirestoreApiReference {
 
   // admin document reference
   static DocumentReference<Map<String, dynamic>> adminPath =
-      firestore.collection("Admin").doc("tw6j8Ye8h3XjnKNGAWsK");
+      firestore.collection("Admin").doc("2W9egbPwPac12SKR6Qv2");
 
 /* collection references */
 
@@ -111,4 +111,8 @@ class FirestoreApiReference {
   // service area collection reference
   static CollectionReference<Map<String, dynamic>> serviceAreaPath =
       firestore.collection("ServiceAreas");
+
+  // bookings collection reference
+  static CollectionReference<Map<String, dynamic>> bookingsPath =
+      firestore.collection("Bookings");
 }
