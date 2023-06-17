@@ -1,49 +1,41 @@
 {
   "project_info": {
-    "project_number": "184728826666",
-    "firebase_url": "https://valt-security-default-rtdb.firebaseio.com",
-    "project_id": "valt-security",
-    "storage_bucket": "valt-security.appspot.com"
+    "project_number": "546902102564",
+    "firebase_url": "https://dial-vault-17004-default-rtdb.firebaseio.com",
+    "project_id": "dial-vault-17004",
+    "storage_bucket": "dial-vault-17004.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184728826666:android:412082342c66af59672453",
+        "mobilesdk_app_id": "1:546902102564:android:d1f4948463126a979bfeb1",
         "android_client_info": {
-          "package_name": "com.example.provider_app"
+          "package_name": "com.dialvault.admin"
         }
       },
       "oauth_client": [
         {
-          "client_id": "184728826666-1jj66fq697s8gnc2m8i24qarkc3j0vl8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.provider_app",
-            "certificate_hash": "d85978ac631031695f3870c7b1eddb2f2b415d69"
-          }
-        },
-        {
-          "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+          "client_id": "546902102564-7lnror1sjvolm3jgsm1f517r5cva9umi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCu50E4Ei7uernSZWxELhOERKB2UA5CPlE"
+          "current_key": "AIzaSyAGyIs0wafbkYzIT78z3LJhwtyv39iFhak"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+              "client_id": "546902102564-7lnror1sjvolm3jgsm1f517r5cva9umi.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "184728826666-k41h6ehgpbbemgth2fvavccmucgnb5gp.apps.googleusercontent.com",
+              "client_id": "546902102564-05kqr381n0jb2muj029jq62efnib8qe6.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.providerApp.RunnerTests"
+                "bundle_id": "com.example.providerApp"
               }
             }
           ]
@@ -52,78 +44,42 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:184728826666:android:a92d8a9758d699a1672453",
+        "mobilesdk_app_id": "1:546902102564:android:cd3236ea7ada12309bfeb1",
         "android_client_info": {
-          "package_name": "com.example.valt_security"
+          "package_name": "com.dialvault.provider"
         }
       },
       "oauth_client": [
         {
-          "client_id": "184728826666-neei0rqfr8r53f8cb82sbkj0dr3ep1t3.apps.googleusercontent.com",
+          "client_id": "546902102564-ajm50sa0qj2j7kmtacq6gkkq8hmaulik.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.valt_security",
+            "package_name": "com.dialvault.provider",
             "certificate_hash": "d1686b76fe83a5bf9a809780860a28ab6d2809df"
           }
         },
         {
-          "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+          "client_id": "546902102564-7lnror1sjvolm3jgsm1f517r5cva9umi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCu50E4Ei7uernSZWxELhOERKB2UA5CPlE"
+          "current_key": "AIzaSyAGyIs0wafbkYzIT78z3LJhwtyv39iFhak"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
+              "client_id": "546902102564-7lnror1sjvolm3jgsm1f517r5cva9umi.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "184728826666-k41h6ehgpbbemgth2fvavccmucgnb5gp.apps.googleusercontent.com",
+              "client_id": "546902102564-05kqr381n0jb2muj029jq62efnib8qe6.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.providerApp.RunnerTests"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:184728826666:android:d96030db1c4d1bd0672453",
-        "android_client_info": {
-          "package_name": "com.example.valt_security_admin_panel"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCu50E4Ei7uernSZWxELhOERKB2UA5CPlE"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "184728826666-urqeoj317gvvtrs8iqgs03gea537ha4o.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "184728826666-k41h6ehgpbbemgth2fvavccmucgnb5gp.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.providerApp.RunnerTests"
+                "bundle_id": "com.example.providerApp"
               }
             }
           ]

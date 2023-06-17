@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>546902102564-9j9i193mmsuq1ebfm4igur9e95f93a9d.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.546902102564-9j9i193mmsuq1ebfm4igur9e95f93a9d</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>546902102564-ajm50sa0qj2j7kmtacq6gkkq8hmaulik.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD8qHXx6XIE7UTHwBnric95nYNmG1pp74U</string>
+	<key>GCM_SENDER_ID</key>
+	<string>546902102564</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.valtSecurityAdminPanel</string>
+	<key>PROJECT_ID</key>
+	<string>dial-vault-17004</string>
+	<key>STORAGE_BUCKET</key>
+	<string>dial-vault-17004.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:546902102564:ios:ae0fbe3a66c78b549bfeb1</string>
+	<key>DATABASE_URL</key>
+	<string>https://dial-vault-17004-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
