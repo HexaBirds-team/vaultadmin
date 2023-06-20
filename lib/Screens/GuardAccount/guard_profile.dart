@@ -8,15 +8,16 @@ import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile_hea
 import 'package:valt_security_admin_panel/Screens/managers/image_view.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
+import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/auth_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
-import 'package:valt_security_admin_panel/controllers/notification_controller.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 
 import '../../components/custom_appbar.dart';
 import '../../components/expanded_btn.dart';
+import '../../controllers/notification_controller.dart';
 import '../../helpers/icons_and_images.dart';
 import '../../helpers/style_sheet.dart';
 import '../../models/app_models.dart';
@@ -35,9 +36,13 @@ class GuardProfileView extends StatefulWidget {
 
 class _GuardProfileViewState extends State<GuardProfileView> {
   bool isChanged = false;
+  bool loading = false;
 
   List<DocsClass> documents = [];
   List<GuardServices> services = [];
+
+  List<String> invalidDocuments = [];
+  List<String> validDocuments = [];
 
   @override
   void initState() {
@@ -49,6 +54,16 @@ class _GuardProfileViewState extends State<GuardProfileView> {
   getStuff() async {
     documents = await FirebaseController(context)
         .getGuardDocs(widget.providerDetails.uid);
+
+    var invalidDocs = documents
+        .where((element) => element.status == DocumentState.invalid)
+        .toList();
+    var validDocs = documents
+        .where((element) => element.status == DocumentState.valid)
+        .toList();
+
+    invalidDocuments.addAll(invalidDocs.map((e) => e.id).toList());
+    validDocuments.addAll(validDocs.map((e) => e.id).toList());
     services = await FirebaseController(context)
         .getGuardServices(widget.providerDetails.uid);
     if (!mounted) return;
@@ -80,23 +95,25 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             title: const SizedBox(),
             autoLeading: true,
             action: [
-              PopupMenuButton(
-                  iconSize: 30.sp,
-                  padding: const EdgeInsets.all(0),
-                  // color: AppColors.,`
-                  onSelected: (value) async {
-                    if (value == "approve") {
-                      await AuthController().approveProfile(guard.uid, context);
-                    } else {
-                      await AuthController().rejectProfile(guard.uid, context);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                        const PopupMenuItem(
-                            value: "approve", child: Text("Approve")),
-                        const PopupMenuItem(
-                            value: "reject", child: Text("Reject")),
-                      ]),
+              guard.isApproved == GuardApprovalStatus.pending
+                  ? PopupMenuButton(
+                      iconSize: 30.sp,
+                      padding: const EdgeInsets.all(0),
+                      onSelected: (value) async {
+                        if (value == "approve") {
+                          await approveGuard();
+                        } else {
+                          await AuthController()
+                              .rejectProfile(guard.uid, guard, context);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                            const PopupMenuItem(
+                                value: "approve", child: Text("Approve")),
+                            const PopupMenuItem(
+                                value: "reject", child: Text("Reject")),
+                          ])
+                  : const SizedBox(),
               widget.showEditOptions
                   ? IconButton(
                       splashRadius: 25,
@@ -186,9 +203,9 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                         margin: EdgeInsets.only(bottom: 12.sp),
                         padding: EdgeInsets.all(15.sp),
                         decoration: BoxDecoration(
-                            color: document.status == DocumentState.invalid
+                            color: invalidDocuments.contains(document.id)
                                 ? AppColors.redColor.withOpacity(0.1)
-                                : document.status == DocumentState.valid
+                                : validDocuments.contains(document.id)
                                     ? AppColors.greenColor.withOpacity(0.1)
                                     : AppColors.whiteColor,
                             border: Border.all(
@@ -249,66 +266,14 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                                         value: e,
                                                         child: Text(e.name)))
                                                     .toList(),
-                                            onSelected: (v) async {
-                                              Map<String, dynamic> data = {
-                                                "title":
-                                                    "Invalid KYC documents",
-                                                "body":
-                                                    "${document.name} of your KYC documents are marked as invalid. Please update your documents to prevent your profile from being blocked.",
-                                                "route": "",
-                                                "createdAt": DateTime.now()
-                                                    .toIso8601String(),
-                                                "notificationType": "KYC",
-                                                "receiver": guard.uid
-                                              };
-                                              v == DocumentState.invalid
-                                                  ? FancyDialogController()
-                                                      .confirmInvalidDocument(
-                                                          context, () async {
-                                                      for (var token in widget
-                                                          .providerDetails
-                                                          .tokens) {
-                                                        await NotificationController()
-                                                            .sendFCM(
-                                                                data, token);
-                                                      }
-                                                      await NotificationController()
-                                                          .uploadNotification(
-                                                              "Notifications",
-                                                              data);
-                                                      await AuthController()
-                                                          .updateDocumentStatus(
-                                                              document,
-                                                              widget
-                                                                  .providerDetails
-                                                                  .uid,
-                                                              document.id
-                                                                  .toString(),
-                                                              v,
-                                                              context)
-                                                          .then((value) =>
-                                                              setState(() {
-                                                                document
-                                                                    .status = v;
-                                                              }));
-                                                    }).show()
-                                                  : {
-                                                      await AuthController()
-                                                          .updateDocumentStatus(
-                                                              document,
-                                                              widget
-                                                                  .providerDetails
-                                                                  .uid,
-                                                              document.id
-                                                                  .toString(),
-                                                              v,
-                                                              context)
-                                                          .then((value) =>
-                                                              setState(() {
-                                                                document
-                                                                    .status = v;
-                                                              })),
-                                                    };
+                                            onSelected: (v) {
+                                              onSelect(v, document);
+                                              print(
+                                                  "Valid documents................");
+                                              print(validDocuments);
+                                              print(
+                                                  "In-Valid documents................");
+                                              print(invalidDocuments);
                                             }),
                                       )
                               ],
@@ -317,6 +282,28 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                         ),
                       );
                     }),
+            AppServices.addHeight(20.h),
+            loading
+                ? const OnViewLoader()
+                : ButtonOneExpanded(
+                    onPressed: () {
+                      invalidDocuments.isNotEmpty || validDocuments.isNotEmpty
+                          ? updateDocStatus(guard)
+                          : null;
+                    },
+                    btnText: "Update Documents",
+                    showBorder: true,
+                    disableGradient: true,
+                    btnTextColor: true,
+                    btnTextClr:
+                        invalidDocuments.isNotEmpty || validDocuments.isNotEmpty
+                            ? AppColors.primary1
+                            : AppColors.greyColor,
+                    borderColor:
+                        invalidDocuments.isNotEmpty || validDocuments.isNotEmpty
+                            ? AppColors.primary1
+                            : AppColors.greyColor,
+                  ),
             AppServices.addHeight(20.h),
             ButtonOneExpanded(
               onPressed: () {
@@ -362,5 +349,97 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             style: GetTextTheme.sf14_regular),
       ],
     );
+  }
+
+  onSelect(DocumentState v, DocsClass document) {
+    if (v == DocumentState.valid && !validDocuments.contains(document.id)) {
+      if (invalidDocuments.contains(document.id)) {
+        invalidDocuments.remove(document.id);
+        validDocuments.add(document.id);
+      } else {
+        validDocuments.add(document.id);
+      }
+    } else if (v == DocumentState.invalid &&
+        !invalidDocuments.contains(document.id)) {
+      if (validDocuments.contains(document.id)) {
+        validDocuments.remove(document.id);
+        invalidDocuments.add(document.id);
+      } else {
+        invalidDocuments.add(document.id);
+      }
+    } else {
+      null;
+    }
+    setState(() {});
+  }
+
+  updateDocStatus(ProvidersInformationClass guard) async {
+    loading = true;
+    Map<String, dynamic> data = {
+      "title": "Invalid KYC documents",
+      "body":
+          "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
+      "route": "/documents",
+      "createdAt": DateTime.now().toIso8601String(),
+      "notificationType": "KYC",
+      "receiver": guard.uid
+    };
+
+    if (invalidDocuments.isNotEmpty) {
+      for (var token in guard.tokens) {
+        await NotificationController().sendFCM(data, token);
+      }
+      NotificationController().uploadNotification("Notifications", data);
+      for (var doc in invalidDocuments) {
+        await AuthController().updateDocumentStatus(
+            guard.uid, doc, DocumentState.invalid, context);
+      }
+    }
+
+    if (validDocuments.isNotEmpty) {
+      for (var doc in validDocuments) {
+        await AuthController()
+            .updateDocumentStatus(guard.uid, doc, DocumentState.valid, context);
+      }
+    }
+
+    loading = false;
+    setState(() {});
+
+    // v == DocumentState.invalid
+    //     ? FancyDialogController().confirmInvalidDocument(context, () async {
+    // for (var token in widget.providerDetails.tokens) {
+    //   await NotificationController().sendFCM(data, token);
+    // }
+    //         await NotificationController()
+    //             .uploadNotification("Notifications", data);
+    //         await AuthController()
+    //             .updateDocumentStatus(document, widget.providerDetails.uid,
+    //                 document.id.toString(), v, context)
+    //             .then((value) => setState(() {
+    //                   document.status = v;
+    //                 }));
+    //       }).show()
+    //     : await AuthController()
+    //         .updateDocumentStatus(document, widget.providerDetails.uid,
+    //             document.id.toString(), v, context)
+    //         .then((value) => setState(() {
+    //               document.status = v;
+    //             }));
+  }
+
+  approveGuard() async {
+    await AuthController().approveProfile(
+        widget.providerDetails.uid, widget.providerDetails, context);
+    var docs = documents
+        .where((element) => element.status != DocumentState.valid)
+        .toList();
+    for (var document in docs) {
+      await AuthController().updateDocumentStatus(widget.providerDetails.uid,
+          document.id, DocumentState.valid, context);
+      validDocuments.add(document.id);
+      invalidDocuments.isNotEmpty ? invalidDocuments.remove(document.id) : null;
+    }
+    setState(() {});
   }
 }

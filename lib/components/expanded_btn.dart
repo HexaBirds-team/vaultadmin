@@ -11,7 +11,7 @@ class ButtonOneExpanded extends StatelessWidget {
   final Function? onPressed;
   final dynamic btnText;
   final bool btnTextWithIcon;
-  final Color btnColor;
+  final Color btnColor, borderColor;
   final Color btnTextClr;
   final bool disableGradient;
   final bool enableColor;
@@ -35,6 +35,7 @@ class ButtonOneExpanded extends StatelessWidget {
       this.disableGradient = false,
       this.enableColor = false,
       this.btnTextColor = false,
+      this.borderColor = AppColors.blackColor,
       this.showBorder = false})
       : super(key: key);
 
@@ -47,9 +48,7 @@ class ButtonOneExpanded extends StatelessWidget {
       decoration: BoxDecoration(
           gradient: disableGradient ? null : gradient,
           borderRadius: borderRadius,
-          border: showBorder
-              ? Border.all(color: AppColors.blackColor.withOpacity(0.2))
-              : null),
+          border: showBorder ? Border.all(color: borderColor) : null),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
             backgroundColor: enableColor ? btnColor : Colors.transparent,

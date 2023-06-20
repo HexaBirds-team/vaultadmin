@@ -22,6 +22,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseMessaging.instance.getInitialMessage();
+
   FirebaseMessaging.onBackgroundMessage(
       (message) => _firebaseMessagingBackgroundHandler(message));
   preference = await SharedPreferences.getInstance();

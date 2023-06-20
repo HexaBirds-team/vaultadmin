@@ -172,9 +172,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
                             return NewGuardsTile(
                                 profile: profile,
                                 onApprove: () async => await AuthController()
-                                    .approveProfile(profile.uid, context),
+                                    .approveProfile(
+                                        profile.uid, profile, context),
                                 onReject: () async => await AuthController()
-                                    .rejectProfile(profile.uid, context));
+                                    .rejectProfile(
+                                        profile.uid, profile, context));
                           })),
               AppServices.addHeight(35.h),
               titleBar(

@@ -42,8 +42,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       currentIndex = widget.routeIndex;
     });
     getListeneres();
-    NotificationController().requestPermission();
-    NotificationController().getToken(context);
+    NotificationController().requestPermission(context);
+    // NotificationController().getToken(context);
     NotificationController().initLocalNotifications();
   }
 

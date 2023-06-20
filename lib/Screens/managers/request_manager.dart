@@ -128,7 +128,9 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                               onPressed: () async =>
                                                   await _authController
                                                       .rejectProfile(
-                                                          profile.uid, context),
+                                                          profile.uid,
+                                                          profile,
+                                                          context),
                                               btnText: "Reject",
                                               enableColor: true,
                                               disableGradient: true,
@@ -142,7 +144,9 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                               onPressed: () async =>
                                                   await _authController
                                                       .approveProfile(
-                                                          profile.uid, context),
+                                                          profile.uid,
+                                                          profile,
+                                                          context),
                                               btnText: "Approve"))),
                                 ],
                               )

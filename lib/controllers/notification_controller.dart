@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, avoid_print
+// ignore_for_file: prefer_const_constructors, avoid_print, use_build_context_synchronously
 
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -20,11 +20,7 @@ class NotificationController {
         "title": snapshot['title'].toString(),
         "body": snapshot['body'].toString()
       },
-      "data": {
-        "click_action": "FLUTTER_NOTIFICATION_CLICK",
-        "id": "1",
-        "status": "done"
-      },
+      "data": {"click_action": snapshot['route'], "id": "1", "status": "done"},
       "to": to
     };
 
@@ -66,12 +62,13 @@ class NotificationController {
             android: initializationSettingsAndroid,
             iOS: iosInitializationSettings);
     await FlutterLocalNotificationsPlugin().initialize(initializationSettings);
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       NotificationController().firebaseMessagingForegroundHandler(message);
     });
   }
 
-  void requestPermission() async {
+  void requestPermission(BuildContext context) async {
     NotificationSettings settings = await messaging.requestPermission(
         alert: true,
         announcement: false,
@@ -82,7 +79,7 @@ class NotificationController {
         sound: true);
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print("User granted permission");
+      getToken(context);
     } else if (settings.authorizationStatus ==
         AuthorizationStatus.provisional) {
       print("User granted provissional permission");
@@ -95,7 +92,7 @@ class NotificationController {
     await messaging.getToken().then((token) {
       saveToken(token!, context);
       return token;
-    });
+    }).onError((error, stackTrace) => saveToken("Not Available", context));
   }
 
   saveToken(String token, BuildContext context) async {

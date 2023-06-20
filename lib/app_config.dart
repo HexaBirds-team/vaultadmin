@@ -5,5 +5,5 @@ class AppConfig {
   static const double screenWidth = 393;
   static const double screenHeight = 852;
   static const String firebaseMessagingKey =
-      "AAAAKwKyMyo:APA91bH6bQKYDEahr8JEiQeh-K5-7lbNJniXs5VaEV0uiUdJOKmcs6Yl7xIVlqaL2VZO_oV8ZNvWMKzEHDbhVY177vtUeJ-xn1U-mP65rGRpRcgSgq2zyinJ33t2mToj1QQXYsRpoPLb";
+      "AAAAf1Xn0iQ:APA91bGMvsrEKC0pWnotOmQVsxjC6eW3lnlfUBKATZij8l_xSTqMnqfCb4mSdVMBnxmQ4WaUW5IHh3Ix-btJbfoBnNk460i722I6JgRmyxJBOnHwC5YuC3zAu-v7jKjd-4sgBq_9zi7g";
 }

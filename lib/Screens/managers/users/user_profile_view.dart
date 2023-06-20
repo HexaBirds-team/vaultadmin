@@ -6,12 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/shimmers/box_shimmer.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
-import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
+import 'package:valt_security_admin_panel/controllers/notification_controller.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../../../components/fancy_popus/awesome_dialogs.dart';
 import '../../../components/gradient_components/gradient_image.dart';
 import '../../../helpers/base_getters.dart';
 import '../image_view.dart';
@@ -59,20 +58,21 @@ class _UserProfileViewState extends State<UserProfileView> {
             IconButton(
                 splashRadius: 25,
                 onPressed: () async {
-                  !isDisabled
-                      ? FancyDialogController().confirmBlockDialog(context,
-                          () async {
-                          await FirestoreApiReference.usersPath
-                              .doc(widget.user.uid)
-                              .update({"isBlocked": true});
-                          setState(() => isDisabled = true);
-                        }, "Are you sure you want to block this user?").show()
-                      : {
-                          await FirestoreApiReference.usersPath
-                              .doc(widget.user.uid)
-                              .update({"isBlocked": false}),
-                          setState(() => isDisabled = false)
-                        };
+                  sendNotification(user);
+                  // !isDisabled
+                  //     ? FancyDialogController().confirmBlockDialog(context,
+                  //         () async {
+                  //         await FirestoreApiReference.usersPath
+                  //             .doc(widget.user.uid)
+                  //             .update({"isBlocked": true});
+                  //         setState(() => isDisabled = true);
+                  //       }, "Are you sure you want to block this user?").show()
+                  //     : {
+                  //         await FirestoreApiReference.usersPath
+                  //             .doc(widget.user.uid)
+                  //             .update({"isBlocked": false}),
+                  //         setState(() => isDisabled = false)
+                  //       };
                 },
                 icon: ImageGradient(
                   image: AppIcons.powerIcon,
@@ -196,5 +196,19 @@ class _UserProfileViewState extends State<UserProfileView> {
         ],
       ),
     );
+  }
+
+  sendNotification(UserInformationClass user) async {
+    Map<String, dynamic> data = {
+      "title": "Invalid KYC documents",
+      "body":
+          "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
+      "route": "/documents",
+      "createdAt": DateTime.now().toIso8601String(),
+      "notificationType": "KYC",
+      "receiver": user.uid
+    };
+
+    await NotificationController().sendFCM(data, user.token);
   }
 }
