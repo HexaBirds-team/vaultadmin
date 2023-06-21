@@ -61,7 +61,7 @@ class SubDifferenceModel {
         singleHr = ShiftModel.fromJson(json['singleDay']['hourly']),
         singleShift = ShiftModel.fromJson(json['singleDay']['shift']);
 
-   Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "pin_code": pincode,
         "monthly": {
           "hourly": {
@@ -106,6 +106,7 @@ class ShiftModel {
   int basic;
   int standard;
   int premium;
+  ShiftModel(this.basic, this.standard, this.premium);
 
   ShiftModel.fromJson(Map<String, dynamic> json)
       : basic = int.parse(json['basic'].toString()),
