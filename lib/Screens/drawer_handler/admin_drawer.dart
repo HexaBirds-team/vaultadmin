@@ -7,7 +7,6 @@ import 'package:valt_security_admin_panel/Screens/managers/Announcements/announc
 import 'package:valt_security_admin_panel/Screens/managers/banners/manage_banners.dart';
 import 'package:valt_security_admin_panel/Screens/managers/service_areas.dart';
 import 'package:valt_security_admin_panel/Screens/managers/service_manager.dart';
-import 'package:valt_security_admin_panel/Screens/managers/subscription/subscription_tabbar.dart';
 import 'package:valt_security_admin_panel/controllers/app_settings_controller.dart';
 
 import '../../app_config.dart';
@@ -73,11 +72,11 @@ class AdminDrawerView extends StatelessWidget {
                   callback: () =>
                       AppServices.pushTo(context, const ServiceManager()),
                   image: AppIcons.serviceIcon),
-              DrawerButtonView(
-                  text: "Manage Subscription",
-                  callback: () => AppServices.pushTo(
-                      context, const SubscriptionsTabBarView()),
-                  image: AppIcons.subscriptionIcon),
+              // DrawerButtonView(
+              //     text: "Manage Subscription",
+              //     callback: () => AppServices.pushTo(
+              //         context, const SubscriptionsTabBarView()),
+              //     image: AppIcons.subscriptionIcon),
               AppServices.addHeight(30.h),
               const Divider(),
               DrawerButtonView(

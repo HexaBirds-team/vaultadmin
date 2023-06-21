@@ -284,4 +284,34 @@ class AppDataController extends ChangeNotifier {
     _serviceArea[i].pincode = pincode;
     notifyListeners();
   }
+
+  // subscription difference handler
+  List<SubDifferenceModel> _subDifference = [];
+  List<SubDifferenceModel> get getSubDifference => _subDifference;
+
+  setSubDifference(List<SubDifferenceModel> data) {
+    _subDifference = data;
+    notifyListeners();
+  }
+
+  addSubDifference(SubDifferenceModel difference) {
+    _subDifference.add(difference);
+    notifyListeners();
+  }
+
+  updateSubDifference(SubDifferenceModel data) {
+    int i = _subDifference.indexWhere((element) => element.id == data.id);
+    _subDifference[i] = data;
+    notifyListeners();
+  }
+
+  deleteSubDifference(String id) {
+    _subDifference.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
+
+  resetSubDifference() {
+    _subDifference = [];
+    notifyListeners();
+  }
 }

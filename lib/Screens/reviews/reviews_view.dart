@@ -44,9 +44,9 @@ class _ReviewsViewState extends State<ReviewsView> {
     allReviews.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return Scaffold(
       appBar: customAppBar(
-          context: context,
-          title: Text("Reviews", style: GetTextTheme.sf26_bold),
-          centerTitle: true),
+        context: context,
+        title: const Text("Reviews"),
+      ),
       body: SafeArea(
           child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.sp),

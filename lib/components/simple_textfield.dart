@@ -57,7 +57,9 @@ class SimpleTextField extends StatelessWidget {
           contentPadding:
               EdgeInsets.symmetric(horizontal: 20.sp, vertical: 17.sp),
           hintText: _hint,
-          label: Text(_label, style: GetTextTheme.sf16_regular),
+          label: _label.isEmpty
+              ? null
+              : Text(_label, style: GetTextTheme.sf16_regular),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
           suffixIcon: _suffixIcon == ""
               ? null

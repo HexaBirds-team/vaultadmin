@@ -27,7 +27,7 @@ class _ManageBannersState extends State<ManageBanners> {
     final banners = db.getBanners;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Manage Banners", style: GetTextTheme.sf24_bold),
+        title: const Text("Manage Banners"),
         elevation: 0,
         backgroundColor: AppColors.whiteColor,
         foregroundColor: AppColors.blackColor,

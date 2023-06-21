@@ -180,7 +180,10 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             AppServices.customDivider(5.h),
             Text("Description", style: GetTextTheme.sf16_medium),
             AppServices.addHeight(10.h),
-            Text(guard.description == "" ? "Not Available" : guard.description,
+            Text(
+                guard.description == "" || guard.description == "null"
+                    ? "Guard not updated his/her description."
+                    : guard.description,
                 style: GetTextTheme.sf14_regular),
             AppServices.customDivider(5.h),
             documentNumberTile("ESIC Number", guard.esicNumber),

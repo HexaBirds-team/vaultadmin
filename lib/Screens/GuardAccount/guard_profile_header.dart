@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
+import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 import '../../../../helpers/base_getters.dart';
 import '../../../../helpers/style_sheet.dart';
@@ -34,7 +35,7 @@ class AccountHeader extends StatelessWidget {
         Text(providerDetails.name, style: GetTextTheme.sf16_bold),
         AppServices.addHeight(5.h),
         Text.rich(TextSpan(
-            text: "${category.name} * ",
+            text: "${FunctionsController().titleCase(category.name)} * ",
             style: GetTextTheme.sf12_medium,
             children: [
               TextSpan(

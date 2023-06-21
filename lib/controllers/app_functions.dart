@@ -170,6 +170,17 @@ class FunctionsController {
     });
     return tokens;
   }
+
+  String titleCase(String text) {
+    var a = text.trim().split(" ");
+    var b = a.map((e) {
+      var c = e.trim().split("");
+      c[0] = c[0].toUpperCase();
+      return c.join();
+    });
+
+    return b.join(" ");
+  }
 }
 
 extension CheckTimeAgo on DateTime {

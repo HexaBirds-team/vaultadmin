@@ -48,15 +48,18 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
             context: context,
             title: const Text("Manage Requests"),
             action: [
-              PopupMenuButton(
-                  initialValue: "",
-                  onSelected: (value) => _authController.approveAllProfile(
-                      requests.map((e) => e.uid).toList(), context),
-                  itemBuilder: (context) => [
-                        const PopupMenuItem(
-                            value: "approveAll", child: Text("Approve All")),
-                      ],
-                  icon: Icon(Icons.more_vert, size: 25.sp))
+              requests.isEmpty
+                  ? const SizedBox()
+                  : PopupMenuButton(
+                      initialValue: "",
+                      onSelected: (value) => _authController.approveAllProfile(
+                          requests.map((e) => e.uid).toList(), context),
+                      itemBuilder: (context) => [
+                            const PopupMenuItem(
+                                value: "approveAll",
+                                child: Text("Approve All")),
+                          ],
+                      icon: Icon(Icons.more_vert, size: 25.sp))
             ]),
         body: Stack(
           children: [

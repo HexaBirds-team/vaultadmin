@@ -1,29 +1,123 @@
+import 'package:valt_security_admin_panel/controllers/app_functions.dart';
+
 import 'enums.dart';
+
+// class CategoryClass {
+//   String name, image, categoryId;
+
+//   CategoryClass(this.name, this.image, this.categoryId);
+//   CategoryClass.fromCategory(Map<String, dynamic> json, this.categoryId)
+//       : name = json["name"].toString(),
+//         image = json['image'].toString();
+// }
 
 class CategoryClass {
   String name, image, categoryId;
+  ShiftModel monthlyHr;
+  ShiftModel monthlyShift;
+  ShiftModel dailyHr;
+  ShiftModel dailyShift;
+  ShiftModel singleHr;
+  ShiftModel singleShift;
 
-  CategoryClass(this.name, this.image, this.categoryId);
+  CategoryClass(
+      this.name,
+      this.image,
+      this.categoryId,
+      this.monthlyHr,
+      this.monthlyShift,
+      this.dailyHr,
+      this.dailyShift,
+      this.singleHr,
+      this.singleShift);
   CategoryClass.fromCategory(Map<String, dynamic> json, this.categoryId)
       : name = json["name"].toString(),
+        monthlyHr = ShiftModel.fromJson(json['monthly']['hourly']),
+        monthlyShift = ShiftModel.fromJson(json['monthly']['shift']),
+        dailyHr = ShiftModel.fromJson(json['multipleDay']['hourly']),
+        dailyShift = ShiftModel.fromJson(json['multipleDay']['shift']),
+        singleHr = ShiftModel.fromJson(json['singleDay']['hourly']),
+        singleShift = ShiftModel.fromJson(json['singleDay']['shift']),
         image = json['image'].toString();
+}
+
+class SubDifferenceModel {
+  String pincode, id;
+  ShiftModel monthlyHr;
+  ShiftModel monthlyShift;
+  ShiftModel dailyHr;
+  ShiftModel dailyShift;
+  ShiftModel singleHr;
+  ShiftModel singleShift;
+
+  SubDifferenceModel(this.id, this.pincode, this.monthlyHr, this.monthlyShift,
+      this.dailyHr, this.dailyShift, this.singleHr, this.singleShift);
+  SubDifferenceModel.fromJson(Map<String, dynamic> json, this.id)
+      : pincode = json["pin_code"].toString(),
+        monthlyHr = ShiftModel.fromJson(json['monthly']['hourly']),
+        monthlyShift = ShiftModel.fromJson(json['monthly']['shift']),
+        dailyHr = ShiftModel.fromJson(json['multipleDay']['hourly']),
+        dailyShift = ShiftModel.fromJson(json['multipleDay']['shift']),
+        singleHr = ShiftModel.fromJson(json['singleDay']['hourly']),
+        singleShift = ShiftModel.fromJson(json['singleDay']['shift']);
+
+   Map<String, dynamic> toJson() => {
+        "pin_code": pincode,
+        "monthly": {
+          "hourly": {
+            "basic": monthlyHr.basic,
+            "standard": monthlyHr.standard,
+            "premium": monthlyHr.premium
+          },
+          "shift": {
+            "basic": monthlyShift.basic,
+            "standard": monthlyShift.standard,
+            "premium": monthlyShift.premium
+          }
+        },
+        "multipleDay": {
+          "hourly": {
+            "basic": dailyHr.basic,
+            "standard": dailyHr.standard,
+            "premium": dailyHr.premium
+          },
+          "shift": {
+            "basic": dailyShift.basic,
+            "standard": dailyShift.standard,
+            "premium": dailyShift.premium
+          }
+        },
+        "singleDay": {
+          "hourly": {
+            "basic": singleHr.basic,
+            "standard": singleHr.standard,
+            "premium": singleHr.premium
+          },
+          "shift": {
+            "basic": singleShift.basic,
+            "standard": singleShift.standard,
+            "premium": singleShift.premium
+          }
+        }
+      };
+}
+
+class ShiftModel {
+  int basic;
+  int standard;
+  int premium;
+
+  ShiftModel.fromJson(Map<String, dynamic> json)
+      : basic = int.parse(json['basic'].toString()),
+        standard = int.parse(json['standard'].toString()),
+        premium = int.parse(json['premium'].toString());
 }
 
 class UserInformationClass {
   String username, phone, image, uid, token, dateOfBirth, gender, aadharNo;
   bool isBlocked;
-  // List<DocsClass> documents;
-  UserInformationClass(
-      this.username,
-      this.phone,
-      this.image,
-      this.uid,
-      this.isBlocked,
-      this.token,
-      this.gender,
-      this.dateOfBirth,
-      // this.documents,
-      this.aadharNo);
+  UserInformationClass(this.username, this.phone, this.image, this.uid,
+      this.isBlocked, this.token, this.gender, this.dateOfBirth, this.aadharNo);
   UserInformationClass.fromUser(Map<String, dynamic> json, this.uid)
       : username = json['Name'].toString(),
         phone = json["Number"].toString(),
@@ -33,9 +127,6 @@ class UserInformationClass {
         dateOfBirth =
             json['dateOfBirth'] == null ? "" : json['dateOfBirth'].toString(),
         aadharNo = json['aadharNo'] == null ? "" : json['aadharNo'].toString(),
-        // documents = json["documents"] == null
-        //     ? []
-        //     : FunctionsController().getDocs(json['documents'] as List<Object?>),
         image = json["ProfileImage"].toString();
 }
 
@@ -58,8 +149,6 @@ class ProvidersInformationClass {
 
   bool isGunAvailable, isBlocked;
   String latitude, longitude;
-  // List<GuardServices> services;
-  // List<DocsClass> documents;
   List<dynamic> tokens;
   double rating;
   ProvidersInformationClass(
@@ -77,18 +166,15 @@ class ProvidersInformationClass {
       this.experience,
       this.longitude,
       this.rating,
-      // this.services,
       this.isApproved,
       this.createdAt,
       this.tokens,
       this.description,
       this.isBlocked,
       this.address,
-      this.category
-      // this.documents
-      );
+      this.category);
   ProvidersInformationClass.fromUser(Map<String, dynamic> json, this.uid)
-      : name = json['name'].toString(),
+      : name = FunctionsController().titleCase(json['name'].toString()),
         phone = json['phone'].toString(),
         qualification = json['qualification'].toString(),
         dateOfBirth = json['dateOfBirth'].toString(),
@@ -109,10 +195,6 @@ class ProvidersInformationClass {
                 : json["Location"].toString().split(",").last,
         experience = json['Experience'].toString(),
         rating = double.parse(json['Ratings'].toString()),
-        // services = json['services'] == null
-        //     ? []
-        //     : FunctionsController()
-        //         .getServices(json['services'] as Map<Object?, Object?>),
         isApproved = GuardApprovalStatus.values.firstWhere(
             (element) => element.name == json['isApproved'].toString()),
         createdAt = json['CreatedAt'].toString(),
@@ -125,10 +207,6 @@ class ProvidersInformationClass {
         pfNumber = json['pfNumber'] == null ? "" : json['pfNumber'].toString(),
         address = "",
         tokens = json['msgToken'] ?? [];
-
-  // documents = json["docs"] == null
-  //     ? []
-  //     : FunctionsController().getDocs(json['docs'] as List<Object?>);
 }
 
 class GuardServices {

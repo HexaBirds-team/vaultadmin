@@ -7,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/Screens/managers/subscription/add_subscription_view.dart';
 
-import '../../controllers/firebase_controller.dart';
 import '../../controllers/app_data_controller.dart';
 import '../../controllers/app_functions.dart';
 import '../../controllers/data_validation_controller.dart';
@@ -62,16 +62,10 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
                           EdgeInsets.symmetric(horizontal: 15.w, vertical: 15),
                       decoration:
                           WidgetDecoration.containerDecoration_1(context),
-                      child: Text("Choose Image",
+                      child: Text(
+                          _pickedFile == null ? "Choose Image" : "Change Image",
                           style: GetTextTheme.sf14_regular)),
                 ),
-                AppServices.addWidth(10.w),
-                _pickedFile == null
-                    ? const SizedBox()
-                    : Expanded(
-                        child: SizedBox(
-                            child: Text(_pickedFile!.path.split('/').last,
-                                style: GetTextTheme.sf12_regular)))
               ],
             ),
             AppServices.addHeight(7.h),
@@ -99,6 +93,7 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
                               child: SizedBox(
                             child: ButtonOneExpanded(
                                 onPressed: () => onSubmit(data),
+                                // onSubmit(data),
                                 btnText: "Save"),
                           )),
                         ],
@@ -119,7 +114,8 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
     value.setLoader(true);
     if (_key.currentState!.validate() && _pickedFile != null) {
       var data = await getFormData();
-      await FirebaseController(context).addNewCategoryCallback(data);
+      AppServices.popView(context);
+      AppServices.pushTo(context, AddSubscriptionView(category: data));
       value.setLoader(false);
     } else {
       value.setLoader(false);

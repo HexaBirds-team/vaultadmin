@@ -33,7 +33,7 @@ class Appthemes {
 
       //appbar theme
       appBarTheme: const AppBarTheme(
-          backgroundColor: AppColors.whiteColor,
+          backgroundColor: AppColors.transparent,
           elevation: 0,
           foregroundColor: AppColors.blackColor),
 

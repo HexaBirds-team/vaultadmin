@@ -73,34 +73,31 @@ class FirebaseController {
   /* Manage Category Callbacks */
 
 // function to add new category
-  addNewCategoryCallback(
-    Map<String, dynamic> data,
-  ) async {
-    try {
-      await FirestoreApiReference.categoryPath.add(data).then((value) => db()
-          .addNewCategory(
-              CategoryClass(data['name'], data['image'], value.id)));
+  // addNewCategoryCallback(
+  //   Map<String, dynamic> data,
+  // ) async {
+  //   try {
+  //     await FirestoreApiReference.categoryPath.add(data).then((value) =>
+  //         db().addNewCategory(CategoryClass.fromCategory(data, value.id)));
 
-      MySnackBar.success(context, "New category added successfully");
-      AppServices.popView(context);
-    } on FirebaseException catch (e) {
-      MySnackBar.error(context, e.message.toString());
-      AppServices.popView(context);
-    } on SocketException {
-      MySnackBar.info(context, "Internet Error");
-      AppServices.popView(context);
-    } catch (e) {
-      MySnackBar.error(context, e.toString());
-      AppServices.popView(context);
-    }
-  }
+  //     AppServices.pushTo(context, screen)
+  //   } on FirebaseException catch (e) {
+  //     MySnackBar.error(context, e.message.toString());
+  //     AppServices.popView(context);
+  //   } on SocketException {
+  //     MySnackBar.info(context, "Internet Error");
+  //     AppServices.popView(context);
+  //   } catch (e) {
+  //     MySnackBar.error(context, e.toString());
+  //     AppServices.popView(context);
+  //   }
+  // }
 
   // function to edit  category
   editCategoryCallBack(Map<String, dynamic> data, String id) async {
     try {
       await FirestoreApiReference.categoryPath.doc(id).update(data).then(
-          (value) => db()
-              .updateCategory(CategoryClass(data['name'], data['image'], id)));
+          (value) => db().updateCategory(CategoryClass.fromCategory(data, id)));
 
       MySnackBar.success(context, "category updated successfully");
       AppServices.popView(context);
@@ -116,10 +113,26 @@ class FirebaseController {
     }
   }
 
-// function to remove category
-  // removeCategoryCallback(String categoryId) async {
-  //   await FirestoreApiReference.categoryPath.doc(categoryId).delete();
-  // }
+  // function to delete category from database
+
+  deleteCategoryCallBack(String id) async {
+    try {
+      await FirestoreApiReference.categoryPath
+          .doc(id)
+          .delete()
+          .then((value) => db().removeCategory(id));
+      AppServices.popView(context);
+    } on FirebaseException catch (e) {
+      MySnackBar.error(context, e.message.toString());
+      AppServices.popView(context);
+    } on SocketException {
+      MySnackBar.info(context, "Internet Error");
+      AppServices.popView(context);
+    } catch (e) {
+      MySnackBar.error(context, e.toString());
+      AppServices.popView(context);
+    }
+  }
 
 // function to get categories
   getUserCategory() async {
@@ -137,6 +150,31 @@ class FirebaseController {
       MySnackBar.info(context, "Internet Error");
     } catch (e) {
       MySnackBar.error(context, e.toString());
+    }
+  }
+
+// function to add subscription
+  addNewCategoryCallback(
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final snapshot = await FirestoreApiReference.categoryPath.add(data);
+      db().addNewCategory(CategoryClass.fromCategory(data, snapshot.id));
+      var differenceData = db().getSubDifference;
+      if (differenceData.isNotEmpty) {
+        for (var difference in differenceData) {
+          await FirestoreApiReference.subDifferencePath(snapshot.id)
+              .add(difference.toJson());
+        }
+      }
+      AppServices.popView(context);
+    } on FirebaseException catch (e) {
+      MySnackBar.error(
+          context, "Add Category error : \n${e.message.toString()}");
+    } on SocketException {
+      MySnackBar.info(context, "Internet Error");
+    } catch (e) {
+      MySnackBar.error(context, "Add Category error : \n${e.toString()}");
     }
   }
 
@@ -385,26 +423,21 @@ class FirebaseController {
   }
 
   // function to get complaints messages
-  getComplaintMessages(String id) async {
-    List<Map<String, dynamic>> messages = [];
+  Future<List<dynamic>> getComplaintMessages(String id) async {
+    List<dynamic> messages = [];
     try {
       final snapshot = await FirestoreApiReference.complaintsMsgPath(id).get();
       if (snapshot.docs.isNotEmpty) {
         messages = snapshot.docs.map((e) => e.data()).toList();
-        return messages;
-      } else {
-        return [];
-      }
+      } else {}
     } on FirebaseException catch (e) {
       MySnackBar.error(context, e.message.toString());
-      return [];
     } on SocketException {
       MySnackBar.info(context, "Internet Error");
-      return [];
     } catch (e) {
       MySnackBar.error(context, e.toString());
-      return [];
     }
+    return messages;
   }
 
   // function to get bookings
@@ -414,8 +447,7 @@ class FirebaseController {
       final snapshot = await path.get();
       if (snapshot.docs.isNotEmpty) {
         var bookingLists = snapshot.docs
-            .map((e) => BookingsClass.fromBooking(
-                e.data as Map<String, dynamic>, e.id.toString()))
+            .map((e) => BookingsClass.fromBooking(e.data(), e.id.toString()))
             .toList();
 
         db().setBookingsList(bookingLists);

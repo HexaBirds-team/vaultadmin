@@ -52,7 +52,7 @@ class _ProviderTileState extends State<ProviderTile> {
                     style: GetTextTheme.sf14_regular.copyWith(
                         color: AppColors.blackColor.withOpacity(0.4))),
                 AppServices.addHeight(2.h),
-                Text("phone : ${widget.provider.phone}",
+                Text("Phone : ${widget.provider.phone}",
                     style: GetTextTheme.sf14_regular),
                 AppServices.addHeight(10.h),
               ],

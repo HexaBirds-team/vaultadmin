@@ -72,19 +72,20 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                           EdgeInsets.symmetric(horizontal: 15.w, vertical: 15),
                       decoration:
                           WidgetDecoration.containerDecoration_1(context),
-                      child: Text("Choose Image",
+                      child: Text(
+                          _pickedFile == null ? "Choose Image" : "Change Image",
                           style: GetTextTheme.sf14_regular)),
                 ),
-                AppServices.addWidth(10.w),
-                _pickedFile == null
-                    ? Expanded(
-                        child: SizedBox(
-                            child: Text(widget.category.image.split("/").last,
-                                style: GetTextTheme.sf12_regular)))
-                    : Expanded(
-                        child: SizedBox(
-                            child: Text(_pickedFile!.path.split('/').last,
-                                style: GetTextTheme.sf12_regular)))
+                // AppServices.addWidth(10.w),
+                // _pickedFile == null
+                //     ? Expanded(
+                //         child: SizedBox(
+                //             child: Text(widget.category.image.split("/").last,
+                //                 style: GetTextTheme.sf12_regular)))
+                //     : Expanded(
+                //         child: SizedBox(
+                //             child: Text(_pickedFile!.path.split('/').last,
+                //                 style: GetTextTheme.sf12_regular)))
               ],
             ),
             AppServices.addHeight(7.h),

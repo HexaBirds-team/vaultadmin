@@ -9,9 +9,12 @@ class AppColors {
   static const Color lightgreyColor = Color(0xffD9D9D9);
   static const Color blackColor = Color(0xff000000);
   static const Color whiteColor = Colors.white;
+  static const Color transparent = Colors.transparent;
   static const Color greyColor = Colors.grey;
   static const grey50 = Color(0xffe8e8e8);
+  static const grey100 = Color(0xffE3E3E3);
   static const Color primary1 = Color(0xff0096FF);
+  static const Color purple50 = Color(0xff4E51FF);
   static const Color primary2 = Color(0xffE384FF);
   static const Color purpleColor = Color(0xff655DBB);
   static const Color greenColor = Color(0xff00BF13);
@@ -19,6 +22,8 @@ class AppColors {
   static const Color redColor = Color(0xffF44336);
   static const lightgreenColor = Color(0xFFB6E388);
   static const orangeColor = Color(0xFFF76c0F);
+  static const backgroundColor = Color(0xFFF5F5F5);
+
   static const Color blueColor = Colors.blue;
   static LinearGradient appGradientColor = const LinearGradient(
       begin: Alignment.topLeft,

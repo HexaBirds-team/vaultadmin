@@ -1,5 +1,5 @@
 class AppConfig {
-  static const String appName = "Vault Admin";
+  static const String appName = "Dial Vault Admin";
   static const String logoBlack = "assets/logo_black.png";
   static const String logoWhite = "assets/logo_white.png";
   static const double screenWidth = 393;

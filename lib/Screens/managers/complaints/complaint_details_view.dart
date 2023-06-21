@@ -1,11 +1,12 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
+import 'package:valt_security_admin_panel/Screens/managers/users/user_profile_view.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_icon.dart';
 import 'package:valt_security_admin_panel/components/simple_textfield.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
@@ -31,7 +32,7 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
   final _msgController = TextEditingController();
 
   ComplaintStatus status = ComplaintStatus.resolved;
-  List<Map<String, dynamic>> complaints = [];
+  List<dynamic> complaints = [];
   @override
   void initState() {
     super.initState();
@@ -67,50 +68,59 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 20.sp, vertical: 15.sp),
           children: [
-            InkWell(
-              onTap: () => {},
-              child: Container(
-                padding: EdgeInsets.all(10.sp),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.r),
-                    color: Theme.of(context).primaryColor,
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.greyColor.withOpacity(0.4),
-                          blurRadius: 8)
-                    ]),
-                margin: EdgeInsets.symmetric(vertical: 5.sp),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                        borderRadius: BorderRadius.circular(5.r),
-                        child: CachedNetworkImage(
-                            height: 70.sp,
-                            width: 70.sp,
-                            imageUrl: widget.data.complaintBy == "user"
-                                ? user.first.image
-                                : guard.first.profileImage,
-                            fit: BoxFit.cover)),
-                    AppServices.addWidth(20.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                              widget.data.complaintBy == "user"
-                                  ? user.first.username
-                                  : guard.first.name,
-                              style: GetTextTheme.sf16_medium),
-                          AppServices.addHeight(5.h),
-                          Text(
-                              "phone : ${widget.data.complaintBy == "user" ? user.first.phone : guard.first.phone}",
-                              style: GetTextTheme.sf14_regular
-                                  .copyWith(color: AppColors.greyColor)),
-                        ],
-                      ),
+            Container(
+              padding: EdgeInsets.all(10.sp),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.r),
+                  color: Theme.of(context).primaryColor,
+                  boxShadow: [
+                    BoxShadow(
+                        color: AppColors.greyColor.withOpacity(0.4),
+                        blurRadius: 8)
+                  ]),
+              margin: EdgeInsets.symmetric(vertical: 5.sp),
+              child: Row(
+                children: [
+                  ClipRRect(
+                      borderRadius: BorderRadius.circular(5.r),
+                      child: CachedNetworkImage(
+                          height: 70.sp,
+                          width: 70.sp,
+                          imageUrl: widget.data.complaintBy == "user"
+                              ? user.first.image
+                              : guard.first.profileImage,
+                          fit: BoxFit.cover)),
+                  AppServices.addWidth(20.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            widget.data.complaintBy == "user"
+                                ? user.first.username
+                                : guard.first.name,
+                            style: GetTextTheme.sf16_medium),
+                        AppServices.addHeight(5.h),
+                        Text(
+                            "phone : ${widget.data.complaintBy == "user" ? user.first.phone : guard.first.phone}",
+                            style: GetTextTheme.sf14_regular
+                                .copyWith(color: AppColors.greyColor)),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: AppColors.greenColor,
+                          foregroundColor: AppColors.whiteColor),
+                      onPressed: () {
+                        widget.data.complaintBy == "user"
+                            ? AppServices.pushTo(
+                                context, UserProfileView(user: user.first))
+                            : AppServices.pushTo(context,
+                                GuardProfileView(providerDetails: guard.first));
+                      },
+                      child: const Text("View Profile"))
+                ],
               ),
             ),
             Container(
@@ -230,30 +240,51 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                 ],
               ),
             ),
-            FirebaseAnimatedList(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                query: getUrl(),
-                itemBuilder: (context, snapshot, animation, i) {
-                  var data = snapshot.value as Map<Object?, Object?>;
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 15.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                            "➤   ${DateFormat("EEEE, MMMM dd, yyyy").format(DateTime.parse(data['sentOn'].toString()))}",
-                            style: GetTextTheme.sf14_bold),
-                        AppServices.addHeight(8.h),
-                        Text(
-                          data['msg'].toString(),
-                          style: GetTextTheme.sf16_regular,
-                        )
-                      ],
-                    ),
-                  );
-                })
+
+            ...List.generate(complaints.length, (index) {
+              var data = complaints[index];
+              return Container(
+                margin: EdgeInsets.only(bottom: 15.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                        "➤   ${DateFormat("EEEE, MMMM dd, yyyy").format(DateTime.parse(data['sentOn'].toString()))}",
+                        style: GetTextTheme.sf14_bold),
+                    AppServices.addHeight(8.h),
+                    Text(
+                      data['msg'].toString(),
+                      style: GetTextTheme.sf16_regular,
+                    )
+                  ],
+                ),
+              );
+            })
+            // FirebaseAnimatedList(
+            //     shrinkWrap: true,
+            //     physics: const NeverScrollableScrollPhysics(),
+            //     query: getUrl(),
+            //     itemBuilder: (context, snapshot, animation, i) {
+            //       var data = snapshot.value as Map<Object?, Object?>;
+            // return Container(
+            //   margin: EdgeInsets.only(bottom: 15.h),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.start,
+            //     mainAxisSize: MainAxisSize.min,
+            //     children: [
+            //       Text(
+            //           "➤   ${DateFormat("EEEE, MMMM dd, yyyy").format(DateTime.parse(data['sentOn'].toString()))}",
+            //           style: GetTextTheme.sf14_bold),
+            //       AppServices.addHeight(8.h),
+            //       Text(
+            //         data['msg'].toString(),
+            //         style: GetTextTheme.sf16_regular,
+            //       )
+            //     ],
+            //   ),
+            // );
+            //     })
           ],
         ),
       ),
