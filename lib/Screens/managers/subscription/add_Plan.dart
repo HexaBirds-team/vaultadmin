@@ -71,33 +71,61 @@ class _AddPlanInSubScriptionState extends State<AddPlanInSubScription> {
     final TextEditingController searchCode = TextEditingController();
 
     return Scaffold(
-      appBar: customAppBar(
-          context: context, title: const Text("Add Plan"), autoLeading: true),
+      appBar: customAppBar(context: context, title: null, autoLeading: true),
       body: SingleChildScrollView(
         child: Padding(
           padding:
               EdgeInsets.symmetric(horizontal: 20.w).copyWith(bottom: 20.h),
           child: Column(
             children: [
-              Container(
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(5.sp)),
-                child: TextField(
-                  controller: searchCode,
-                  decoration: InputDecoration(
-                    hintText: "Pin Code",
-                    hintStyle: GetTextTheme.sf20_medium,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 12.h, horizontal: 15.w),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.r),
-                        borderSide: BorderSide.none),
-                    fillColor: AppColors.grey100,
-                    filled: true,
+              Row(
+                children: [
+                  Text("Pin Code", style: GetTextTheme.sf18_medium),
+                  AppServices.addWidth(20.w),
+                  Expanded(
+                    child: Autocomplete(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text == "") {
+                          return const Iterable<String>.empty();
+                        } else {
+                          List<String> matches = [];
+                          matches.addAll(
+                              serviceAreaCode.map((e) => e.pincode).toList());
+
+                          matches.retainWhere((e) {
+                            return e.startsWith(textEditingValue.text);
+                          });
+
+                          return matches;
+                        }
+                      },
+                      onSelected: (String selection) {
+                        print(selection);
+                      },
+                      fieldViewBuilder: (BuildContext context,
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          VoidCallback onFieldSubmitted) {
+                        return TextField(
+                          decoration: InputDecoration(
+                              fillColor: AppColors.grey50,
+                              filled: true,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  borderSide: BorderSide.none),
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 20.w, vertical: 10.h)),
+                          controller: textEditingController,
+                          focusNode: focusNode,
+                          onSubmitted: (String value) {},
+                        );
+                      },
+                    ),
                   ),
-                ),
+                ],
               ),
-              AppServices.addHeight(10.h),
+              AppServices.addHeight(20.h),
               SubscriptionForm(
                   hourBasic: hourBasic,
                   hourStandard: hourStandard,

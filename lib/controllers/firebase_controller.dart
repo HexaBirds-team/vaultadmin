@@ -157,6 +157,7 @@ class FirebaseController {
   addNewCategoryCallback(
     Map<String, dynamic> data,
   ) async {
+    db().setLoader(true);
     try {
       final snapshot = await FirestoreApiReference.categoryPath.add(data);
       db().addNewCategory(CategoryClass.fromCategory(data, snapshot.id));
@@ -167,14 +168,18 @@ class FirebaseController {
               .add(difference.toJson());
         }
       }
+      db().setLoader(false);
       AppServices.popView(context);
     } on FirebaseException catch (e) {
       MySnackBar.error(
           context, "Add Category error : \n${e.message.toString()}");
+      db().setLoader(false);
     } on SocketException {
       MySnackBar.info(context, "Internet Error");
+      db().setLoader(false);
     } catch (e) {
       MySnackBar.error(context, "Add Category error : \n${e.toString()}");
+      db().setLoader(false);
     }
   }
 

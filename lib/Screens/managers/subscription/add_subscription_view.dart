@@ -76,11 +76,13 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
     final db = Provider.of<AppDataController>(context);
 
     return WillPopScope(
-        onWillPop: () => !formSubmit
-            ? FancyDialogController().willCloseWindow(context, () async {
-                await storage.refFromURL(widget.category['image']).delete();
-                AppServices.popView(context);
-              })
+        onWillPop: () async => !formSubmit
+            ? {
+                await FancyDialogController().willCloseWindow(context, () {
+                  storage.refFromURL(widget.category['image']).delete();
+                  AppServices.popView(context);
+                }).show()
+              }
             : AppServices.popView(context),
         child: Scaffold(
             backgroundColor: AppColors.backgroundColor,
@@ -144,39 +146,44 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
                                   style: GetTextTheme.sf16_regular))
                     ],
                   ),
-                  Container(
-                    width: AppServices.getScreenWidth(context),
-                    decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
-                        borderRadius: BorderRadius.circular(10.r)),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Consumer<AppDataController>(
-                          builder: (context, value, child) {
-                            if (value.getSubDifference.isEmpty) {
-                              return const SizedBox();
-                            } else {
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: value.getSubDifference.length,
-                                itemBuilder: (context, index) {
-                                  return subDifferenceModelTiel(
-                                      value.getSubDifference[index]);
-                                },
-                              );
-                            }
-                          },
-                        ),
-                        AppServices.addHeight(50.h),
-                        ButtonOneExpanded(
-                            onPressed: () {
-                              onSave();
-                            },
-                            btnText: "Save")
-                      ],
-                    ),
-                  ),
+                  Consumer<AppDataController>(builder: (context, value, child) {
+                    return value.getSubDifference.isEmpty
+                        ? const SizedBox()
+                        : Container(
+                            width: AppServices.getScreenWidth(context),
+                            decoration: BoxDecoration(
+                                color: AppColors.whiteColor,
+                                borderRadius: BorderRadius.circular(10.r)),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: value.getSubDifference.length,
+                                  itemBuilder: (context, index) {
+                                    return subDifferenceModelTiel(
+                                        value.getSubDifference[index]);
+                                  },
+                                )
+                                // Consumer<AppDataController>(
+                                //   builder: (context, value, child) {
+                                //     if (value.getSubDifference.isEmpty) {
+                                //       return const SizedBox();
+                                //     } else {
+                                //       return
+                                //     }
+                                //   },
+                                // ),
+                              ],
+                            ),
+                          );
+                  }),
+                  AppServices.addHeight(50.h),
+                  ButtonOneExpanded(
+                      onPressed: () {
+                        onSave();
+                      },
+                      btnText: "Save")
                 ]),
               ),
             )));
