@@ -120,7 +120,6 @@ class _AddPlanInSubScriptionState extends State<AddPlanInSubScription> {
               AppServices.addHeight(20.h),
               ButtonOneExpanded(
                   onPressed: () {
-                    print(searchCode.text);
                     db.addSubDifference(SubDifferenceModel(
                       DateTime.now().millisecondsSinceEpoch.toString(),
                       searchCode.text,
