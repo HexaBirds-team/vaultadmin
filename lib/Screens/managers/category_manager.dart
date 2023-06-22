@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/Screens/managers/edit_category.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/pop_ups/edit_category_dialog.dart';
 
@@ -52,12 +53,17 @@ class _AdminCategoryManagerState extends State<AdminCategoryManager> {
                       childAspectRatio: 0.75),
                   itemBuilder: (context, i) {
                     return InkWell(
-                      onTap: () => showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (context) => StatefulBuilder(
-                              builder: (context, state) => EditCategoryDialog(
-                                  category: categoryList[i]))),
+                      onTap: () => AppServices.pushTo(
+                          context,
+                          EditCategoryScreen(
+                            categoryClass: categoryList[i],
+                          )),
+                      // onTap: () => showDialog(
+                      //     barrierDismissible: false,
+                      //     context: context,
+                      //     builder: (context) => StatefulBuilder(
+                      //   builder: (context, state) => EditCategoryDialog(
+                      //             category: categoryList[i]))),
                       child: Container(
                         decoration: WidgetDecoration.containerDecoration_1(
                             context,

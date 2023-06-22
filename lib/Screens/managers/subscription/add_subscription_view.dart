@@ -7,8 +7,10 @@ import 'package:valt_security_admin_panel/Screens/managers/subscription/add_Plan
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
+import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
+import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
@@ -16,7 +18,9 @@ import 'package:valt_security_admin_panel/models/app_models.dart';
 import '../../../components/Subscription/subscription_form.dart';
 
 class AddSubscriptionView extends StatefulWidget {
+  // bool isEDit =false;
   Map<String, dynamic> category;
+
   AddSubscriptionView({super.key, required this.category});
 
   @override
@@ -73,8 +77,6 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
 
   @override
   Widget build(BuildContext context) {
-    final db = Provider.of<AppDataController>(context);
-
     return WillPopScope(
         onWillPop: () => !formSubmit
             ? FancyDialogController().willCloseWindow(context, () async {
@@ -147,7 +149,6 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
                   Container(
                     width: AppServices.getScreenWidth(context),
                     decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
                         borderRadius: BorderRadius.circular(10.r)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -169,11 +170,14 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
                           },
                         ),
                         AppServices.addHeight(50.h),
-                        ButtonOneExpanded(
-                            onPressed: () {
-                              onSave();
-                            },
-                            btnText: "Save")
+                        Consumer<AppDataController>(
+                            builder: (context, data, child) => data.appLoading
+                                ? const OnViewLoader()
+                                : ButtonOneExpanded(
+                                    onPressed: () {
+                                      onSave(context);
+                                    },
+                                    btnText: "Save"))
                       ],
                     ),
                   ),
@@ -241,50 +245,75 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
     );
   }
 
-  onSave() async {
-    Map<String, dynamic> data = {
-      "monthly": {
-        "hourly": {
-          "basic": monthlyHourBasic.text,
-          "standard": monthlyHourStandard.text,
-          "premium": monthlyHourPremium.text
+  onSave(BuildContext context) async {
+    bool isValid = hourBasic.text.isNotEmpty &&
+        hourStandard.text.isNotEmpty &&
+        hourPremium.text.isNotEmpty &&
+        singleShiftBasic.text.isNotEmpty &&
+        singleShiftPremium.text.isNotEmpty &&
+        singleShiftStandard.text.isNotEmpty &&
+        multipleDayHourBasic.text.isNotEmpty &&
+        multipleDayHourStandard.text.isNotEmpty &&
+        multipleDayHourPremium.text.isNotEmpty &&
+        multipleDayShiftBasic.text.isNotEmpty &&
+        multipleDayShiftStandard.text.isNotEmpty &&
+        multipleDayShiftPremium.text.isNotEmpty &&
+        monthlyHourBasic.text.isNotEmpty &&
+        monthlyHourStandard.text.isNotEmpty &&
+        monthlyHourPremium.text.isNotEmpty &&
+        monthlyShiftBasic.text.isNotEmpty &&
+        monthlyShiftPremium.text.isNotEmpty &&
+        monthlyShiftStandard.text.isNotEmpty;
+    if (isValid) {
+      final db = Provider.of<AppDataController>(context, listen: false);
+      Map<String, dynamic> data = {
+        "monthly": {
+          "hourly": {
+            "basic": monthlyHourBasic.text,
+            "standard": monthlyHourStandard.text,
+            "premium": monthlyHourPremium.text
+          },
+          "shift": {
+            "basic": monthlyShiftBasic.text,
+            "standard": monthlyShiftStandard.text,
+            "premium": monthlyShiftPremium.text
+          }
         },
-        "shift": {
-          "basic": monthlyShiftBasic.text,
-          "standard": monthlyShiftStandard.text,
-          "premium": monthlyShiftPremium.text
-        }
-      },
-      "multipleDay": {
-        "hourly": {
-          "basic": multipleDayHourBasic.text,
-          "standard": multipleDayHourStandard.text,
-          "premium": multipleDayHourPremium.text
+        "multipleDay": {
+          "hourly": {
+            "basic": multipleDayHourBasic.text,
+            "standard": multipleDayHourStandard.text,
+            "premium": multipleDayHourPremium.text
+          },
+          "shift": {
+            "basic": multipleDayShiftBasic.text,
+            "standard": multipleDayShiftStandard.text,
+            "premium": multipleDayShiftPremium.text
+          }
         },
-        "shift": {
-          "basic": multipleDayShiftBasic.text,
-          "standard": multipleDayShiftStandard.text,
-          "premium": multipleDayShiftPremium.text
+        "singleDay": {
+          "hourly": {
+            "basic": hourBasic.text,
+            "standard": hourStandard.text,
+            "premium": hourPremium.text
+          },
+          "shift": {
+            "basic": singleShiftBasic.text,
+            "standard": singleShiftStandard.text,
+            "premium": singleShiftPremium.text
+          }
         }
-      },
-      "singleDay": {
-        "hourly": {
-          "basic": hourBasic.text,
-          "standard": hourStandard.text,
-          "premium": hourPremium.text
-        },
-        "shift": {
-          "basic": singleShiftBasic.text,
-          "standard": singleShiftStandard.text,
-          "premium": singleShiftPremium.text
-        }
-      }
-    };
+      };
 
-    data.addAll(widget.category);
-    await FirebaseController(context).addNewCategoryCallback(data);
-    setState(() {
-      formSubmit = true;
-    });
+      data.addAll(widget.category);
+      await FirebaseController(context).addNewCategoryCallback(data);
+
+      setState(() {
+        formSubmit = true;
+      });
+      db.resetSubDifference();
+    } else {
+      MySnackBar.error(context, "All fields are Mandatory");
+    }
   }
 }

@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/Subscription/subscription_form.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
+import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
+import 'package:valt_security_admin_panel/components/loaders/full_screen_loader.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
+import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
@@ -120,35 +123,57 @@ class _AddPlanInSubScriptionState extends State<AddPlanInSubScription> {
               AppServices.addHeight(20.h),
               ButtonOneExpanded(
                   onPressed: () {
-                    db.addSubDifference(SubDifferenceModel(
-                      DateTime.now().millisecondsSinceEpoch.toString(),
-                      searchCode.text,
-                      ShiftModel(
-                          intConvert(monthlyHourBasic.text),
-                          intConvert(monthlyHourStandard.text),
-                          intConvert(monthlyHourPremium.text)),
-                      ShiftModel(
-                          intConvert(monthlyShiftBasic.text),
-                          intConvert(monthlyShiftStandard.text),
-                          intConvert(monthlyShiftPremium.text)),
-                      ShiftModel(
-                          intConvert(multipleDayHourBasic.text),
-                          intConvert(multipleDayHourStandard.text),
-                          intConvert(multipleDayHourPremium.text)),
-                      ShiftModel(
-                          intConvert(multipleDayShiftBasic.text),
-                          intConvert(multipleDayShiftStandard.text),
-                          intConvert(multipleDayShiftPremium.text)),
-                      ShiftModel(
-                          intConvert(hourBasic.text),
-                          intConvert(hourStandard.text),
-                          intConvert(hourPremium.text)),
-                      ShiftModel(
-                          intConvert(singleShiftBasic.text),
-                          intConvert(singleShiftStandard.text),
-                          intConvert(singleShiftPremium.text)),
-                    ));
-                    Navigator.pop(context);
+                    bool isValid = hourBasic.text.isNotEmpty &&
+                        hourStandard.text.isNotEmpty &&
+                        hourPremium.text.isNotEmpty &&
+                        singleShiftBasic.text.isNotEmpty &&
+                        singleShiftPremium.text.isNotEmpty &&
+                        singleShiftStandard.text.isNotEmpty &&
+                        multipleDayHourBasic.text.isNotEmpty &&
+                        multipleDayHourStandard.text.isNotEmpty &&
+                        multipleDayHourPremium.text.isNotEmpty &&
+                        multipleDayShiftBasic.text.isNotEmpty &&
+                        multipleDayShiftStandard.text.isNotEmpty &&
+                        multipleDayShiftPremium.text.isNotEmpty &&
+                        monthlyHourBasic.text.isNotEmpty &&
+                        monthlyHourStandard.text.isNotEmpty &&
+                        monthlyHourPremium.text.isNotEmpty &&
+                        monthlyShiftBasic.text.isNotEmpty &&
+                        monthlyShiftPremium.text.isNotEmpty &&
+                        monthlyShiftStandard.text.isNotEmpty;
+                    if (isValid && searchCode.text.isNotEmpty) {
+                      db.addSubDifference(SubDifferenceModel(
+                        DateTime.now().millisecondsSinceEpoch.toString(),
+                        searchCode.text,
+                        ShiftModel(
+                            intConvert(monthlyHourBasic.text),
+                            intConvert(monthlyHourStandard.text),
+                            intConvert(monthlyHourPremium.text)),
+                        ShiftModel(
+                            intConvert(monthlyShiftBasic.text),
+                            intConvert(monthlyShiftStandard.text),
+                            intConvert(monthlyShiftPremium.text)),
+                        ShiftModel(
+                            intConvert(multipleDayHourBasic.text),
+                            intConvert(multipleDayHourStandard.text),
+                            intConvert(multipleDayHourPremium.text)),
+                        ShiftModel(
+                            intConvert(multipleDayShiftBasic.text),
+                            intConvert(multipleDayShiftStandard.text),
+                            intConvert(multipleDayShiftPremium.text)),
+                        ShiftModel(
+                            intConvert(hourBasic.text),
+                            intConvert(hourStandard.text),
+                            intConvert(hourPremium.text)),
+                        ShiftModel(
+                            intConvert(singleShiftBasic.text),
+                            intConvert(singleShiftStandard.text),
+                            intConvert(singleShiftPremium.text)),
+                      ));
+                      Navigator.pop(context);
+                    } else {
+                      MySnackBar.error(context, "All fields are Mandatory");
+                    }
                   },
                   btnText: "Save Subscription")
             ],
