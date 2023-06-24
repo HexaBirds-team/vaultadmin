@@ -194,7 +194,8 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             AppServices.addHeight(10.h),
             documents.isEmpty
                 ? AppServices.getEmptyIcon(
-                    "Documents are not available for the guard.", "Documents")
+                    "Guard have not updated his/her documents yet.",
+                    "Documents Not Found")
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -378,21 +379,9 @@ class _GuardProfileViewState extends State<GuardProfileView> {
 
   updateDocStatus(ProvidersInformationClass guard) async {
     loading = true;
-    Map<String, dynamic> data = {
-      "title": "Invalid KYC documents",
-      "body":
-          "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
-      "route": "/documents",
-      "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "KYC",
-      "receiver": guard.uid
-    };
 
     if (invalidDocuments.isNotEmpty) {
-      for (var token in guard.tokens) {
-        await NotificationController().sendFCM(data, token);
-      }
-      NotificationController().uploadNotification("Notifications", data);
+      await NotificationController().guardDocInvalidNotification(guard);
       for (var doc in invalidDocuments) {
         await AuthController().updateDocumentStatus(
             guard.uid, doc, DocumentState.invalid, context);

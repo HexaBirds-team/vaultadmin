@@ -114,6 +114,7 @@ class _AddNewCategoryPopUpState extends State<AddNewCategoryPopUp> {
     value.setLoader(true);
     if (_key.currentState!.validate() && _pickedFile != null) {
       var data = await getFormData();
+      value.resetSubDifference();
       AppServices.popView(context);
       AppServices.pushTo(context, AddSubscriptionView(category: data));
       value.setLoader(false);

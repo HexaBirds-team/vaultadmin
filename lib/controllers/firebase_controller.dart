@@ -95,21 +95,30 @@ class FirebaseController {
 
   // function to edit  category
   editCategoryCallBack(Map<String, dynamic> data, String id) async {
+    db().setLoader(true);
     try {
-      await FirestoreApiReference.categoryPath.doc(id).update(data).then(
-          (value) => db().updateCategory(CategoryClass.fromCategory(data, id)));
-
-      MySnackBar.success(context, "category updated successfully");
+      await FirestoreApiReference.categoryPath.doc(id).update(data);
+      db().updateCategory(CategoryClass.fromCategory(data, id));
+      var differenceData = db().getSubDifference;
+      if (differenceData.isNotEmpty) {
+        for (var difference in differenceData) {
+          await FirestoreApiReference.subDifferencePath(id)
+              .doc(difference.id)
+              .set(difference.toJson());
+        }
+      }
+      db().setLoader(false);
       AppServices.popView(context);
     } on FirebaseException catch (e) {
-      MySnackBar.error(context, e.message.toString());
-      AppServices.popView(context);
+      MySnackBar.error(
+          context, "Add Category error : \n${e.message.toString()}");
+      db().setLoader(false);
     } on SocketException {
       MySnackBar.info(context, "Internet Error");
-      AppServices.popView(context);
+      db().setLoader(false);
     } catch (e) {
-      MySnackBar.error(context, e.toString());
-      AppServices.popView(context);
+      MySnackBar.error(context, "Add Category error : \n${e.toString()}");
+      db().setLoader(false);
     }
   }
 
@@ -645,6 +654,77 @@ class FirebaseController {
       MySnackBar.error(context, e.toString());
     }
   }
+
+  getSubDifference(String catId) async {
+    db().setLoader(true);
+    try {
+      final snapshot =
+          await FirestoreApiReference.subDifferencePath(catId).get();
+      db().setSubDifference(snapshot.docs
+          .map((e) => SubDifferenceModel.fromJson(e.data(), e.id))
+          .toList());
+      db().setLoader(false);
+    } on FirebaseException catch (e) {
+      db().setLoader(false);
+      MySnackBar.error(context, e.message.toString());
+    } on SocketException {
+      db().setLoader(false);
+      MySnackBar.info(context, "Internet Error");
+    } catch (e) {
+      db().setLoader(false);
+      MySnackBar.error(context, e.toString());
+    }
+  }
+
+  updateOfferIsDisabled(bool status, String id) async {
+    db().setLoader(true);
+    try {
+      await database.ref("Offers/$id").update({"isDisabled": status});
+      db().updateOfferDisableStatus(status, id);
+      db().setLoader(false);
+    } on FirebaseException catch (e) {
+      db().setLoader(false);
+      MySnackBar.error(context, e.message.toString());
+    } on SocketException {
+      db().setLoader(false);
+      MySnackBar.info(context, "Internet Error");
+    } catch (e) {
+      db().setLoader(false);
+      MySnackBar.error(context, e.toString());
+    }
+  }
+
+  deleteOffer(String id) async {
+    db().setLoader(true);
+    try {
+      await database.ref("Offers/$id").remove();
+      db().deleteOffer(id);
+      db().setLoader(false);
+    } on FirebaseException catch (e) {
+      db().setLoader(false);
+      MySnackBar.error(context, e.message.toString());
+    } on SocketException {
+      db().setLoader(false);
+      MySnackBar.info(context, "Internet Error");
+    } catch (e) {
+      db().setLoader(false);
+      MySnackBar.error(context, e.toString());
+    }
+  }
+
+  // addSubDifference(String catId, Map<String, dynamic> data) async {
+  //   try {
+  //     final snapshot =
+  //         await FirestoreApiReference.subDifferencePath(catId).add(data);
+  //     db().addSubDifference(SubDifferenceModel.fromJson(data, snapshot.id));
+  //   } on FirebaseException catch (e) {
+  //     MySnackBar.error(context, e.message.toString());
+  //   } on SocketException {
+  //     MySnackBar.info(context, "Internet Error");
+  //   } catch (e) {
+  //     MySnackBar.error(context, e.toString());
+  //   }
+  // }
 
   // function to add service
 }

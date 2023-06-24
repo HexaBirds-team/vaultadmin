@@ -25,6 +25,7 @@ class AppIcons {
   static const String phoneIcon = 'assets/icons/phoneIcon.png';
   static const String successIcon = 'assets/icons/successIcon.png';
   static const String questionMarkIcon = 'assets/icons/questionMark.png';
+  static const String offerIcon = 'assets/icons/offer.png';
   // Favorites Tab Icon
   static const String sortByIcon = 'assets/icons/sortByIcon.png';
   static const String filterIcon = 'assets/icons/filterIcon.png';
@@ -60,6 +61,11 @@ class AppImages {
   static const String avatarPlaceholder = "assets/images/avatarPlaceholder.png";
   static const String emptyImage = "assets/images/empty.jpg";
   static const String splashImage = "assets/images/splash_logo.png";
+  static const String noBookingImage = "assets/images/no_booking.png";
+  static const String noDataImage = "assets/images/no_data.png";
+  static const String noNotificationImage = "assets/images/no_notification.png";
+  static const String noComplaintImage = "assets/images/no_complaint.png";
+  static const String noResultImage = "assets/images/no_result.png";
 }
 
 class AppNetWorkImages {

@@ -1,7 +1,9 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:valt_security_admin_panel/controllers/data_validation_controller.dart';
 
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
@@ -66,80 +68,11 @@ class CreateSubscriptionTile extends StatelessWidget {
                 AppServices.addHeight(10.h),
                 Row(
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Basic", style: GetTextTheme.sf18_medium),
-                          AppServices.addHeight(5.h),
-                          TextField(
-                            controller: hourbasic,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12.h, horizontal: 15.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.r),
-                                  borderSide: BorderSide.none),
-                              fillColor: AppColors.grey100,
-                              filled: true,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    SubTextField("Basic", hourbasic),
                     AppServices.addWidth(10.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Standard", style: GetTextTheme.sf18_medium),
-                          AppServices.addHeight(5.h),
-                          TextField(
-                            controller: hourStandard,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12.h, horizontal: 15.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.r),
-                                  borderSide: BorderSide.none),
-                              fillColor: AppColors.grey100,
-                              filled: true,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    SubTextField("Standard", hourStandard),
                     AppServices.addWidth(10.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Premium", style: GetTextTheme.sf18_medium),
-                          AppServices.addHeight(5.h),
-                          TextField(
-                            controller: hourPremium,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12.h, horizontal: 15.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.r),
-                                  borderSide: BorderSide.none),
-                              fillColor: AppColors.grey100,
-                              filled: true,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    SubTextField("Premium", hourPremium)
                   ],
                 ),
                 AppServices.addHeight(20.h),
@@ -159,83 +92,47 @@ class CreateSubscriptionTile extends StatelessWidget {
                 AppServices.addHeight(10.h),
                 Row(
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Basic", style: GetTextTheme.sf18_medium),
-                          AppServices.addHeight(5.h),
-                          TextField(
-                            controller: shiftbasic,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12.h, horizontal: 15.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.r),
-                                  borderSide: BorderSide.none),
-                              fillColor: AppColors.grey100,
-                              filled: true,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    SubTextField("Basic", shiftbasic),
                     AppServices.addWidth(10.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Standard", style: GetTextTheme.sf18_medium),
-                          AppServices.addHeight(5.h),
-                          TextField(
-                            controller: shiftStandard,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12.h, horizontal: 15.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.r),
-                                  borderSide: BorderSide.none),
-                              fillColor: AppColors.grey100,
-                              filled: true,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    SubTextField("Standard", shiftStandard),
                     AppServices.addWidth(10.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Premium", style: GetTextTheme.sf18_medium),
-                          AppServices.addHeight(5.h),
-                          TextField(
-                            controller: shiftPremium,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12.h, horizontal: 15.w),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.r),
-                                  borderSide: BorderSide.none),
-                              fillColor: AppColors.grey100,
-                              filled: true,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    SubTextField("Premium", shiftPremium),
                   ],
                 )
               ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Expanded SubTextField(String title, TextEditingController controller) {
+    RegExp expression = RegExp(r'^\d+(?:-\d+)?$');
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(title, style: GetTextTheme.sf18_medium),
+          AppServices.addHeight(5.h),
+          TextFormField(
+            controller: controller,
+            validator: (v) =>
+                DataValidationController().validateTextInput(v, "amount"),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(expression)
+            ],
+            decoration: InputDecoration(
+              isDense: true,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 12.h, horizontal: 15.w),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.r),
+                  borderSide: BorderSide.none),
+              fillColor: AppColors.grey100,
+              filled: true,
             ),
           )
         ],

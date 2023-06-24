@@ -27,7 +27,7 @@ class _AllUserManagerViewState extends State<AllUserManagerView> {
       body: SafeArea(
           child: userList.isEmpty
               ? AppServices.getEmptyIcon(
-                  "There are no new users available.", "User")
+                  "There are no new users available.", "No Data Found")
               : GridView.builder(
                   itemCount: userList.length,
                   padding:

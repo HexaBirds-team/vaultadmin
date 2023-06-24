@@ -5,6 +5,7 @@ import 'package:valt_security_admin_panel/components/search_textfield.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 
 import '../../../helpers/base_getters.dart';
+import '../../../helpers/icons_and_images.dart';
 import '../../../models/enums.dart';
 import '../../dashboard/new_bookings_tile.dart';
 
@@ -23,7 +24,19 @@ class _BookingManagerState extends State<BookingManager> {
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
-    final bookings = db.getBookings;
+    final bookings = status == BookingStatus.all
+        ? db.getBookings
+            .where((element) => element.bookingId
+                .toLowerCase()
+                .startsWith(searchValue.toLowerCase()))
+            .toList()
+        : db.getBookings
+            .where((element) =>
+                element.bookingStatus == status.name &&
+                element.bookingId
+                    .toLowerCase()
+                    .startsWith(searchValue.toLowerCase()))
+            .toList();
     bookings.sort((a, b) => b.bookingTime.compareTo(a.bookingTime));
     return Scaffold(
       appBar: AppBar(
@@ -53,8 +66,35 @@ class _BookingManagerState extends State<BookingManager> {
               ))),
       body: SafeArea(
           child: bookings.isEmpty
-              ? AppServices.getEmptyIcon(
-                  "There are no new bookings available.", "Bookings")
+              ? status != BookingStatus.all &&
+                      db.getBookings
+                          .where(
+                              (element) => element.bookingStatus == status.name)
+                          .isEmpty
+                  ? AppServices.getEmptyIcon(
+                      status == BookingStatus.completed
+                          ? "Looks like no bookings have been completed yet"
+                          : status == BookingStatus.cancelled
+                              ? "No one has cancelled their booking"
+                              : "Looks like no one have booked any guard yet.",
+                      "No Bookings Yet",
+                      image: AppImages.noBookingImage)
+                  : searchValue.isNotEmpty
+                      ? Center(
+                          child: Image.asset(
+                            AppImages.noResultImage,
+                            height: 150.h,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : AppServices.getEmptyIcon(
+                          status == BookingStatus.completed
+                              ? "Looks like no bookings have been completed yet"
+                              : status == BookingStatus.cancelled
+                                  ? "No one has cancelled their booking"
+                                  : "Looks like no one have booked any guard yet.",
+                          "No Bookings Yet",
+                          image: AppImages.noBookingImage)
               : ListView.builder(
                   itemCount: bookings.length,
                   padding:
@@ -62,19 +102,20 @@ class _BookingManagerState extends State<BookingManager> {
                   shrinkWrap: true,
                   itemBuilder: (context, i) {
                     final booking = bookings[i];
-                    return status == BookingStatus.all
-                        ? (booking.bookingId
-                                .toLowerCase()
-                                .startsWith(searchValue.toLowerCase())
-                            ? NewBookingsTile(booking: booking)
-                            : const SizedBox())
-                        : (booking.bookingStatus == status.name
-                            ? (booking.bookingId
-                                    .toLowerCase()
-                                    .startsWith(searchValue.toLowerCase())
-                                ? NewBookingsTile(booking: booking)
-                                : const SizedBox())
-                            : const SizedBox());
+                    return NewBookingsTile(booking: booking);
+                    // status == BookingStatus.all
+                    //     ? (booking.bookingId
+                    //             .toLowerCase()
+                    //             .startsWith(searchValue.toLowerCase())
+                    //         ? NewBookingsTile(booking: booking)
+                    //         : const SizedBox())
+                    //     : (booking.bookingStatus == status.name
+                    //         ? (booking.bookingId
+                    //                 .toLowerCase()
+                    //                 .startsWith(searchValue.toLowerCase())
+                    //             ? NewBookingsTile(booking: booking)
+                    //             : const SizedBox())
+                    //         : const SizedBox());
                   })),
     );
   }

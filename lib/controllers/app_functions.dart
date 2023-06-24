@@ -62,7 +62,7 @@ class FunctionsController {
     return location.first;
   }
 
-  generateId() {
+  generateId({int length = 7}) {
     List<String> characters = [
       "1",
       "2",
@@ -136,7 +136,7 @@ class FunctionsController {
       return characters[index];
     }
 
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < length; i++) {
       String character = randomChoice();
       id += character;
     }

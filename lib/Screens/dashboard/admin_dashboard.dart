@@ -12,7 +12,6 @@ import 'package:valt_security_admin_panel/Screens/managers/booking/booking_manag
 import 'package:valt_security_admin_panel/Screens/managers/complaints/complaints_tab_bar.dart';
 import 'package:valt_security_admin_panel/Screens/managers/provider_manager.dart';
 import 'package:valt_security_admin_panel/Screens/managers/users/users_manager.dart';
-import 'package:valt_security_admin_panel/Screens/settings.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
@@ -28,6 +27,8 @@ import '../../helpers/style_sheet.dart';
 import '../drawer_handler/admin_drawer.dart';
 import '../managers/request_manager.dart';
 
+import '../settings.dart';
+
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({Key? key}) : super(key: key);
 
@@ -40,6 +41,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  // String paymentResponse = "";
+  //Testing
+  // String mid = "TEST_MID_HERE";
+  // String PAYTM_MERCHANT_KEY = "TEST_KEY_HERE";
+  // String website = "WEBSTAGING";
+  // bool testing = true;
 
   // function to decode location
 
@@ -91,8 +99,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
             autoLeading: true,
             action: [
               IconButton(
-                  onPressed: () =>
-                      AppServices.pushTo(context, const SettingsView()),
+                  onPressed: () {
+                    AppServices.pushTo(context, const SettingsView());
+                    // generateTxnToken(0);
+                    // var response = AllInOneSdk.startTransaction(mid, orderId, amount, txnToken, callbackUrl, isStaging, restrictAppInvoke)
+                  },
                   icon: const Icon(Icons.settings))
             ]),
         body: WillPopScope(
@@ -160,7 +171,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   child: pendingGuard.isEmpty
                       ? AppServices.getEmptyIcon(
                           "There are no pending requests for new joinee.",
-                          "Data")
+                          "No Data Found")
                       : ListView.builder(
                           itemCount: pendingGuard.toList().length,
                           shrinkWrap: true,
@@ -188,7 +199,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   height: 180.sp,
                   child: userList.isEmpty
                       ? AppServices.getEmptyIcon(
-                          "There are no new users available", "User")
+                          "There are no new users available", "No User Found")
                       : ListView.builder(
                           itemCount: userList.length,
                           shrinkWrap: true,
@@ -204,11 +215,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
               AppServices.addHeight(15.h),
               bookingsList.isEmpty
                   ? AppServices.getEmptyIcon(
-                      "There are no new bookings available.", "Bookings")
+                      "Looks like no one have booked any guard yet.",
+                      "No Bookings Yet",
+                      image: AppImages.noBookingImage)
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: bookingsList.length,
+                      itemCount:
+                          bookingsList.length > 5 ? 5 : bookingsList.length,
                       itemBuilder: (context, i) {
                         final booking = bookingsList[i];
                         return NewBookingsTile(booking: booking);
@@ -233,6 +247,67 @@ class _AdminDashboardState extends State<AdminDashboard> {
       ],
     );
   }
+
+  // void generateTxnToken(int mode) async {
+  //   String orderId = DateTime.now().millisecondsSinceEpoch.toString();
+
+  //   String callBackUrl =
+  //       '${testing ? 'https://securegw-stage.paytm.in' : 'https://securegw.paytm.in'}/theia/paytmCallback?ORDER_ID=$orderId';
+  //   var url = 'https://desolate-anchorage-29312.herokuapp.com/generateTxnToken';
+
+  //   var body = json.encode({
+  //     "mid": mid,
+  //     "key_secret": PAYTM_MERCHANT_KEY,
+  //     "website": website,
+  //     "orderId": orderId,
+  //     "amount": "1",
+  //     "callbackUrl": callBackUrl,
+  //     "custId": "122",
+  //     "mode": mode.toString(),
+  //     "testing": testing ? 0 : 1
+  //   });
+
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(url),
+  //       body: body,
+  //       headers: {'Content-type': "application/json"},
+  //     );
+  //     print("Response is");
+  //     print(response.body);
+  //     String txnToken = response.body;
+  //     setState(() {
+  //       paymentResponse = txnToken;
+  //     });
+
+  //     var paytmResponse = Paytm.payWithPaytm(
+  //         mId: mid,
+  //         orderId: orderId,
+  //         txnToken: txnToken,
+  //         txnAmount: "1",
+  //         callBackUrl: callBackUrl,
+  //         staging: testing,
+  //         appInvokeEnabled: false);
+
+  //     paytmResponse.then((value) {
+  //       print(value);
+  //       setState(() {
+  //         print("Value is ");
+  //         print(value);
+  //         if (value['error']) {
+  //           paymentResponse = value['errorMessage'];
+  //         } else {
+  //           if (value['response'] != null) {
+  //             paymentResponse = value['response']['STATUS'];
+  //           }
+  //         }
+  //         paymentResponse += "\n$value";
+  //       });
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 }
 
 class TotalServicesTiles extends StatelessWidget {

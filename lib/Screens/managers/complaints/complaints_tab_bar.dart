@@ -17,11 +17,27 @@ class _ComplaintsTabBarViewState extends State<ComplaintsTabBarView>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController =
       TabController(length: ComplaintStatus.values.length, vsync: this);
+
+  String filterValue = "all";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
             title: const Text("Manage complaints"),
+            actions: [
+              PopupMenuButton(
+                  icon: const Icon(Icons.filter_alt),
+                  initialValue: filterValue,
+                  onSelected: (v) => setState(() {
+                        filterValue = v;
+                      }),
+                  itemBuilder: (context) => [
+                        const PopupMenuItem(value: "all", child: Text("All")),
+                        const PopupMenuItem(value: "user", child: Text("User")),
+                        const PopupMenuItem(
+                            value: "guard", child: Text("Guard")),
+                      ])
+            ],
             bottom: TabBar(
                 indicatorPadding: const EdgeInsets.all(0.0),
                 indicatorWeight: 4.0,
@@ -47,10 +63,15 @@ class _ComplaintsTabBarViewState extends State<ComplaintsTabBarView>
                     )
                     .toList())),
         body: TabBarView(controller: _tabController, children: [
-          ComplaintsManager(status: ComplaintStatus.pending.name),
-          ComplaintsManager(status: ComplaintStatus.processing.name),
-          ComplaintsManager(status: ComplaintStatus.resolved.name),
-          ComplaintsManager(status: ComplaintStatus.cancelled.name),
+          ComplaintsManager(
+              status: ComplaintStatus.pending.name, complaintBy: filterValue),
+          ComplaintsManager(
+              status: ComplaintStatus.processing.name,
+              complaintBy: filterValue),
+          ComplaintsManager(
+              status: ComplaintStatus.resolved.name, complaintBy: filterValue),
+          ComplaintsManager(
+              status: ComplaintStatus.cancelled.name, complaintBy: filterValue),
         ]));
   }
 }

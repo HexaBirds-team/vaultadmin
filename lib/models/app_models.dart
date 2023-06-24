@@ -354,14 +354,18 @@ class ServiceAreaClass {
 class NotificationModel {
   String id, title, msg, notificationType, route;
   DateTime time;
+  bool isAdmin;
   NotificationModel(this.id, this.title, this.msg, this.notificationType,
-      this.route, this.time);
+      this.route, this.time, this.isAdmin);
 
   NotificationModel.fromNotification(Map<Object?, Object?> json, this.id)
       : title = json['title'].toString(),
         msg = json['body'].toString(),
         notificationType = json['notificationType'].toString(),
         route = json['route'].toString(),
+        isAdmin = json['isAdmin'] == null
+            ? false
+            : json['isAdmin'].toString() == "true",
         time = DateTime.parse(json['createdAt'].toString());
 }
 
@@ -390,4 +394,25 @@ class ReviewsModel {
         ratings = double.parse(json["Ratings"].toString()),
         senderId = json["SenderId"].toString(),
         createdAt = DateTime.parse(json["CreatedAt"].toString());
+}
+
+// announcement/offers class
+
+class OfferClass {
+  String id, title, description, receiver, expiryDate, offerCode, discount;
+  DateTime createdAt;
+  bool isDisabled;
+  OfferClass.fromJson(Map<Object?, Object?> json, this.id)
+      : title = json['title'].toString(),
+        description = json['body'].toString(),
+        receiver = json['receiver'].toString(),
+        expiryDate =
+            json['ExpiryDate'] == null ? "" : json['ExpiryDate'].toString(),
+        offerCode =
+            json['OfferCode'] == null ? "" : json['OfferCode'].toString(),
+        isDisabled = json['isDisabled'] == null
+            ? false
+            : json['isDisabled'].toString() == "true",
+        discount = json['discount'] == null ? "" : json['discount'].toString(),
+        createdAt = DateTime.parse(json['createdAt'].toString());
 }

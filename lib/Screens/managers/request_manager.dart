@@ -65,7 +65,8 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
           children: [
             requests.isEmpty
                 ? AppServices.getEmptyIcon(
-                    "There are no pending requests for new joinee.", "Data")
+                    "There are no pending requests for new joinee.",
+                    "No Data Found")
                 : ListView.builder(
                     itemCount: requests.length,
                     shrinkWrap: true,

@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
+import 'package:valt_security_admin_panel/models/app_models.dart';
 import '../app_config.dart';
 import 'app_data_controller.dart';
 import 'app_settings_controller.dart';
@@ -106,5 +107,57 @@ class NotificationController {
     } else {
       null;
     }
+  }
+
+/* send notification function handler */
+
+// notification after profile approval of guard
+  approveProfileNotification(ProvidersInformationClass guard) async {
+    Map<String, dynamic> data = {
+      "title": "Approval Accepted",
+      "body": "Your profile has been accepted by admin.",
+      "route": "/approved",
+      "createdAt": DateTime.now().toIso8601String(),
+      "notificationType": "Approval",
+      "receiver": guard.uid,
+      "isAdmin" : false
+    };
+    for (var token in guard.tokens) {
+      await NotificationController().sendFCM(data, token);
+    }
+    await NotificationController().uploadNotification("Notifications", data);
+  }
+
+// notification after rejection of guard profile
+  rejectProfileNotification(ProvidersInformationClass guard) async {
+    Map<String, dynamic> data = {
+      "title": "Approval Rejected",
+      "body": "Your account approval request has been rejected by the Admin.",
+      "route": "/rejected",
+      "createdAt": DateTime.now().toIso8601String(),
+      "notificationType": "Approval",
+      "receiver": guard.uid
+    };
+    for (var token in guard.tokens) {
+      await NotificationController().sendFCM(data, token);
+    }
+    await NotificationController().uploadNotification("Notifications", data);
+  }
+
+// document invalid notification function
+  guardDocInvalidNotification(ProvidersInformationClass guard) async {
+    Map<String, dynamic> data = {
+      "title": "Invalid KYC documents",
+      "body":
+          "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
+      "route": "/documents",
+      "createdAt": DateTime.now().toIso8601String(),
+      "notificationType": "KYC",
+      "receiver": guard.uid
+    };
+    for (var token in guard.tokens) {
+      await NotificationController().sendFCM(data, token);
+    }
+    NotificationController().uploadNotification("Notifications", data);
   }
 }

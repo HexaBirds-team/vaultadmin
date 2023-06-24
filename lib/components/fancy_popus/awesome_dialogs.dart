@@ -14,6 +14,18 @@ class FancyDialogController {
         btnOkOnPress: onOk != null ? () => onOk() : null);
   }
 
+  AwesomeDialog disableConfirmationDialog(
+      BuildContext context, Function? onOk) {
+    return AwesomeDialog(
+        context: context,
+        dialogType: DialogType.warning,
+        animType: AnimType.scale,
+        title: "Confirm Action!",
+        desc: "Are you sure you want to disable this item?",
+        btnCancelOnPress: () {},
+        btnOkOnPress: onOk != null ? () => onOk() : null);
+  }
+
   AwesomeDialog willCloseWindow(BuildContext context, Function onokPress) {
     return AwesomeDialog(
       context: context,

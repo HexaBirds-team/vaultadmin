@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/Screens/login.dart';
 import 'package:valt_security_admin_panel/Screens/managers/Announcements/announcement.dart';
+import 'package:valt_security_admin_panel/Screens/managers/Announcements/manage_offers.dart';
 import 'package:valt_security_admin_panel/Screens/managers/banners/manage_banners.dart';
 import 'package:valt_security_admin_panel/Screens/managers/service_areas.dart';
 import 'package:valt_security_admin_panel/Screens/managers/service_manager.dart';
@@ -48,7 +49,7 @@ class AdminDrawerView extends StatelessWidget {
             shrinkWrap: true,
             children: [
               DrawerButtonView(
-                  text: "Create Announcement/Offer",
+                  text: "Manage Announcement/Offer",
                   callback: () =>
                       AppServices.pushTo(context, const CreateAnnouncement()),
                   image: AppIcons.announcementIcon),
@@ -72,6 +73,11 @@ class AdminDrawerView extends StatelessWidget {
                   callback: () =>
                       AppServices.pushTo(context, const ServiceManager()),
                   image: AppIcons.serviceIcon),
+              DrawerButtonView(
+                  text: "Manage Offers",
+                  callback: () =>
+                      AppServices.pushTo(context, const OfferManager()),
+                  image: AppIcons.offerIcon),
               // DrawerButtonView(
               //     text: "Manage Subscription",
               //     callback: () => AppServices.pushTo(

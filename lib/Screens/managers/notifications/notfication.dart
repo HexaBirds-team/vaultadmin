@@ -27,7 +27,9 @@ class _NotificationsViewState extends State<NotificationsView> {
             customAppBar(context: context, title: const Text("Notifications")),
         body: notifications.isEmpty
             ? AppServices.getEmptyIcon(
-                "There are not any notifications yet.", "Notifications")
+                "You have no notification right now. Please come back later.",
+                "No Notifications Yet",
+                image: AppImages.noNotificationImage)
             : ListView.builder(
                 itemCount: notifications.length,
                 shrinkWrap: true,

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/managers/complaints/complaint_details_view.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
+import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 
 import '../../../helpers/base_getters.dart';
 import '../../../helpers/style_sheet.dart';
@@ -13,7 +14,9 @@ import '../../../models/enums.dart';
 
 class ComplaintsManager extends StatefulWidget {
   String status;
-  ComplaintsManager({super.key, this.status = "pending"});
+  String complaintBy;
+  ComplaintsManager(
+      {super.key, this.status = "pending", this.complaintBy = "all"});
 
   @override
   State<ComplaintsManager> createState() => _ComplaintsManagerState();
@@ -24,14 +27,20 @@ class _ComplaintsManagerState extends State<ComplaintsManager> {
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
     final complaints = db.getAllComplaints
-        .where((element) => element.status.name == widget.status)
+        .where((element) =>
+            element.status.name == widget.status &&
+            (widget.complaintBy == "all"
+                ? true
+                : element.complaintBy == widget.complaintBy))
         .toList();
     return SafeArea(
         child: Padding(
             padding: EdgeInsets.only(top: 10.sp),
             child: complaints.isEmpty
                 ? AppServices.getEmptyIcon(
-                    "There are no new complaints available.", "Complaints")
+                    "Looks like no one have raised any complaint yet.",
+                    "No Complaint Found",
+                    image: AppImages.noComplaintImage)
                 : ListView.builder(
                     itemCount: complaints.length,
                     shrinkWrap: true,

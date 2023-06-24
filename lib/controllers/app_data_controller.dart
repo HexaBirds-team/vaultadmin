@@ -122,6 +122,7 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
+// user handler
   List<UserInformationClass> _users = [];
   List<UserInformationClass> get getAllUsers => _users;
 
@@ -138,6 +139,12 @@ class AppDataController extends ChangeNotifier {
   updateUser(String id, String name) {
     int index = _users.indexWhere((element) => element.uid == id);
     _users[index].username = name;
+    notifyListeners();
+  }
+
+  updateUserBlockStatus(String id, bool status) {
+    int i = _users.indexWhere((element) => element.uid == id);
+    _users[i].isBlocked = status;
     notifyListeners();
   }
 
@@ -231,6 +238,45 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /* Announcement handler */
+  List<OfferClass> _announcements = [];
+  List<OfferClass> get getAnnouncements => _announcements;
+
+  addAnnouncement(OfferClass announcement) {
+    _announcements.add(announcement);
+    notifyListeners();
+  }
+
+  setAnnouncements(List<OfferClass> announcements) {
+    _announcements = announcements;
+    notifyListeners();
+  }
+
+  /* Offers handler */
+  List<OfferClass> _offers = [];
+  List<OfferClass> get getOffers => _offers;
+
+  addOffers(OfferClass offer) {
+    _offers.add(offer);
+    notifyListeners();
+  }
+
+  setOffers(List<OfferClass> offers) {
+    _offers = offers;
+    notifyListeners();
+  }
+
+  updateOfferDisableStatus(bool status, String id) {
+    int i = _offers.indexWhere((element) => element.id == id);
+    _offers[i].isDisabled = status;
+    notifyListeners();
+  }
+
+  deleteOffer(String id) {
+    _offers.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
+
   /* banners handler */
   List<BannersClass> _banners = [];
   List<BannersClass> get getBanners => _banners;
@@ -290,7 +336,7 @@ class AppDataController extends ChangeNotifier {
   List<SubDifferenceModel> get getSubDifference => _subDifference;
 
   setSubDifference(List<SubDifferenceModel> data) {
-    _subDifference = data;
+    _subDifference.addAll(data);
     notifyListeners();
   }
 
@@ -314,4 +360,6 @@ class AppDataController extends ChangeNotifier {
     _subDifference = [];
     notifyListeners();
   }
+
+  //
 }

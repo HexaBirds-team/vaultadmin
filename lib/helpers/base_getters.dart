@@ -144,19 +144,45 @@ class AppServices {
   }
 
 // empty icon widget
-  static getEmptyIcon(String message, String name) => Container(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              AppIcons.emptyIcon,
-              height: 70.sp,
-            ),
-            AppServices.addHeight(10.h),
-            Text("No $name Found", style: GetTextTheme.sf18_bold),
-            Text(message, style: GetTextTheme.sf14_regular)
-          ],
-        ),
-      );
+  static getEmptyIcon(message, title, {String image = AppIcons.emptyIcon}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 35.h),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            image,
+            height: 90.sp,
+          ),
+          AppServices.addHeight(5.h),
+          Text(title, style: GetTextTheme.sf18_bold),
+          AppServices.addHeight(10.h),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style:
+                GetTextTheme.sf14_regular.copyWith(color: AppColors.greyColor),
+          ),
+        ],
+      ),
+    );
+  }
+  // static getEmptyIcon(String message, String name,
+  //         {String image = AppIcons.emptyIcon}) =>
+  //     Container(
+  //       alignment: Alignment.center,
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Image.asset(
+  //             image,
+  //             height: 90.sp,
+  //           ),
+  //           AppServices.addHeight(10.h),
+  //           Text("No $name Found", style: GetTextTheme.sf18_bold),
+  //           Text(message, style: GetTextTheme.sf14_regular)
+  //         ],
+  //       ),
+  //     );
 }

@@ -3,15 +3,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/shimmers/box_shimmer.dart';
+import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/controllers/notification_controller.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
+import '../../../components/fancy_popus/awesome_dialogs.dart';
 import '../../../components/gradient_components/gradient_image.dart';
+import '../../../controllers/firestore_api_reference.dart';
 import '../../../helpers/base_getters.dart';
 import '../image_view.dart';
 
@@ -29,6 +33,7 @@ class _UserProfileViewState extends State<UserProfileView> {
   @override
   void initState() {
     super.initState();
+    getDocuments();
     setState(() {
       _nameController.text = widget.user.username;
       _phoneController.text = widget.user.phone;
@@ -37,8 +42,8 @@ class _UserProfileViewState extends State<UserProfileView> {
   }
 
   getDocuments() async {
-    documents = await FirebaseController(context).getUserDocs(widget.user.uid);
     if (!mounted) return;
+    documents = await FirebaseController(context).getUserDocs(widget.user.uid);
     setState(() {});
   }
 
@@ -58,21 +63,25 @@ class _UserProfileViewState extends State<UserProfileView> {
             IconButton(
                 splashRadius: 25,
                 onPressed: () async {
-                  sendNotification(user);
-                  // !isDisabled
-                  //     ? FancyDialogController().confirmBlockDialog(context,
-                  //         () async {
-                  //         await FirestoreApiReference.usersPath
-                  //             .doc(widget.user.uid)
-                  //             .update({"isBlocked": true});
-                  //         setState(() => isDisabled = true);
-                  //       }, "Are you sure you want to block this user?").show()
-                  //     : {
-                  //         await FirestoreApiReference.usersPath
-                  //             .doc(widget.user.uid)
-                  //             .update({"isBlocked": false}),
-                  //         setState(() => isDisabled = false)
-                  //       };
+                  final db =
+                      Provider.of<AppDataController>(context, listen: false);
+                  // sendNotification(user);
+                  !isDisabled
+                      ? FancyDialogController().confirmBlockDialog(context,
+                          () async {
+                          await FirestoreApiReference.usersPath
+                              .doc(widget.user.uid)
+                              .update({"isBlocked": true});
+                          db.updateUserBlockStatus(user.uid, true);
+                          setState(() => isDisabled = true);
+                        }, "Are you sure you want to block this user?").show()
+                      : {
+                          await FirestoreApiReference.usersPath
+                              .doc(widget.user.uid)
+                              .update({"isBlocked": false}),
+                          db.updateUserBlockStatus(user.uid, false),
+                          setState(() => isDisabled = false)
+                        };
                 },
                 icon: ImageGradient(
                   image: AppIcons.powerIcon,
@@ -118,7 +127,8 @@ class _UserProfileViewState extends State<UserProfileView> {
             AppServices.addHeight(10.h),
             documents.isEmpty
                 ? AppServices.getEmptyIcon(
-                    "Documents are not available for the user.", "Documents")
+                    "User haven't updated his/her documents.",
+                    "Documents Not Found")
                 : ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),

@@ -17,6 +17,7 @@ class SimpleTextField extends StatelessWidget {
       TextInputType inputType = TextInputType.text,
       bool isObsecure = false,
       bool readOnly = false,
+      double borderRadius = 50,
       int maxLines = 1})
       : _name = name,
         _validator = validator,
@@ -28,6 +29,7 @@ class SimpleTextField extends StatelessWidget {
         _inputType = inputType,
         _isObsecure = isObsecure,
         _maxLines = maxLines,
+        _borderRadius = borderRadius,
         super(key: key);
 
   final TextEditingController _name;
@@ -40,6 +42,7 @@ class SimpleTextField extends StatelessWidget {
   final TextInputType _inputType;
   final bool _isObsecure;
   final int _maxLines;
+  final double _borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +63,8 @@ class SimpleTextField extends StatelessWidget {
           label: _label.isEmpty
               ? null
               : Text(_label, style: GetTextTheme.sf16_regular),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.r)),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(_borderRadius.r)),
           suffixIcon: _suffixIcon == ""
               ? null
               : Padding(

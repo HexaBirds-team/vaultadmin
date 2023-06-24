@@ -44,15 +44,13 @@ class _ReviewsViewState extends State<ReviewsView> {
     allReviews.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return Scaffold(
       appBar: customAppBar(
-        context: context,
-        title: const Text("Reviews"),
-      ),
+          context: context, title: const Text("Reviews"), autoLeading: true),
       body: SafeArea(
           child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.sp),
         child: allReviews.isEmpty
             ? AppServices.getEmptyIcon(
-                "There are not any reviews yet", "Reviews")
+                "There are not any reviews yet.", "No Reviews Found")
             : Column(
                 children: [
                   Text((ratings.isNaN ? 0 : ratings).toStringAsFixed(1),

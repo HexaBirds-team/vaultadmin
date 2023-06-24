@@ -158,7 +158,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                 style: GetTextTheme.sf14_regular),
                             AppServices.addHeight(10.h),
                             Text(
-                                myBooking!.type == "daily"
+                                myBooking!.type == "Multiple Day"
                                     ? AppServices.splitBookingDate(
                                         myBooking!.reportingDate.toString())
                                     : AppServices.formatDate(
@@ -197,7 +197,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                               ],
                             ),
                             AppServices.addHeight(20.h),
-                            Text("Expacted Amount",
+                            Text("Expected Amount",
                                 style: GetTextTheme.sf14_regular),
                             AppServices.addHeight(10.h),
                             Text("\u{20B9} ${myBooking!.price}.00",

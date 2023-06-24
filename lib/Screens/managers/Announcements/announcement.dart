@@ -130,15 +130,20 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
                           )
                         : const SizedBox(),
                     AppServices.addHeight(20.h),
-                    Text("Select Expiry Date", style: GetTextTheme.sf18_bold),
-                    AppServices.addHeight(5.h),
-                    CalendarDatePicker(
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(DateTime.now().year + 10),
-                        onDateChanged: (v) => setState(() {
-                              expiryDate = v;
-                            })),
+                    type == AnnouncementType.announcement
+                        ? const SizedBox()
+                        : Column(mainAxisSize: MainAxisSize.min, children: [
+                            Text("Select Expiry Date",
+                                style: GetTextTheme.sf18_bold),
+                            AppServices.addHeight(5.h),
+                            CalendarDatePicker(
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(DateTime.now().year + 10),
+                                onDateChanged: (v) => setState(() {
+                                      expiryDate = v;
+                                    })),
+                          ]),
                     AppServices.addHeight(20.h),
                     Text("Select Receiver", style: GetTextTheme.sf18_bold),
                     AppServices.addHeight(5.h),
@@ -205,9 +210,11 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
     Map<String, dynamic> data = {
       "title": _titleController.text.trim(),
       "body": _msgController.text.trim(),
-      "ExpiryDate": expiryDate == null ? "" : expiryDate!.toIso8601String(),
       "createdAt": DateTime.now().toIso8601String(),
       "receiver": receiverType.name,
+      "notificationType": "Announcement",
+      "isAdmin": true,
+      "route": "/Notification"
     };
 
     Map<String, dynamic> couponData = {
@@ -225,7 +232,7 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       db.setLoader(true);
       if (type == AnnouncementType.announcement) {
         await NotificationController()
-            .uploadNotification("Announcements", data);
+            .uploadNotification("Notifications", data);
       } else {
         if (_discountController.text.isEmpty || offerCode.isEmpty) {
           MySnackBar.error(context, "Please complete the Offer's details");
@@ -239,7 +246,9 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
         for (var user in users) {
           user.token == ""
               ? null
-              : NotificationController().sendFCM(data, user.token);
+              : NotificationController().sendFCM(
+                  type == AnnouncementType.announcement ? data : couponData,
+                  user.token);
         }
         db.setLoader(false);
       }
@@ -250,7 +259,13 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
               ? null
               : {
                   for (var token in guard.tokens)
-                    {NotificationController().sendFCM(data, token)}
+                    {
+                      NotificationController().sendFCM(
+                          type == AnnouncementType.announcement
+                              ? data
+                              : couponData,
+                          token)
+                    }
                 };
         }
         db.setLoader(false);

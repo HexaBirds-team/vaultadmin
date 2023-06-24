@@ -33,7 +33,7 @@ class AdminProviderManager extends StatelessWidget {
               child: providersList.isEmpty
                   ? Center(
                       child: AppServices.getEmptyIcon(
-                          "There are no data for joinee.", "Guard"))
+                          "There are no data of any guard.", "No Data Found"))
                   : ListView.separated(
                       padding: EdgeInsets.symmetric(horizontal: 10.sp),
                       itemCount: providersList.length,

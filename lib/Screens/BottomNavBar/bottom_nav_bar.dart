@@ -23,8 +23,9 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
-  late StreamSubscription<DatabaseEvent> bookingRef;
+  // late StreamSubscription<DatabaseEvent> announcementRef;
   late StreamSubscription<DatabaseEvent> notificationRef;
+  late StreamSubscription<DatabaseEvent> offerRef;
 
   List<Widget> screens = [
     const AdminDashboard(),
@@ -43,18 +44,20 @@ class _BottomNavBarState extends State<BottomNavBar> {
     });
     getListeneres();
     NotificationController().requestPermission(context);
-    // NotificationController().getToken(context);
     NotificationController().initLocalNotifications();
   }
 
   getListeneres() {
     notificationRef = AppDataStreamer().notificationStream(context);
+    // announcementRef = AppDataStreamer().announcementStream(context);
+    offerRef = AppDataStreamer().offerStream(context);
   }
 
   @override
   void dispose() {
     super.dispose();
-    bookingRef.cancel();
+    // announcementRef.cancel();
+    offerRef.cancel();
     notificationRef.cancel();
   }
 

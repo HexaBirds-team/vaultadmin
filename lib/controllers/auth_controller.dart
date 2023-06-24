@@ -12,18 +12,7 @@ class AuthController {
       BuildContext context) async {
     final db = Provider.of<AppDataController>(context, listen: false);
     db.setLoader(true);
-    Map<String, dynamic> data = {
-      "title": "Approval Accepted",
-      "body": "Your profile has been accepted by admin.",
-      "route": "/approved",
-      "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "Approval",
-      "receiver": guard.uid
-    };
-    for (var token in guard.tokens) {
-      await NotificationController().sendFCM(data, token);
-    }
-    await NotificationController().uploadNotification("Notifications", data);
+    await NotificationController().approveProfileNotification(guard);
     await FirestoreApiReference.guardApi(profileId)
         .update({"isApproved": GuardApprovalStatus.approved.name});
     db.updateApproval(profileId);
@@ -35,18 +24,7 @@ class AuthController {
       BuildContext context) async {
     final db = Provider.of<AppDataController>(context, listen: false);
     db.setLoader(true);
-    Map<String, dynamic> data = {
-      "title": "Approval Rejected",
-      "body": "Your account approval request has been rejected by the Admin.",
-      "route": "/rejected",
-      "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "Approval",
-      "receiver": guard.uid
-    };
-    for (var token in guard.tokens) {
-      await NotificationController().sendFCM(data, token);
-    }
-    await NotificationController().uploadNotification("Notifications", data);
+    await NotificationController().rejectProfileNotification(guard);
     await FirestoreApiReference.guardApi(profileId)
         .update({"isApproved": GuardApprovalStatus.rejected.name});
     db.updateRejection(profileId);
