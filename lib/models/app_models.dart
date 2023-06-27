@@ -148,7 +148,7 @@ class ProvidersInformationClass {
       pfNumber;
   GuardApprovalStatus isApproved;
 
-  bool isGunAvailable, isBlocked;
+  bool isGunAvailable, isBlocked, isVerified;
   String latitude, longitude;
   List<dynamic> tokens;
   double rating;
@@ -172,6 +172,7 @@ class ProvidersInformationClass {
       this.tokens,
       this.description,
       this.isBlocked,
+      this.isVerified,
       this.address,
       this.category);
   ProvidersInformationClass.fromUser(Map<String, dynamic> json, this.uid)
@@ -201,6 +202,9 @@ class ProvidersInformationClass {
         createdAt = json['CreatedAt'].toString(),
         category = json['Category'].toString(),
         isBlocked = json['isBlocked'].toString() == "true",
+        isVerified = json['isVerified'] == null
+            ? false
+            : json['isVerified'].toString() == "true",
         description =
             json['description'] == null ? "" : json['description'].toString(),
         esicNumber =

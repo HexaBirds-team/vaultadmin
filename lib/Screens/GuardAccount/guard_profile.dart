@@ -292,7 +292,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                 : ButtonOneExpanded(
                     onPressed: () {
                       invalidDocuments.isNotEmpty || validDocuments.isNotEmpty
-                          ? updateDocStatus(guard)
+                          ? updateDocStatus(guard, documents)
                           : null;
                     },
                     btnText: "Update Documents",
@@ -377,7 +377,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
     setState(() {});
   }
 
-  updateDocStatus(ProvidersInformationClass guard) async {
+  updateDocStatus(ProvidersInformationClass guard, List<DocsClass> docs) async {
     loading = true;
 
     if (invalidDocuments.isNotEmpty) {
@@ -393,6 +393,10 @@ class _GuardProfileViewState extends State<GuardProfileView> {
         await AuthController()
             .updateDocumentStatus(guard.uid, doc, DocumentState.valid, context);
       }
+    }
+
+    if (validDocuments.length == docs.length) {
+      FirestoreApiReference.guardApi(guard.uid).update({"isVerified": true});
     }
 
     loading = false;
