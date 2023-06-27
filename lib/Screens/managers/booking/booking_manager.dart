@@ -99,7 +99,7 @@ class _BookingManagerState extends State<BookingManager> {
                   itemCount: bookings.length,
                   padding:
                       EdgeInsets.symmetric(horizontal: 15.sp, vertical: 10.sp),
-                  shrinkWrap: true,
+                  // shrinkWrap: true,
                   itemBuilder: (context, i) {
                     final booking = bookings[i];
                     return NewBookingsTile(booking: booking);

@@ -19,7 +19,7 @@ class MySnackBar {
   }
 
   static warning(BuildContext context, String msg) {
-    AnimatedSnackBar.rectangle('Watning', msg,
+    AnimatedSnackBar.rectangle('Warning', msg,
             duration: const Duration(milliseconds: 1500),
             type: AnimatedSnackBarType.warning,
             brightness: Brightness.light)

@@ -361,5 +361,17 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
-  //
+  // payments handler
+  List<PaymentModel> _payments = [];
+  List<PaymentModel> get getPayments => _payments;
+
+  addPayment(PaymentModel payment) {
+    _payments.add(payment);
+    notifyListeners();
+  }
+
+  setPayment(List<PaymentModel> payments) {
+    _payments = payments;
+    notifyListeners();
+  }
 }

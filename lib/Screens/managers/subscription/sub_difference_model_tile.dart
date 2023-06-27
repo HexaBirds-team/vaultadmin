@@ -40,35 +40,75 @@ class SubDifferenceModelTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                        flex: 1,
-                        child:
-                            Text("Basic Plan", style: GetTextTheme.sf18_bold)),
-                    Text("    :", style: GetTextTheme.sf18_bold),
+                        flex: 2,
+                        child: SizedBox(
+                            child: Text("Basic Plan",
+                                style: GetTextTheme.sf16_bold))),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
+                      child: Text(":",
+                          textAlign: TextAlign.center,
+                          style: GetTextTheme.sf16_bold),
+                    ),
                     Expanded(
-                      flex: 1,
-                      child: Text("Start from ${data.singleShift.basic}/ day",
-                          style: GetTextTheme.sf18_medium),
+                      flex: 3,
+                      child: SizedBox(
+                        child: Text("Start from ${data.singleShift.basic}/ day",
+                            style: GetTextTheme.sf16_regular),
+                      ),
                     )
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Standard Plan", style: GetTextTheme.sf18_bold),
-                    Text(":", style: GetTextTheme.sf18_bold),
-                    Text("Start from ${data.singleShift.standard}/ day",
-                        style: GetTextTheme.sf18_medium)
+                    Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                            child: Text("Standard Plan",
+                                style: GetTextTheme.sf16_bold))),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
+                      child: Text(":",
+                          textAlign: TextAlign.center,
+                          style: GetTextTheme.sf16_bold),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: SizedBox(
+                        child: Text(
+                            "Start from ${data.singleShift.standard}/ day",
+                            style: GetTextTheme.sf16_regular),
+                      ),
+                    )
                   ],
                 ),
+              
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Premium Plan", style: GetTextTheme.sf18_bold),
-                    Text(":", style: GetTextTheme.sf18_bold),
-                    Text("Start from ${data.singleShift.premium}/ day",
-                        style: GetTextTheme.sf18_medium)
+                    Expanded(
+                        flex: 2,
+                        child: SizedBox(
+                            child: Text("Premium Plan",
+                                style: GetTextTheme.sf16_bold))),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5.w),
+                      child: Text(":",
+                          textAlign: TextAlign.center,
+                          style: GetTextTheme.sf16_bold),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: SizedBox(
+                        child: Text(
+                            "Start from ${data.singleShift.premium}/ day",
+                            style: GetTextTheme.sf16_regular),
+                      ),
+                    )
                   ],
                 ),
+               
               ],
             ),
           )

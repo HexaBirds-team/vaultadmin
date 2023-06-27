@@ -8,6 +8,7 @@ import 'package:valt_security_admin_panel/Screens/managers/Announcements/manage_
 import 'package:valt_security_admin_panel/Screens/managers/banners/manage_banners.dart';
 import 'package:valt_security_admin_panel/Screens/managers/service_areas.dart';
 import 'package:valt_security_admin_panel/Screens/managers/service_manager.dart';
+import 'package:valt_security_admin_panel/Screens/managers/transactions/transactions_view.dart';
 import 'package:valt_security_admin_panel/controllers/app_settings_controller.dart';
 
 import '../../app_config.dart';
@@ -47,22 +48,8 @@ class AdminDrawerView extends StatelessWidget {
             child: SizedBox(
           child: ListView(
             shrinkWrap: true,
+            padding: const EdgeInsets.all(0),
             children: [
-              DrawerButtonView(
-                  text: "Manage Announcement/Offer",
-                  callback: () =>
-                      AppServices.pushTo(context, const CreateAnnouncement()),
-                  image: AppIcons.announcementIcon),
-              DrawerButtonView(
-                  text: "Manage Banners",
-                  callback: () =>
-                      AppServices.pushTo(context, const ManageBanners()),
-                  image: AppIcons.bannersIcon),
-              DrawerButtonView(
-                  text: "Manage Service Area",
-                  callback: () =>
-                      AppServices.pushTo(context, const ServiceAreaManager()),
-                  image: AppIcons.serviceAreaIcon),
               DrawerButtonView(
                   text: "Manage Category",
                   callback: () =>
@@ -74,16 +61,32 @@ class AdminDrawerView extends StatelessWidget {
                       AppServices.pushTo(context, const ServiceManager()),
                   image: AppIcons.serviceIcon),
               DrawerButtonView(
+                  text: "Manage Service Area",
+                  callback: () =>
+                      AppServices.pushTo(context, const ServiceAreaManager()),
+                  image: AppIcons.serviceAreaIcon),
+              const Divider(),
+              DrawerButtonView(
+                  text: "Create Announcement/Offer",
+                  callback: () =>
+                      AppServices.pushTo(context, const CreateAnnouncement()),
+                  image: AppIcons.announcementIcon),
+              DrawerButtonView(
                   text: "Manage Offers",
                   callback: () =>
                       AppServices.pushTo(context, const OfferManager()),
                   image: AppIcons.offerIcon),
-              // DrawerButtonView(
-              //     text: "Manage Subscription",
-              //     callback: () => AppServices.pushTo(
-              //         context, const SubscriptionsTabBarView()),
-              //     image: AppIcons.subscriptionIcon),
-              AppServices.addHeight(30.h),
+              DrawerButtonView(
+                  text: "Manage Banners",
+                  callback: () =>
+                      AppServices.pushTo(context, const ManageBanners()),
+                  image: AppIcons.bannersIcon),
+              const Divider(),
+              DrawerButtonView(
+                  text: "Transactions",
+                  callback: () =>
+                      AppServices.pushTo(context, const TransactionsView()),
+                  image: AppIcons.transactionIcon),
               const Divider(),
               DrawerButtonView(
                   text: "Logout",

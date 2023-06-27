@@ -712,19 +712,56 @@ class FirebaseController {
     }
   }
 
-  // addSubDifference(String catId, Map<String, dynamic> data) async {
-  //   try {
-  //     final snapshot =
-  //         await FirestoreApiReference.subDifferencePath(catId).add(data);
-  //     db().addSubDifference(SubDifferenceModel.fromJson(data, snapshot.id));
-  //   } on FirebaseException catch (e) {
-  //     MySnackBar.error(context, e.message.toString());
-  //   } on SocketException {
-  //     MySnackBar.info(context, "Internet Error");
-  //   } catch (e) {
-  //     MySnackBar.error(context, e.toString());
-  //   }
-  // }
+// get payments function
 
-  // function to add service
+  getPayments() async {
+    // db().setLoader(true);
+    try {
+      final snapshot = await FirestoreApiReference.paymentsPath.get();
+      db().setPayment(snapshot.docs
+          .map((e) => PaymentModel.fromJson(e.data(), e.id))
+          .toList());
+      // db().setLoader(false);
+    } on FirebaseException catch (e) {
+      // db().setLoader(false);
+      MySnackBar.error(context, e.message.toString());
+    } on SocketException {
+      // db().setLoader(false);
+      MySnackBar.info(context, "Internet Error");
+    } catch (e) {
+      // db().setLoader(false);
+      MySnackBar.error(context, e.toString());
+    }
+  }
+
+  // get offers function
+  getOffers(BuildContext context) async {
+    try {
+      final snapshot = await database.ref("Offers").get();
+      final data = snapshot.children;
+      db().setOffers(data
+          .map((e) => OfferClass.fromJson(
+              e.value as Map<Object?, Object?>, e.key.toString()))
+          .toList());
+    } on FirebaseException catch (e) {
+      MySnackBar.error(
+          context, "Offers firebase error :: ${e.message.toString()}");
+    } on SocketException {
+      MySnackBar.info(context, "Internet Error");
+    } catch (e) {
+      MySnackBar.error(context, "offers error :: ${e.toString()}");
+    }
+    // onValue.listen((event) {
+    //   final data = event.snapshot.children;
+
+    //   final db = Provider.of<AppDataController>(context, listen: false);
+
+    //   for (var offer in data) {
+    //     db.getOffers.any((element) => element.id == offer.key)
+    //         ? null
+    //         : db.addOffers(OfferClass.fromJson(
+    //             offer.value as Map<Object?, Object?>, offer.key.toString()));
+    //   }
+    // });
+  }
 }

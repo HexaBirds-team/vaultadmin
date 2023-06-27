@@ -9,6 +9,7 @@ import 'package:valt_security_admin_panel/Screens/managers/notifications/notfica
 import 'package:valt_security_admin_panel/Screens/managers/request_manager.dart';
 import 'package:valt_security_admin_panel/Screens/reviews/reviews_view.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 
 import '../../controllers/notification_controller.dart';
 import '../../controllers/stream_controller.dart';
@@ -25,7 +26,6 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   // late StreamSubscription<DatabaseEvent> announcementRef;
   late StreamSubscription<DatabaseEvent> notificationRef;
-  late StreamSubscription<DatabaseEvent> offerRef;
 
   List<Widget> screens = [
     const AdminDashboard(),
@@ -48,16 +48,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   getListeneres() {
+    final firebase = FirebaseController(context);
     notificationRef = AppDataStreamer().notificationStream(context);
+    firebase.getComplaints();
+    firebase.getServices();
+    firebase.getUserCategory();
+    firebase.getServiceArea();
     // announcementRef = AppDataStreamer().announcementStream(context);
-    offerRef = AppDataStreamer().offerStream(context);
   }
 
   @override
   void dispose() {
     super.dispose();
     // announcementRef.cancel();
-    offerRef.cancel();
     notificationRef.cancel();
   }
 

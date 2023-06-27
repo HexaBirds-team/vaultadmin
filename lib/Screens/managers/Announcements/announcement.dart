@@ -212,7 +212,7 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       "body": _msgController.text.trim(),
       "createdAt": DateTime.now().toIso8601String(),
       "receiver": receiverType.name,
-      "notificationType": "Announcement",
+      "notificationType": "announcement",
       "isAdmin": true,
       "route": "/Notification"
     };
@@ -225,6 +225,18 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       "receiver": receiverType.name,
       "OfferCode": offerCode,
       "discount": _discountController.text
+    };
+
+    Map<String, dynamic> offerNotificationData = {
+      "title": _titleController.text.trim(),
+      "body": _msgController.text.trim(),
+      "ExpiryDate": expiryDate == null ? "" : expiryDate!.toIso8601String(),
+      "createdAt": DateTime.now().toIso8601String(),
+      "receiver": receiverType.name,
+      "OfferCode": offerCode,
+      "discount": _discountController.text,
+      "route": "/Offer",
+      "notificationType": "offers"
     };
     final db = Provider.of<AppDataController>(context, listen: false);
 
@@ -239,6 +251,19 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
         } else {
           await NotificationController()
               .uploadNotification("Offers", couponData);
+          await NotificationController()
+              .uploadNotification("Notifications", offerNotificationData);
+
+          // db.addOffers(OfferClass(
+          //     key,
+          //     couponData['title'],
+          //     couponData['body'],
+          //     couponData['receiver'],
+          //     couponData['ExpiryDate'],
+          //     couponData['OfferCode'],
+          //     couponData['discount'],
+          //     DateTime.parse(couponData['createdAt']),
+          //     false));
         }
       }
       if (receiverType == AnnouncementReceiverType.user) {

@@ -4,9 +4,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
+import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
 import '../helpers/style_sheet.dart';
@@ -53,11 +53,11 @@ class FunctionsController {
 // function to convert latLng to address for user Readable.
   Future<Placemark> convertLatLngToAddress(
       double position1, double position2, BuildContext context) async {
-    final db = Provider.of<AppDataController>(context, listen: false);
-    db.setLoader(true);
+    // final db = Provider.of<AppDataController>(context, listen: false);
+    // db.setLoader(true);
 
     final location = await placemarkFromCoordinates(position1, position2);
-    db.setLoader(false);
+    // db.setLoader(false);
 
     return location.first;
   }
@@ -180,6 +180,31 @@ class FunctionsController {
     });
 
     return b.join(" ");
+  }
+
+  // Function to check Internet available or not
+  static Future<bool> checkInternetConnectivity(context) async {
+    bool result = await InternetConnectionChecker().hasConnection;
+
+    return result;
+  }
+
+  static getNotificationIcon(String notificationType) {
+    switch (notificationType) {
+      case "announcement":
+        return AppIcons.notification_announcement;
+      case "complaint":
+        return AppIcons.notification_complaint;
+      case "guard":
+        return AppIcons.notification_guard;
+      case "payment":
+        return AppIcons.notification_payment;
+      case "reject":
+        return AppIcons.notification_cancel;
+
+      default:
+        return AppIcons.documentsIcon;
+    }
   }
 }
 

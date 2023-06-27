@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 class AppIcons {
   // Onboarding Icon
   static const String searchIcon = 'assets/icons/searchIcon.png';
@@ -40,6 +42,8 @@ class AppIcons {
   static const String powerIcon = "assets/icons/power.png";
   static const String emptyIcon = "assets/icons/page.png";
   static const String homeIcon = "assets/icons/home.png";
+  static const String paymentIcon = "assets/icons/payment_icon.png";
+  static const String transactionIcon = "assets/icons/transaction_icon.png";
 
   //drawer icons
   static const String announcementIcon = "assets/icons/announcement.png";
@@ -48,6 +52,18 @@ class AppIcons {
   static const String categoryIcon = "assets/icons/category.png";
   static const String serviceIcon = "assets/icons/services.png";
   static const String subscriptionIcon = "assets/icons/subscriptions.png";
+
+  // notification icons
+  static const String notification_announcement =
+      "assets/icons/notification_announcement.png";
+  static const String notification_complaint =
+      "assets/icons/notification_complaint.png";
+  static const String notification_guard =
+      "assets/icons/notification_guard.png";
+  static const String notification_payment =
+      "assets/icons/notification_payment.png";
+  static const String notification_cancel =
+      "assets/icons/notification_cancel.png";
 }
 
 class AppImages {
@@ -66,6 +82,13 @@ class AppImages {
   static const String noNotificationImage = "assets/images/no_notification.png";
   static const String noComplaintImage = "assets/images/no_complaint.png";
   static const String noResultImage = "assets/images/no_result.png";
+  static const String noInternetImage = "assets/images/no_internet.jpg";
+  static const String noInternetPng = "assets/images/no_internet.png";
+  static const String noTransactionPng = "assets/images/no_transaction.png";
+  static const String netBankingImg = "assets/images/net_banking.png";
+  static const String upiImg = "assets/images/upi.png";
+  static const String cardImg = "assets/images/card.png";
+  static const String comingSoonImg = "assets/images/coming_soon.png";
 }
 
 class AppNetWorkImages {

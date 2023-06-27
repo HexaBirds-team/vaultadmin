@@ -7,11 +7,13 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
-import 'package:valt_security_admin_panel/Screens/receipt.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
+import 'package:valt_security_admin_panel/components/pdf/pdf_file_handle_api.dart';
+import 'package:valt_security_admin_panel/components/pdf/receipt_pdf.dart';
 import 'package:valt_security_admin_panel/components/shimmers/booking_details_shimmer.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
+import 'package:valt_security_admin_panel/models/enums.dart';
 
 import '../../../helpers/base_getters.dart';
 import '../../../helpers/style_sheet.dart';
@@ -64,7 +66,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
         backgroundColor: AppColors.whiteColor,
         foregroundColor: AppColors.blackColor,
         elevation: 0,
-        title: Text("Booking Detail", style: GetTextTheme.sf18_bold),
+        title: const Text("Booking Detail"),
       ),
       body: SafeArea(
           child: loading
@@ -164,7 +166,7 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                     : AppServices.formatDate(
                                         myBooking!.reportingDate.toString()),
                                 style: GetTextTheme.sf16_medium),
-                            Text(myBooking!.reportingTime,
+                            Text("Shift : ${myBooking!.reportingTime}",
                                 style: GetTextTheme.sf14_regular),
                             AppServices.addHeight(20.h),
                             Row(
@@ -306,9 +308,23 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                           ),
                     AppServices.addHeight(40.h),
                     ButtonOneExpanded(
-                        onPressed: () => AppServices.pushTo(
-                            context, ReceiptView(booking: myBooking!)),
-                        btnText: "View Receipt")
+                        onPressed: () async {
+                          final file =
+                              await PdfInvoiceApi.generate(widget.booking);
+                          PdfFileHandlerApi.openFile(file);
+                        },
+                        // AppServices.pushTo(
+                        //     context, ReceiptView(booking: myBooking!)),
+                        btnText: "View Receipt"),
+                    widget.booking.bookingStatus == BookingStatus.cancelled.name
+                        ? TextButton.icon(
+                            style: TextButton.styleFrom(
+                                foregroundColor: AppColors.primary1),
+                            onPressed: () {},
+                            icon: const Icon(Icons.payment),
+                            label: const Text("Refund Payment"))
+                        : const SizedBox(),
+                    AppServices.addHeight(20.h),
                   ],
                 )),
     );

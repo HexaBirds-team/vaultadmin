@@ -8,6 +8,7 @@ import 'package:valt_security_admin_panel/Screens/BottomNavBar/bottom_nav_bar.da
 import 'package:valt_security_admin_panel/Screens/login.dart';
 import 'package:valt_security_admin_panel/app_config.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
+import 'package:valt_security_admin_panel/controllers/app_functions.dart';
 import 'package:valt_security_admin_panel/controllers/app_settings_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firestore_api_reference.dart';
@@ -15,6 +16,7 @@ import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 
+import 'Screens/no_internet_view.dart';
 import 'controllers/app_data_controller.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -34,20 +36,32 @@ class _SplashScreenState extends State<SplashScreen> {
   getStuff() async {
     final firebase = FirebaseController(context);
     final db = Provider.of<AppDataController>(context, listen: false);
-    firebase.getServices();
-    await firebase.getUsersList();
-    await firebase.getGuardsList();
-    firebase.getUserCategory();
-    firebase.getBanners();
-    await firebase.getComplaints();
-    firebase.getSubscriptions();
-    await firebase.getServiceArea();
-    await firebase.getBookings();
-    final data = await FirestoreApiReference.adminPath.get();
-    db.setAdminDetails(data.data()!);
-    bool islogin = await preference.getBool("isLogin") ?? false;
-    AppServices.pushAndRemove(
-        islogin ? BottomNavBar() : const LoginView(), context);
+    bool internet =await FunctionsController.checkInternetConnectivity(context); 
+    if (internet) {
+
+      // on screen
+      // firebase.getPayments();
+      // firebase.getBanners();
+      // bottom nav
+      // await firebase.getComplaints();
+      // firebase.getServices();
+      // firebase.getUserCategory();
+      // await firebase.getServiceArea();
+      // splash
+      await firebase.getUsersList();
+      await firebase.getGuardsList();
+      await firebase.getBookings();
+      // firebase.getSubscriptions();
+      final data = await FirestoreApiReference.adminPath.get();
+      db.setAdminDetails(data.data()!);
+      bool islogin = await preference.getBool("isLogin") ?? false;
+      AppServices.pushAndRemove(
+          islogin ? BottomNavBar() : const LoginView(), context);
+    } else {
+
+        AppServices.pushAndRemove(const NoInternetView(), context);
+      
+    }
   }
 
   @override

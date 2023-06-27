@@ -114,9 +114,12 @@ class _UserProfileViewState extends State<UserProfileView> {
             ),
             AppServices.addHeight(25.h),
             detailTile("Username", user.username),
+            const Divider(),
             detailTile("Contact No.", user.phone),
+            const Divider(),
             detailTile(
                 "Gender", user.gender == '' ? "Not Available" : user.gender),
+            const Divider(),
             detailTile("Date Of Birth",
                 user.dateOfBirth == "" ? "Not Available" : user.dateOfBirth),
             AppServices.customDivider(5.h),
@@ -136,41 +139,44 @@ class _UserProfileViewState extends State<UserProfileView> {
                     itemBuilder: (context, i) {
                       DocsClass document = documents[i];
 
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 12.sp),
-                        padding: EdgeInsets.all(15.sp),
-                        decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
-                            border: Border.all(
-                                color: AppColors.blackColor.withOpacity(0.1)),
-                            boxShadow: [WidgetDecoration.addContainerShadow()],
-                            borderRadius: BorderRadius.circular(10.r)),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                ImageGradient(
-                                    image: AppIcons.documentsIcon,
-                                    gradient: AppColors.appGradientColor),
-                                AppServices.addWidth(15.w),
-                                Expanded(
-                                    child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Document Name",
-                                        style: GetTextTheme.sf14_regular
-                                            .copyWith(
-                                                color: AppColors.greyColor)),
-                                    Text(document.name,
-                                        style: GetTextTheme.sf16_medium),
-                                  ],
-                                )),
-                                document.image == ""
-                                    ? const Text("Not Available")
-                                    : InkWell(
-                                        onTap: () => AppServices.pushTo(
-                                            context, ImageView(doc: document)),
-                                        child: ClipRRect(
+                      return InkWell(
+                        onTap: () => AppServices.pushTo(
+                            context, ImageView(doc: document)),
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 12.sp),
+                          padding: EdgeInsets.all(15.sp),
+                          decoration: BoxDecoration(
+                              color: AppColors.whiteColor,
+                              border: Border.all(
+                                  color: AppColors.blackColor.withOpacity(0.1)),
+                              boxShadow: [
+                                WidgetDecoration.addContainerShadow()
+                              ],
+                              borderRadius: BorderRadius.circular(10.r)),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  ImageGradient(
+                                      image: AppIcons.documentsIcon,
+                                      gradient: AppColors.appGradientColor),
+                                  AppServices.addWidth(15.w),
+                                  Expanded(
+                                      child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Document Name",
+                                          style: GetTextTheme.sf14_regular
+                                              .copyWith(
+                                                  color: AppColors.greyColor)),
+                                      Text(document.name,
+                                          style: GetTextTheme.sf16_medium),
+                                    ],
+                                  )),
+                                  document.image == ""
+                                      ? const Text("Not Available")
+                                      : ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10.r),
                                           child: CachedNetworkImage(
@@ -181,11 +187,11 @@ class _UserProfileViewState extends State<UserProfileView> {
                                                   BoxShimmerView(),
                                               fit: BoxFit.cover),
                                         ),
-                                      ),
-                                AppServices.addWidth(10.w),
-                              ],
-                            ),
-                          ],
+                                  AppServices.addWidth(10.w),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     })
@@ -197,7 +203,7 @@ class _UserProfileViewState extends State<UserProfileView> {
 
   Padding detailTile(String title, String detail) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 5.sp),
+      padding: const EdgeInsets.fromLTRB(0, 7, 0, 7),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -208,17 +214,17 @@ class _UserProfileViewState extends State<UserProfileView> {
     );
   }
 
-  sendNotification(UserInformationClass user) async {
-    Map<String, dynamic> data = {
-      "title": "Invalid KYC documents",
-      "body":
-          "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
-      "route": "/documents",
-      "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "KYC",
-      "receiver": user.uid
-    };
+  // sendNotification(UserInformationClass user) async {
+  //   Map<String, dynamic> data = {
+  //     "title": "Invalid KYC documents",
+  //     "body":
+  //         "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
+  //     "route": "/documents",
+  //     "createdAt": DateTime.now().toIso8601String(),
+  //     "notificationType": "KYC",
+  //     "receiver": user.uid
+  //   };
 
-    await NotificationController().sendFCM(data, user.token);
-  }
+  //   await NotificationController().sendFCM(data, user.token);
+  // }
 }

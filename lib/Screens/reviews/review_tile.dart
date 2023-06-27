@@ -19,8 +19,10 @@ class ReviewsTile extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 20.h),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               ClipRRect(
                   borderRadius: BorderRadius.circular(1000.r),

@@ -35,7 +35,8 @@ class NotificationController {
 
   uploadNotification(String api, Map<String, dynamic> data) async {
     final path = database.ref(api).push();
-    await path.set(data);
+    final snapshot = await path.set(data);
+    return;
   }
 
   void firebaseMessagingForegroundHandler(RemoteMessage message) async {
@@ -116,11 +117,11 @@ class NotificationController {
     Map<String, dynamic> data = {
       "title": "Approval Accepted",
       "body": "Your profile has been accepted by admin.",
-      "route": "/approved",
+      "route": "/Dashboard",
       "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "Approval",
+      "notificationType": "approved",
       "receiver": guard.uid,
-      "isAdmin" : false
+      "isAdmin": false
     };
     for (var token in guard.tokens) {
       await NotificationController().sendFCM(data, token);
@@ -133,10 +134,11 @@ class NotificationController {
     Map<String, dynamic> data = {
       "title": "Approval Rejected",
       "body": "Your account approval request has been rejected by the Admin.",
-      "route": "/rejected",
+      "route": "/Documents",
       "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "Approval",
-      "receiver": guard.uid
+      "notificationType": "reject",
+      "receiver": guard.uid,
+      "isAdmin": false
     };
     for (var token in guard.tokens) {
       await NotificationController().sendFCM(data, token);
@@ -150,9 +152,9 @@ class NotificationController {
       "title": "Invalid KYC documents",
       "body":
           "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
-      "route": "/documents",
+      "route": "/Documents",
       "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "KYC",
+      "notificationType": "document",
       "receiver": guard.uid
     };
     for (var token in guard.tokens) {
@@ -160,4 +162,25 @@ class NotificationController {
     }
     NotificationController().uploadNotification("Notifications", data);
   }
+
+  // payment refund notification
+  paymentRefundNotification(
+      UserInformationClass user, BookingsClass booking) async {
+    Map<String, dynamic> data = {
+      "title": "Payment Refund",
+      "body":
+          "Your payment has been refunded for the ${booking.bookingId} booking",
+      "route": "/Notification",
+      "createdAt": DateTime.now().toIso8601String(),
+      "notificationType": "payment",
+      "receiver": user.uid
+    };
+    sendFCM(data, user.token);
+    uploadNotification("Notifications", data);
+  }
+
+  // guard payment notification
+  // guardPaymentNotification() async {
+
+  // }
 }

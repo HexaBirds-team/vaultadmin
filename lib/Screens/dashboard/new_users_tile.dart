@@ -19,7 +19,7 @@ class NewUsersTile extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(right: 10.sp),
       child: AspectRatio(
-        aspectRatio: 0.8.sp,
+        aspectRatio: 0.7,
         child: InkWell(
           onTap: () =>
               AppServices.pushTo(context, UserProfileView(user: profile)),

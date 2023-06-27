@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
+import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/models/enums.dart';
 
 import '../../../helpers/style_sheet.dart';
@@ -45,6 +46,7 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
         .toList();
     return Scaffold(
         appBar: customAppBar(
+            autoLeading: true,
             context: context,
             title: const Text("Manage Requests"),
             action: [
@@ -64,101 +66,124 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
         body: Stack(
           children: [
             requests.isEmpty
-                ? AppServices.getEmptyIcon(
-                    "There are no pending requests for new joinee.",
-                    "No Data Found")
-                : ListView.builder(
-                    itemCount: requests.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, i) {
-                      final profile = requests[i];
+                ? RefreshIndicator.adaptive(
+                    onRefresh: () =>
+                        FirebaseController(context).getGuardsList(),
+                    child: ListView(
+                      // shrinkWrap: true,
+                      children: [
+                        AppServices.addHeight(
+                            AppServices.getScreenHeight(context) * 0.25),
+                        AppServices.getEmptyIcon(
+                            "There are no pending requests for new joinee.",
+                            "No Data Found")
+                      ],
+                    ),
+                  )
+                : RefreshIndicator.adaptive(
+                    onRefresh: () =>
+                        FirebaseController(context).getGuardsList(),
+                    child: ListView.builder(
+                        itemCount: requests.length,
+                        shrinkWrap: true,
+                        itemBuilder: (context, i) {
+                          final profile = requests[i];
 
-                      return InkWell(
-                        onTap: () => AppServices.pushTo(context,
-                            GuardProfileView(providerDetails: profile)),
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 15.w, vertical: 5.h),
-                          padding: EdgeInsets.all(10.sp),
-                          decoration: WidgetDecoration.containerDecoration_1(
-                              context,
-                              enableShadow: true),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
+                          return InkWell(
+                            onTap: () => AppServices.pushTo(context,
+                                GuardProfileView(providerDetails: profile)),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 15.w, vertical: 5.h),
+                              padding: EdgeInsets.all(10.sp),
+                              decoration:
+                                  WidgetDecoration.containerDecoration_1(
+                                      context,
+                                      enableShadow: true),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  SizedBox(
-                                      height: 80,
-                                      width: 80,
-                                      child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10.r),
-                                          child: WidgetImplimentor()
-                                              .addNetworkImage(
-                                                  url: profile.profileImage,
-                                                  fit: BoxFit.cover))),
-                                  AppServices.addWidth(15.w),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(profile.name,
-                                            style: GetTextTheme.sf18_bold),
-                                        AppServices.addHeight(5.h),
-                                        Text(profile.address,
-                                            style: GetTextTheme.sf12_regular),
-                                        AppServices.addHeight(5.h),
-                                        Text(
-                                            "qualification : ${profile.qualification}",
-                                            style: GetTextTheme.sf14_bold
-                                                .copyWith(
-                                                    color: AppColors.primary1)),
-                                      ],
-                                    ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                          height: 80,
+                                          width: 80,
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              child: WidgetImplimentor()
+                                                  .addNetworkImage(
+                                                      url: profile
+                                                          .profileImage,
+                                                      fit: BoxFit.cover))),
+                                      AppServices.addWidth(15.w),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(profile.name,
+                                                style:
+                                                    GetTextTheme.sf18_bold),
+                                            AppServices.addHeight(5.h),
+                                            Text(profile.address,
+                                                style: GetTextTheme
+                                                    .sf12_regular),
+                                            AppServices.addHeight(5.h),
+                                            Text(
+                                                "qualification : ${profile.qualification}",
+                                                style: GetTextTheme.sf14_bold
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .primary1)),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 5),
+                                      child: Divider()),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: SizedBox(
+                                              child: ButtonOneExpanded(
+                                                  showBorder: true,
+                                                  onPressed: () async =>
+                                                      await _authController
+                                                          .rejectProfile(
+                                                              profile.uid,
+                                                              profile,
+                                                              context),
+                                                  btnText: "Reject",
+                                                  enableColor: true,
+                                                  disableGradient: true,
+                                                  btnColor:
+                                                      AppColors.whiteColor,
+                                                  btnTextColor: true,
+                                                  btnTextClr:
+                                                      AppColors.primary1))),
+                                      AppServices.addWidth(10.w),
+                                      Expanded(
+                                          child: SizedBox(
+                                              child: ButtonOneExpanded(
+                                                  onPressed: () async =>
+                                                      await _authController
+                                                          .approveProfile(
+                                                              profile.uid,
+                                                              profile,
+                                                              context),
+                                                  btnText: "Approve"))),
+                                    ],
                                   )
                                 ],
                               ),
-                              const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 5),
-                                  child: Divider()),
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: SizedBox(
-                                          child: ButtonOneExpanded(
-                                              showBorder: true,
-                                              onPressed: () async =>
-                                                  await _authController
-                                                      .rejectProfile(
-                                                          profile.uid,
-                                                          profile,
-                                                          context),
-                                              btnText: "Reject",
-                                              enableColor: true,
-                                              disableGradient: true,
-                                              btnColor: AppColors.whiteColor,
-                                              btnTextColor: true,
-                                              btnTextClr: AppColors.primary1))),
-                                  AppServices.addWidth(10.w),
-                                  Expanded(
-                                      child: SizedBox(
-                                          child: ButtonOneExpanded(
-                                              onPressed: () async =>
-                                                  await _authController
-                                                      .approveProfile(
-                                                          profile.uid,
-                                                          profile,
-                                                          context),
-                                              btnText: "Approve"))),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
+                            ),
+                          );
+                        }),
+                  ),
             db.appLoading ? const FullScreenLoader() : const SizedBox()
           ],
         ));

@@ -31,7 +31,7 @@ class Appthemes {
               foregroundColor: MaterialStateProperty.all(
                   AppColors.blackColor.withOpacity(0.5)))),
 
-      //appbar theme
+      // appbar theme
       appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.transparent,
           elevation: 0,

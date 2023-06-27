@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors
+// ignore_for_file: must_be_immutable, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -16,6 +16,8 @@ import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_text.dart';
+import 'package:valt_security_admin_panel/controllers/app_functions.dart';
+import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/models/enums.dart';
 
@@ -79,11 +81,18 @@ class _AdminDashboardState extends State<AdminDashboard> {
     final complaintsList = data.getAllComplaints;
     return RefreshIndicator.adaptive(
       onRefresh: () async {
-        final firebase = FirebaseController(context);
-        await firebase.getUsersList();
-        await firebase.getGuardsList();
-        await firebase.getComplaints();
-        await firebase.getBookings();
+        bool network =
+            await FunctionsController.checkInternetConnectivity(context);
+        if (network) {
+          final firebase = FirebaseController(context);
+          await firebase.getUsersList();
+          await firebase.getGuardsList();
+          await firebase.getComplaints();
+          await firebase.getBookings();
+        } else {
+          MySnackBar.error(context,
+              "Couldn't refresh data. Please check your connection or try again.");
+        }
       },
       child: Scaffold(
         key: _key,

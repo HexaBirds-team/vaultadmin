@@ -402,6 +402,16 @@ class OfferClass {
   String id, title, description, receiver, expiryDate, offerCode, discount;
   DateTime createdAt;
   bool isDisabled;
+  OfferClass(
+      this.id,
+      this.title,
+      this.description,
+      this.receiver,
+      this.expiryDate,
+      this.offerCode,
+      this.discount,
+      this.createdAt,
+      this.isDisabled);
   OfferClass.fromJson(Map<Object?, Object?> json, this.id)
       : title = json['title'].toString(),
         description = json['body'].toString(),
@@ -415,4 +425,44 @@ class OfferClass {
             : json['isDisabled'].toString() == "true",
         discount = json['discount'] == null ? "" : json['discount'].toString(),
         createdAt = DateTime.parse(json['createdAt'].toString());
+}
+
+// payments model
+class PaymentModel {
+  String id,
+      amount,
+      category,
+      packageName,
+      paymentId,
+      status,
+      userId,
+      userName,
+      description,
+      paymentMethod;
+  DateTime createdOn;
+
+  PaymentModel(
+      this.id,
+      this.amount,
+      this.category,
+      this.packageName,
+      this.paymentMethod,
+      this.paymentId,
+      this.status,
+      this.userId,
+      this.description,
+      this.userName,
+      this.createdOn);
+
+  PaymentModel.fromJson(Map<String, dynamic> json, this.id)
+      : amount = json['amount'] ?? "",
+        category = json['category'] ?? "",
+        packageName = json['packageName'] ?? "",
+        paymentId = json['paymentId'] ?? "",
+        paymentMethod = json['payment_method'] ?? "",
+        status = json['status'] ?? "",
+        description = json['description'] ?? "",
+        userId = json['userId'] ?? "",
+        userName = json['userName'] ?? "",
+        createdOn = DateTime.parse(json['createdOn']);
 }

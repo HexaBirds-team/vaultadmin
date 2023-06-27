@@ -61,7 +61,11 @@ class FirestoreApiReference {
       firestore.collection("Categories");
 
   // subscription difference reference
-  static CollectionReference<Map<String, dynamic>> subDifferencePath(String id) => FirestoreApiReference.categoryPath.doc(id).collection("subscription_difference");
+  static CollectionReference<Map<String, dynamic>> subDifferencePath(
+          String id) =>
+      FirestoreApiReference.categoryPath
+          .doc(id)
+          .collection("subscription_difference");
 
   // service reference
   static CollectionReference<Map<String, dynamic>> servicePath =
@@ -118,4 +122,8 @@ class FirestoreApiReference {
   // bookings collection reference
   static CollectionReference<Map<String, dynamic>> bookingsPath =
       firestore.collection("Bookings");
+
+  // payments collection reference
+  static CollectionReference<Map<String, dynamic>> paymentsPath =
+      firestore.collection("Payment");
 }
