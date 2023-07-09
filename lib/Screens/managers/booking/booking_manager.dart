@@ -27,15 +27,19 @@ class _BookingManagerState extends State<BookingManager> {
     final bookings = status == BookingStatus.all
         ? db.getBookings
             .where((element) => element.bookingId
+                .trim()
                 .toLowerCase()
                 .startsWith(searchValue.toLowerCase()))
             .toList()
         : db.getBookings
             .where((element) =>
-                element.bookingStatus == status.name &&
-                element.bookingId
-                    .toLowerCase()
-                    .startsWith(searchValue.toLowerCase()))
+                element.bookingStatus.toLowerCase() == status.name &&
+                (searchValue.isEmpty
+                    ? true
+                    : element.bookingId
+                        .trim()
+                        .toLowerCase()
+                        .startsWith(searchValue.toLowerCase())))
             .toList();
     bookings.sort((a, b) => b.bookingTime.compareTo(a.bookingTime));
     return Scaffold(
@@ -62,14 +66,15 @@ class _BookingManagerState extends State<BookingManager> {
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: SearchField(
                     hint: "Search by Booking Number..",
-                    onSearch: (v) => {setState(() => searchValue = v)}),
+                    onSearch: (v) => {setState(() => searchValue = v.trim())}),
               ))),
       body: SafeArea(
           child: bookings.isEmpty
               ? status != BookingStatus.all &&
                       db.getBookings
-                          .where(
-                              (element) => element.bookingStatus == status.name)
+                          .where((element) =>
+                              element.bookingStatus.toLowerCase() ==
+                              status.name)
                           .isEmpty
                   ? AppServices.getEmptyIcon(
                       status == BookingStatus.completed

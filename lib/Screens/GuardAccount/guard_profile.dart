@@ -159,24 +159,29 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             AppServices.customDivider(5.h),
             Text("Services Offered", style: GetTextTheme.sf16_medium),
             AppServices.addHeight(5.h),
-            ListView.builder(
-                itemCount: services.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, i) {
-                  return Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Row(
-                      children: [
-                        Image.asset(AppIcons.bulletIcon,
-                            height: 10.sp, width: 10.sp),
-                        AppServices.addWidth(15.w),
-                        Text(services[i].title,
-                            style: GetTextTheme.sf14_regular)
-                      ],
-                    ),
-                  );
-                }),
+            services.isEmpty
+                ? Text(
+                    "Guard not updated his/her services.",
+                    style: GetTextTheme.sf14_regular,
+                  )
+                : ListView.builder(
+                    itemCount: services.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, i) {
+                      return Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Row(
+                          children: [
+                            Image.asset(AppIcons.bulletIcon,
+                                height: 10.sp, width: 10.sp),
+                            AppServices.addWidth(15.w),
+                            Text(services[i].title,
+                                style: GetTextTheme.sf14_regular)
+                          ],
+                        ),
+                      );
+                    }),
             AppServices.customDivider(5.h),
             Text("Description", style: GetTextTheme.sf16_medium),
             AppServices.addHeight(10.h),
@@ -253,7 +258,8 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                       ),
                                 AppServices.addWidth(10.w),
                                 document.image == "" ||
-                                        widget.showEditOptions == false
+                                        widget.showEditOptions == false ||
+                                        document.status != DocumentState.posted
                                     ? const SizedBox()
                                     : SizedBox(
                                         height: 30.sp,
@@ -272,12 +278,6 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                                     .toList(),
                                             onSelected: (v) {
                                               onSelect(v, document);
-                                              print(
-                                                  "Valid documents................");
-                                              print(validDocuments);
-                                              print(
-                                                  "In-Valid documents................");
-                                              print(invalidDocuments);
                                             }),
                                       )
                               ],
@@ -289,25 +289,28 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             AppServices.addHeight(20.h),
             loading
                 ? const OnViewLoader()
-                : ButtonOneExpanded(
-                    onPressed: () {
-                      invalidDocuments.isNotEmpty || validDocuments.isNotEmpty
-                          ? updateDocStatus(guard, documents)
-                          : null;
-                    },
-                    btnText: "Update Documents",
-                    showBorder: true,
-                    disableGradient: true,
-                    btnTextColor: true,
-                    btnTextClr:
-                        invalidDocuments.isNotEmpty || validDocuments.isNotEmpty
+                : (documents.isEmpty || !isChanged
+                    ? const SizedBox()
+                    : ButtonOneExpanded(
+                        onPressed: () {
+                          invalidDocuments.isNotEmpty ||
+                                  validDocuments.isNotEmpty
+                              ? updateDocStatus(guard, documents)
+                              : null;
+                        },
+                        btnText: "Update Documents",
+                        showBorder: true,
+                        disableGradient: true,
+                        btnTextColor: true,
+                        btnTextClr: invalidDocuments.isNotEmpty ||
+                                validDocuments.isNotEmpty
                             ? AppColors.primary1
                             : AppColors.greyColor,
-                    borderColor:
-                        invalidDocuments.isNotEmpty || validDocuments.isNotEmpty
+                        borderColor: invalidDocuments.isNotEmpty ||
+                                validDocuments.isNotEmpty
                             ? AppColors.primary1
                             : AppColors.greyColor,
-                  ),
+                      )),
             AppServices.addHeight(20.h),
             ButtonOneExpanded(
               onPressed: () {
@@ -374,54 +377,46 @@ class _GuardProfileViewState extends State<GuardProfileView> {
     } else {
       null;
     }
+    isChanged = true;
     setState(() {});
   }
 
   updateDocStatus(ProvidersInformationClass guard, List<DocsClass> docs) async {
     loading = true;
+    var updatedDocuments = documents
+        .where((element) => element.status != DocumentState.posted)
+        .toList();
 
     if (invalidDocuments.isNotEmpty) {
       await NotificationController().guardDocInvalidNotification(guard);
       for (var doc in invalidDocuments) {
-        await AuthController().updateDocumentStatus(
-            guard.uid, doc, DocumentState.invalid, context);
+        if (!updatedDocuments.any((element) => element.id == doc)) {
+          await AuthController().updateDocumentStatus(
+              guard.uid, doc, DocumentState.invalid, context);
+          int i = documents.indexWhere((element) => element.id == doc);
+          documents[i].status = DocumentState.invalid;
+        }
       }
     }
 
     if (validDocuments.isNotEmpty) {
       for (var doc in validDocuments) {
-        await AuthController()
-            .updateDocumentStatus(guard.uid, doc, DocumentState.valid, context);
+        if (!updatedDocuments.any((element) => element.id == doc)) {
+          await AuthController().updateDocumentStatus(
+              guard.uid, doc, DocumentState.valid, context);
+          int i = documents.indexWhere((element) => element.id == doc);
+          documents[i].status = DocumentState.valid;
+        }
       }
     }
 
     if (validDocuments.length == docs.length) {
       FirestoreApiReference.guardApi(guard.uid).update({"isVerified": true});
     }
+    isChanged = false;
 
     loading = false;
     setState(() {});
-
-    // v == DocumentState.invalid
-    //     ? FancyDialogController().confirmInvalidDocument(context, () async {
-    // for (var token in widget.providerDetails.tokens) {
-    //   await NotificationController().sendFCM(data, token);
-    // }
-    //         await NotificationController()
-    //             .uploadNotification("Notifications", data);
-    //         await AuthController()
-    //             .updateDocumentStatus(document, widget.providerDetails.uid,
-    //                 document.id.toString(), v, context)
-    //             .then((value) => setState(() {
-    //                   document.status = v;
-    //                 }));
-    //       }).show()
-    //     : await AuthController()
-    //         .updateDocumentStatus(document, widget.providerDetails.uid,
-    //             document.id.toString(), v, context)
-    //         .then((value) => setState(() {
-    //               document.status = v;
-    //             }));
   }
 
   approveGuard() async {
@@ -435,6 +430,10 @@ class _GuardProfileViewState extends State<GuardProfileView> {
           document.id, DocumentState.valid, context);
       validDocuments.add(document.id);
       invalidDocuments.isNotEmpty ? invalidDocuments.remove(document.id) : null;
+    }
+    if (documents.isNotEmpty) {
+      await FirestoreApiReference.guardApi(widget.providerDetails.uid)
+          .update({"isVerified": true});
     }
     setState(() {});
   }

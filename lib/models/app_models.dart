@@ -459,7 +459,7 @@ class PaymentModel {
       this.createdOn);
 
   PaymentModel.fromJson(Map<String, dynamic> json, this.id)
-      : amount = json['amount'] ?? "",
+      : amount = json['amount'] == null ? "" : json['amount'].toString(),
         category = json['category'] ?? "",
         packageName = json['packageName'] ?? "",
         paymentId = json['paymentId'] ?? "",

@@ -46,7 +46,21 @@ class _ProviderTileState extends State<ProviderTile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.provider.name, style: GetTextTheme.sf18_bold),
+                Row(
+                  children: [
+                    Flexible(
+                        child: Text(widget.provider.name,
+                            style: GetTextTheme.sf18_bold)),
+                    AppServices.addWidth(4.w),
+                    widget.provider.isVerified
+                        ? Icon(
+                            Icons.verified,
+                            size: 18.sp,
+                            color: AppColors.blueColor,
+                          )
+                        : const SizedBox()
+                  ],
+                ),
                 AppServices.addHeight(6.h),
                 Text(widget.provider.address,
                     style: GetTextTheme.sf14_regular.copyWith(

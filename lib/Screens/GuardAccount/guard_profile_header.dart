@@ -32,7 +32,20 @@ class AccountHeader extends StatelessWidget {
                 width: 90.sp,
                 fit: BoxFit.cover)),
         AppServices.addHeight(10.h),
-        Text(providerDetails.name, style: GetTextTheme.sf16_bold),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(providerDetails.name, style: GetTextTheme.sf16_bold),
+            AppServices.addWidth(4.w),
+            providerDetails.isVerified
+                ? Icon(
+                    Icons.verified,
+                    size: 18.sp,
+                    color: AppColors.blueColor,
+                  )
+                : const SizedBox()
+          ],
+        ),
         AppServices.addHeight(5.h),
         Text.rich(TextSpan(
             text: "${FunctionsController().titleCase(category.name)} * ",
