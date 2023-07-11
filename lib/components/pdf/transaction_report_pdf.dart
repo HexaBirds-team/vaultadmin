@@ -18,6 +18,8 @@ class TransactionReportApi {
     final fontRegular = await PdfGoogleFonts.poppinsRegular();
     final fontBold = await PdfGoogleFonts.poppinsMedium();
 
+    print(data.length);
+
     // images
     final appLogo =
         (await rootBundle.load(AppConfig.logoBlack)).buffer.asUint8List();
@@ -122,7 +124,7 @@ class TransactionReportApi {
                 })
               ])
             ]),
-            if (data.length > 10) getListofTransaction(data, fontBold, db)
+            if (data.length > 10) ...getListofTransaction(data, fontBold, db)
             // ListView(padding: const EdgeInsets.all(20), children: [
             //   Table(children: [
             //     ...List.generate(14, (i) {
@@ -224,20 +226,33 @@ customTableRow(PaymentModel data, Font font, AppDataController db) {
   ]);
 }
 
-getListofTransaction(List<PaymentModel> data, Font font, AppDataController db) {
+List<Widget> getListofTransaction(
+    List<PaymentModel> data, Font font, AppDataController db) {
   var list = data.sublist(10);
+
   List<PaymentModel> list1 = [];
-  Widget widget = SizedBox();
-  for (var i = 0; i < list.length; i++) {
-    list1.add(list[i]);
-    if (i % 13 == 0) {
-      widget = ListView(padding: const EdgeInsets.all(20), children: [
-        Table(children: [
-          ...List.generate(
-              list1.length, (index) => customTableRow(list1[index], font, db))
-        ])
-      ]);
-      list1 = [];
+  List<Widget> widget = [];
+  if (list.length <= 14) {
+    widget.add(ListView(padding: const EdgeInsets.all(20), children: [
+      Table(children: [
+        ...List.generate(
+            list.length, (index) => customTableRow(list[index], font, db))
+      ])
+    ]));
+  } else {
+    for (var i = 0; i < list.length; i++) {
+      list1.add(list[i]);
+
+      if (i != 0 && i % 13 == 0) {
+        print(list1.length);
+        widget.add(ListView(padding: const EdgeInsets.all(20), children: [
+          Table(children: [
+            ...List.generate(
+                list1.length, (index) => customTableRow(list1[index], font, db))
+          ])
+        ]));
+        list1 = [];
+      }
     }
   }
   return widget;

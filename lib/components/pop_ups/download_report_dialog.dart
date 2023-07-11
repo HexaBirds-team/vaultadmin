@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -168,12 +170,12 @@ class _DownloadTranReportDialogState extends State<DownloadTranReportDialog> {
             element.createdOn.toIso8601String().split("T").first))
         .toList();
     data.sort((a, b) => b.createdOn.compareTo(a.createdOn));
-    print("$startDate, $endDate");
     File file = await TransactionReportApi.generate(
         data,
         DateFormat("dd/MM/yyyy").format(startDate),
         DateFormat("dd/MM/yyyy").format(endDate),
         db);
+    AppServices.popView(context);
     PdfFileHandlerApi.openFile(file);
   }
 }
