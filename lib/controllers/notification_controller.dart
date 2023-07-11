@@ -35,7 +35,7 @@ class NotificationController {
 
   uploadNotification(String api, Map<String, dynamic> data) async {
     final path = database.ref(api).push();
-    final snapshot = await path.set(data);
+    await path.set(data);
     return;
   }
 

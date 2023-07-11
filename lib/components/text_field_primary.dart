@@ -16,6 +16,7 @@ class TextFieldPrimary extends StatelessWidget {
   int maxlines;
   bool readOnly;
   TextInputType inputType;
+  Function? ontap;
   TextFieldPrimary(
       {Key? key,
       this.hint = "",
@@ -25,6 +26,7 @@ class TextFieldPrimary extends StatelessWidget {
       this.padding = 15,
       this.maxlines = 1,
       this.readOnly = false,
+      this.ontap,
       this.inputType = TextInputType.emailAddress})
       : super(key: key);
 
@@ -32,6 +34,7 @@ class TextFieldPrimary extends StatelessWidget {
   Widget build(BuildContext context) {
     return Platform.isAndroid
         ? TextField(
+            onTap: ontap == null ? null : () => ontap!(),
             readOnly: readOnly,
             onChanged: onchange == null ? null : (value) => onchange!(value),
             maxLines: maxlines,
@@ -70,6 +73,7 @@ class TextFieldPrimary extends StatelessWidget {
             onChanged: (value) => onchange!(value),
             maxLines: maxlines,
             controller: controller,
+            onTap: ontap == null ? null : () => ontap!(),
             obscuringCharacter: "*",
             decoration: BoxDecoration(
                 color: AppColors.grey50,

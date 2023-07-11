@@ -206,7 +206,6 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
   onSave(BuildContext context) async {
     bool isValid = _key.currentState!.validate();
     if (isValid) {
-      final db = Provider.of<AppDataController>(context, listen: false);
       Map<String, dynamic> data = {
         "monthly": {
           "hourly": {

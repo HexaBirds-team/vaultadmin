@@ -4,10 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
-import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
+
+import '../../../components/pop_ups/download_report_dialog.dart';
 
 class TransactionsView extends StatefulWidget {
   const TransactionsView({super.key});
@@ -52,7 +53,12 @@ class _TransactionsViewState extends State<TransactionsView> {
                         )))
                 : TextButton(
                     onPressed: () {
-                      MySnackBar.info(context, "Coming Soon!!");
+                      showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return const DownloadTranReportDialog();
+                          });
                     },
                     style: TextButton.styleFrom(
                       // padding: EdgeInsets.symmetric(vertical: 2.h),
@@ -64,11 +70,6 @@ class _TransactionsViewState extends State<TransactionsView> {
                     )),
             AppServices.addWidth(20.w)
           ]),
-
-      // customAppBar(
-      //     autoLeading: true,
-      //     context: context,
-      //    ),
       body: SafeArea(
           child: transactions.isEmpty
               ? RefreshIndicator.adaptive(

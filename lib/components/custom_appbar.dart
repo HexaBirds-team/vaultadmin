@@ -4,7 +4,7 @@ dynamic customAppBar(
     {required BuildContext context,
     required dynamic title,
     dynamic leading,
-    dynamic action,
+    List<Widget>? action,
     bool autoLeading = false,
     bool centerTitle = false}) {
   return AppBar(
@@ -15,3 +15,5 @@ dynamic customAppBar(
     automaticallyImplyLeading: autoLeading,
   );
 }
+
+
