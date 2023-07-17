@@ -36,9 +36,9 @@ class _SplashScreenState extends State<SplashScreen> {
   getStuff() async {
     final firebase = FirebaseController(context);
     final db = Provider.of<AppDataController>(context, listen: false);
-    bool internet =await FunctionsController.checkInternetConnectivity(context); 
+    bool internet =
+        await FunctionsController.checkInternetConnectivity(context);
     if (internet) {
-
       // on screen
       // firebase.getPayments();
       // firebase.getBanners();
@@ -51,6 +51,8 @@ class _SplashScreenState extends State<SplashScreen> {
       await firebase.getUsersList();
       await firebase.getGuardsList();
       await firebase.getBookings();
+      await firebase.getShiftTime();
+      firebase.getOffers(context);
       // firebase.getSubscriptions();
       final data = await FirestoreApiReference.adminPath.get();
       db.setAdminDetails(data.data()!);
@@ -58,9 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
       AppServices.pushAndRemove(
           islogin ? BottomNavBar() : const LoginView(), context);
     } else {
-
-        AppServices.pushAndRemove(const NoInternetView(), context);
-      
+      AppServices.pushAndRemove(const NoInternetView(), context);
     }
   }
 

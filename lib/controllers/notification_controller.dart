@@ -124,7 +124,8 @@ class NotificationController {
       "isAdmin": false
     };
     for (var token in guard.tokens) {
-      await NotificationController().sendFCM(data, token);
+      await NotificationController()
+          .sendFCM(data, token.split("?deviceId").first);
     }
     await NotificationController().uploadNotification("Notifications", data);
   }
@@ -141,7 +142,8 @@ class NotificationController {
       "isAdmin": false
     };
     for (var token in guard.tokens) {
-      await NotificationController().sendFCM(data, token);
+      await NotificationController()
+          .sendFCM(data, token.split("?deviceId").first);
     }
     await NotificationController().uploadNotification("Notifications", data);
   }
@@ -158,7 +160,8 @@ class NotificationController {
       "receiver": guard.uid
     };
     for (var token in guard.tokens) {
-      await NotificationController().sendFCM(data, token);
+      await NotificationController()
+          .sendFCM(data, token.split("?deviceId").first);
     }
     NotificationController().uploadNotification("Notifications", data);
   }
@@ -175,12 +178,10 @@ class NotificationController {
       "notificationType": "payment",
       "receiver": user.uid
     };
-    sendFCM(data, user.token);
+
+    for (var token in user.token) {
+      sendFCM(data, token.split("?deviceId").first);
+    }
     uploadNotification("Notifications", data);
   }
-
-  // guard payment notification
-  // guardPaymentNotification() async {
-
-  // }
 }

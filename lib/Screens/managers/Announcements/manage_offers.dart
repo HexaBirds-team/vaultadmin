@@ -20,17 +20,11 @@ class OfferManager extends StatefulWidget {
 }
 
 class _OfferManagerState extends State<OfferManager> {
-  bool loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    getOffers();
-  }
+  bool loading = false;
 
   getOffers() async {
     FirebaseController(context).getOffers(context);
-    loading = false;
+
     setState(() {});
   }
 
@@ -130,11 +124,23 @@ class _OfferManagerState extends State<OfferManager> {
                                   ),
                                 ),
                                 AppServices.addWidth(10.w),
-                                GradientText(
-                                    DateFormat("dd MMM yyyy").format(
-                                        DateTime.parse(offer.expiryDate)),
-                                    gradient: AppColors.appGradientColor,
-                                    style: GetTextTheme.sf18_medium)
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    offer.isPromoCode
+                                        ? Text("Promo Code",
+                                            style: GetTextTheme.sf12_regular
+                                                .copyWith(
+                                                    color:
+                                                        AppColors.greenColor))
+                                        : const SizedBox(),
+                                    GradientText(
+                                        DateFormat("dd MMM yyyy").format(
+                                            DateTime.parse(offer.expiryDate)),
+                                        gradient: AppColors.appGradientColor,
+                                        style: GetTextTheme.sf18_medium),
+                                  ],
+                                )
                               ],
                             ),
                             AppServices.addHeight(10.h),

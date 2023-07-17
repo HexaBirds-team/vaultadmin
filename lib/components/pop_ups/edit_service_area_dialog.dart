@@ -16,7 +16,9 @@ import '../simple_textfield.dart';
 class EditServiceAreaDialog extends StatefulWidget {
   String pincode;
   String id;
-  EditServiceAreaDialog({Key? key, required this.pincode, required this.id})
+  String city;
+  EditServiceAreaDialog(
+      {Key? key, required this.pincode, required this.id, required this.city})
       : super(key: key);
 
   @override
@@ -25,6 +27,8 @@ class EditServiceAreaDialog extends StatefulWidget {
 
 class _EditServiceAreaDialogState extends State<EditServiceAreaDialog> {
   final _pinCodeController = TextEditingController();
+  final _cityController = TextEditingController();
+
   final _validator = DataValidationController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
@@ -36,6 +40,7 @@ class _EditServiceAreaDialogState extends State<EditServiceAreaDialog> {
 
   getStuff() {
     _pinCodeController.text = widget.pincode;
+    _cityController.text = widget.city;
   }
 
   @override
@@ -53,11 +58,18 @@ class _EditServiceAreaDialogState extends State<EditServiceAreaDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text("Edit Service Area", style: GetTextTheme.sf18_bold),
-              AppServices.addHeight(10.h),
+              AppServices.addHeight(25.h),
               SimpleTextField(
                   name: _pinCodeController,
                   validator: _validator,
+                  inputType: TextInputType.number,
                   label: "Enter Service Area Pincode"),
+              AppServices.addHeight(15.h),
+              SimpleTextField(
+                  name: _cityController,
+                  validator: _validator,
+                  inputType: TextInputType.text,
+                  label: "Enter Service Area Name"),
               AppServices.addHeight(20.h),
               db.appLoading
                   ? const OnViewLoader()
@@ -91,8 +103,8 @@ class _EditServiceAreaDialogState extends State<EditServiceAreaDialog> {
 
   onUpdate(AppDataController value) async {
     if (_key.currentState!.validate()) {
-      FirebaseController(context)
-          .editServiceArea(_pinCodeController.text, widget.id);
+      FirebaseController(context).editServiceArea(
+          _pinCodeController.text, _cityController.text, widget.id);
     } else {
       null;
     }

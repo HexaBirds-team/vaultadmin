@@ -115,7 +115,8 @@ class ShiftModel {
 }
 
 class UserInformationClass {
-  String username, phone, image, uid, token, dateOfBirth, gender, aadharNo;
+  String username, phone, image, uid, dateOfBirth, gender, aadharNo;
+  List<String> token;
   bool isBlocked;
   UserInformationClass(this.username, this.phone, this.image, this.uid,
       this.isBlocked, this.token, this.gender, this.dateOfBirth, this.aadharNo);
@@ -123,7 +124,9 @@ class UserInformationClass {
       : username = json['Name'].toString(),
         phone = json["Number"].toString(),
         isBlocked = json['isBlocked'].toString() == "true",
-        token = json['token'] == null ? "" : json['token'].toString(),
+        token = json['token'] == null
+            ? []
+            : (json['token'] as List).map((e) => e.toString()).toList(),
         gender = json['Gender'] == null ? "" : json['Gender'].toString(),
         dateOfBirth =
             json['dateOfBirth'] == null ? "" : json['dateOfBirth'].toString(),
@@ -349,10 +352,11 @@ class SubscriptionClass {
 }
 
 class ServiceAreaClass {
-  String id, pincode;
-  ServiceAreaClass(this.id, this.pincode);
+  String id, pincode, city;
+  ServiceAreaClass(this.id, this.pincode, this.city);
   ServiceAreaClass.fromJson(Map<String, dynamic> json, this.id)
-      : pincode = json['pincode'];
+      : pincode = json['pincode'],
+        city = json['city'];
 }
 
 class NotificationModel {
@@ -405,7 +409,7 @@ class ReviewsModel {
 class OfferClass {
   String id, title, description, receiver, expiryDate, offerCode, discount;
   DateTime createdAt;
-  bool isDisabled;
+  bool isDisabled, isPromoCode;
   OfferClass(
       this.id,
       this.title,
@@ -415,6 +419,7 @@ class OfferClass {
       this.offerCode,
       this.discount,
       this.createdAt,
+      this.isPromoCode,
       this.isDisabled);
   OfferClass.fromJson(Map<Object?, Object?> json, this.id)
       : title = json['title'].toString(),
@@ -422,6 +427,7 @@ class OfferClass {
         receiver = json['receiver'].toString(),
         expiryDate =
             json['ExpiryDate'] == null ? "" : json['ExpiryDate'].toString(),
+        isPromoCode = json['isPromoCode'].toString() == "true",
         offerCode =
             json['OfferCode'] == null ? "" : json['OfferCode'].toString(),
         isDisabled = json['isDisabled'] == null
@@ -469,4 +475,13 @@ class PaymentModel {
         userId = json['userId'] ?? "",
         userName = json['userName'] ?? "",
         createdOn = DateTime.parse(json['createdOn']);
+}
+
+class ShiftTimeModel {
+  String id, startTime, endTime;
+  ShiftTimeModel(this.id, this.startTime, this.endTime);
+
+  ShiftTimeModel.fromShift(Map<String, dynamic> json, this.id)
+      : startTime = json['start'],
+        endTime = json['end'];
 }

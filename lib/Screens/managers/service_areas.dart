@@ -67,12 +67,16 @@ class _ServiceAreaManagerState extends State<ServiceAreaManager> {
                 return ListTile(
                   title: Text(serviceArea[i].pincode.toString(),
                       style: GetTextTheme.sf18_medium),
+                  subtitle: Text(
+                    serviceArea[i].city,
+                  ),
                   trailing: IconButton(
                       onPressed: () => showDialog(
                           context: context,
                           builder: (context) => EditServiceAreaDialog(
                               pincode: serviceArea[i].pincode.toString(),
-                              id: serviceArea[i].id.toString())),
+                              id: serviceArea[i].id.toString(),
+                              city: serviceArea[i].city.toString())),
                       splashRadius: 20.sp,
                       icon: ImageGradient(
                           image: AppIcons.editIcon,

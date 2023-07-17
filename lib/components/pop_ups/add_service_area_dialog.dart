@@ -22,6 +22,7 @@ class AddServiceAreaDialog extends StatefulWidget {
 
 class _AddServiceAreaDialogState extends State<AddServiceAreaDialog> {
   final _pinCodeController = TextEditingController();
+  final _cityController = TextEditingController();
   final _validator = DataValidationController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
@@ -40,11 +41,17 @@ class _AddServiceAreaDialogState extends State<AddServiceAreaDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text("Add Service Area", style: GetTextTheme.sf18_bold),
-              AppServices.addHeight(10.h),
+              AppServices.addHeight(25.h),
               SimpleTextField(
                   name: _pinCodeController,
                   validator: _validator,
+                  inputType: TextInputType.number,
                   label: "Enter Service Area Pincode"),
+              AppServices.addHeight(15.h),
+              SimpleTextField(
+                  name: _cityController,
+                  validator: _validator,
+                  label: "Enter Service Area Name"),
               AppServices.addHeight(20.h),
               db.appLoading
                   ? const OnViewLoader()
@@ -77,7 +84,8 @@ class _AddServiceAreaDialogState extends State<AddServiceAreaDialog> {
 
   onSave(AppDataController value) async {
     if (_key.currentState!.validate()) {
-      await FirebaseController(context).addServiceArea(_pinCodeController.text);
+      await FirebaseController(context)
+          .addServiceArea(_pinCodeController.text, _cityController.text);
     } else {
       null;
     }

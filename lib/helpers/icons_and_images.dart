@@ -44,6 +44,7 @@ class AppIcons {
   static const String homeIcon = "assets/icons/home.png";
   static const String paymentIcon = "assets/icons/payment_icon.png";
   static const String transactionIcon = "assets/icons/transaction_icon.png";
+  static const String clockIcon = "assets/icons/clock.png";
 
   //drawer icons
   static const String announcementIcon = "assets/icons/announcement.png";
