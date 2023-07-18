@@ -51,7 +51,6 @@ class _SplashScreenState extends State<SplashScreen> {
       await firebase.getUsersList();
       await firebase.getGuardsList();
       await firebase.getBookings();
-      await firebase.getShiftTime();
       firebase.getOffers(context);
       // firebase.getSubscriptions();
       final data = await FirestoreApiReference.adminPath.get();

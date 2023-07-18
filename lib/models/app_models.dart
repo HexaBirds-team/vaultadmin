@@ -352,10 +352,13 @@ class SubscriptionClass {
 }
 
 class ServiceAreaClass {
-  String id, pincode, city;
-  ServiceAreaClass(this.id, this.pincode, this.city);
+  String id, pincode, city, dayTime, nightTime;
+  ServiceAreaClass(
+      this.id, this.pincode, this.city, this.dayTime, this.nightTime);
   ServiceAreaClass.fromJson(Map<String, dynamic> json, this.id)
       : pincode = json['pincode'],
+        dayTime = json['day'],
+        nightTime = json['night'],
         city = json['city'];
 }
 

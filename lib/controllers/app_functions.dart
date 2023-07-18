@@ -214,6 +214,26 @@ class FunctionsController {
     }
     return days;
   }
+
+  static String timeConversion(String time) {
+    var splittedTime = time.split("to");
+    var now = DateTime.now();
+    var time1 = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(splittedTime.first.split(":").first),
+        int.parse(splittedTime.first.split(":").last.split(" ").first));
+    var time2 = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(splittedTime.last.split(":").first),
+        int.parse(splittedTime.last.split(":").last.split(" ").first));
+    String convertedTime =
+        "${DateFormat("hh:mm a").format(time1)} to ${DateFormat("hh:mm a").format(time2)}";
+    return convertedTime;
+  }
 }
 
 extension CheckTimeAgo on DateTime {

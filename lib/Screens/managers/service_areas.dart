@@ -74,9 +74,7 @@ class _ServiceAreaManagerState extends State<ServiceAreaManager> {
                       onPressed: () => showDialog(
                           context: context,
                           builder: (context) => EditServiceAreaDialog(
-                              pincode: serviceArea[i].pincode.toString(),
-                              id: serviceArea[i].id.toString(),
-                              city: serviceArea[i].city.toString())),
+                              serviceData: serviceArea[i])),
                       splashRadius: 20.sp,
                       icon: ImageGradient(
                           image: AppIcons.editIcon,

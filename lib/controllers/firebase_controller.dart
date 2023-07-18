@@ -589,13 +589,12 @@ class FirebaseController {
   }
 
   // function to add service area
-  addServiceArea(String pincode, String city) async {
+  addServiceArea(Map<String, dynamic> data) async {
     try {
       db().setLoader(true);
 
-      await FirestoreApiReference.serviceAreaPath
-          .add({"pincode": pincode, "city": city}).then((value) =>
-              db().addServiceArea(ServiceAreaClass(value.id, pincode, city)));
+      await FirestoreApiReference.serviceAreaPath.add(data).then((value) =>
+          db().addServiceArea(ServiceAreaClass.fromJson(data, value.id)));
       AppServices.popView(context);
       db().setLoader(false);
     } on FirebaseException catch (e) {
@@ -614,14 +613,13 @@ class FirebaseController {
   }
 
   // function to edit service area
-  editServiceArea(String pincode, String city, String id) async {
+  editServiceArea(Map<String, dynamic> data, String id) async {
     try {
       db().setLoader(true);
 
-      await FirestoreApiReference.serviceAreaPath
-          .doc(id)
-          .update({"pincode": pincode, "city": city}).then(
-              (value) => db().updateServiceArea(id, pincode, city));
+      await FirestoreApiReference.serviceAreaPath.doc(id).update(data).then(
+          (value) =>
+              db().updateServiceArea(ServiceAreaClass.fromJson(data, id)));
       AppServices.popView(context);
       db().setLoader(false);
     } on FirebaseException catch (e) {
@@ -763,13 +761,5 @@ class FirebaseController {
     //             offer.value as Map<Object?, Object?>, offer.key.toString()));
     //   }
     // });
-  }
-
-  // get shift time
-  getShiftTime() async {
-    final snapshot = await firestore.collection("Shift").get();
-    db().setShiftTime(snapshot.docs
-        .map((e) => ShiftTimeModel.fromShift(e.data(), e.id))
-        .toList());
   }
 }

@@ -325,10 +325,9 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
-  updateServiceArea(String id, String pincode, String city) {
-    int i = _serviceArea.indexWhere((element) => element.id == id);
-    _serviceArea[i].pincode = pincode;
-    _serviceArea[i].city = city;
+  updateServiceArea(ServiceAreaClass data) {
+    int i = _serviceArea.indexWhere((element) => element.id == data.id);
+    _serviceArea[i] = data;
     notifyListeners();
   }
 
@@ -376,23 +375,5 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // shift time handler
-  List<ShiftTimeModel> _shiftTime = [];
-  List<ShiftTimeModel> get getShiftTime => _shiftTime;
-
-  setShiftTime(List<ShiftTimeModel> shift) {
-    _shiftTime = shift;
-    notifyListeners();
-  }
-
-  updateShiftTime(ShiftTimeModel shift) {
-    var i = _shiftTime.indexWhere((element) => element.id == shift.id);
-    _shiftTime[i] = shift;
-    notifyListeners();
-  }
-
-  addShiftTime(ShiftTimeModel shift) {
-    _shiftTime.add(shift);
-    notifyListeners();
-  }
+ 
 }
