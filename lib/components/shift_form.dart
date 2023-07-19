@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../helpers/base_getters.dart';
 import '../helpers/icons_and_images.dart';
@@ -34,8 +35,9 @@ class _ShiftFormState extends State<ShiftForm> {
           var time = await showTimePicker(
               context: context,
               initialTime: TimeOfDay(hour: TimeOfDay.now().hour, minute: 00));
-          widget.startTimeController.text =
-              "${time!.hour < 10 ? "0${time.hour}" : time.hour}:${time.minute < 10 ? "0${time.minute}" : time.minute} ${time.period.name}";
+          widget.startTimeController.text = DateFormat("hh:mm a")
+              .format(DateTime(1999, 08, 24, time!.hour, time.minute));
+          // "${time!.hour < 10 ? "0${time.hour}" : time.hour}:${time.minute < 10 ? "0${time.minute}" : time.minute} ${time.period.name}";
 
           setState(() {});
         }, "Select Start Time", "", widget.startTimeController),
@@ -44,8 +46,8 @@ class _ShiftFormState extends State<ShiftForm> {
           var time = await showTimePicker(
               context: context,
               initialTime: TimeOfDay(hour: TimeOfDay.now().hour, minute: 00));
-          widget.endTimeController.text =
-              "${time!.hour < 10 ? "0${time.hour}" : time.hour}:${time.minute < 10 ? "0${time.minute}" : time.minute} ${time.period.name}";
+          widget.endTimeController.text = DateFormat("hh:mm a")
+              .format(DateTime(1999, 08, 24, time!.hour, time.minute));
 
           setState(() {});
         }, "Select End Time", "", widget.endTimeController),
