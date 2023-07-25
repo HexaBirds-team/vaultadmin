@@ -349,11 +349,11 @@ class FirebaseController {
         }
       }
     } on FirebaseException catch (e) {
-      MySnackBar.error(context, e.message.toString());
+      MySnackBar.error(context, "Fetch Guard Error : ${e.message.toString()}");
     } on SocketException {
       MySnackBar.info(context, "Internet Error");
     } catch (e) {
-      MySnackBar.error(context, e.toString());
+      MySnackBar.error(context, "Fetch Guard Error : ${e.toString()}");
     }
   }
 
@@ -432,7 +432,7 @@ class FirebaseController {
     } on SocketException {
       MySnackBar.info(context, "Internet Error");
     } catch (e) {
-      print(e);
+      MySnackBar.error(context, "Fetch Complaints Error : $e");
     }
   }
 

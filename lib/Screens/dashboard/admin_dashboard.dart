@@ -86,8 +86,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
         if (network) {
           final firebase = FirebaseController(context);
           await firebase.getUsersList();
+
           await firebase.getGuardsList();
+
           await firebase.getComplaints();
+
           await firebase.getBookings();
         } else {
           MySnackBar.error(context,
