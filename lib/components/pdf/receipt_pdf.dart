@@ -45,7 +45,7 @@ class PdfInvoiceApi {
               ),
               SizedBox(height: 30),
               Text(
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+                  "Thank you for choosing our security services! We appreciate your trust in us and remain committed to providing exceptional protection.",
                   style: const TextStyle(fontSize: 14)),
               SizedBox(height: 20),
               customRow("Order:", booking.bookingId, false),
@@ -54,6 +54,8 @@ class PdfInvoiceApi {
                   "Date:",
                   DateFormat("yyyy-MM-dd hh:mm a").format(booking.bookingTime),
                   false),
+              customRow(
+                  "Payment Id:", booking.paymentId.split("_").last, false),
               SizedBox(height: 20),
               Row(
                 children: [
@@ -114,7 +116,7 @@ class PdfInvoiceApi {
               customRow("Address:", booking.address, true),
               SizedBox(height: 30),
               Text(
-                "If you need help with anything. don't hesitate to contact us at +91-9876543210",
+                "If you need help with anything. don't hesitate to contact us at +91-9992211889",
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 14),
               ),

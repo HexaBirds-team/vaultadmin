@@ -41,6 +41,52 @@ class FancyDialogController {
     );
   }
 
+  AwesomeDialog approveGuardDialog(BuildContext context, Function onokPress) {
+    return AwesomeDialog(
+      context: context,
+      dialogType: DialogType.warning,
+      animType: AnimType.scale,
+      title: "Warning",
+      desc:
+          "By clicking submit means you have reviewed all the documents provided by guard and are valid. All the document will automatically be marked as valid.",
+      btnOkText: "Submit",
+      btnCancelText: "Cancel",
+      btnCancelOnPress: () {},
+      btnOkOnPress: () => onokPress(),
+    );
+  }
+
+  AwesomeDialog approveAllGuardDialog(
+      BuildContext context, Function onokPress) {
+    return AwesomeDialog(
+      context: context,
+      dialogType: DialogType.warning,
+      animType: AnimType.scale,
+      title: "Warning",
+      desc:
+          "By clicking submit means you have reviewed all the documents provided by the guards and are valid. All the document will automatically be marked as valid and all the guards will automatically be marked as approved.",
+      btnOkText: "Okay",
+      btnCancelText: "Cancel",
+      btnCancelOnPress: () {},
+      btnOkOnPress: () => onokPress(),
+    );
+  }
+
+  AwesomeDialog rejectGuardDialog(BuildContext context, Function onokPress) {
+    return AwesomeDialog(
+      context: context,
+      dialogType: DialogType.warning,
+      animType: AnimType.scale,
+      title: "Warning",
+      desc:
+          "By clicking on reject means you are dissaggreed with the documents provided by the guard. This will send a notification to the guard for resubmission of all the documents.",
+      btnOkText: "Reject",
+      btnCancelText: "Cancel",
+      btnCancelOnPress: () {},
+      btnOkOnPress: () => onokPress(),
+    );
+  }
+
   AwesomeDialog showWillPopMsg(BuildContext context) {
     return AwesomeDialog(
         context: context,

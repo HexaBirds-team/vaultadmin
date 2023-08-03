@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/managers/users/user_profile_view.dart';
-import 'package:valt_security_admin_panel/controllers/widget_creator.dart';
 
 import '../../../../helpers/style_sheet.dart';
 import '../../../controllers/app_data_controller.dart';
@@ -58,8 +57,9 @@ class _AllUserManagerViewState extends State<AllUserManagerView> {
                                   .circularContainerDecoration_1(context),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(200.r),
-                                  child: WidgetImplimentor().addNetworkImage(
-                                      url: user.image, fit: BoxFit.cover)),
+                                  child: Image.network(user.image, fit: BoxFit.cover))
+                                  // WidgetImplimentor().addNetworkImage(
+                                  //     url: user.image, fit: BoxFit.cover)),
                             ),
                             AppServices.addHeight(10.h),
                             Text(user.username,

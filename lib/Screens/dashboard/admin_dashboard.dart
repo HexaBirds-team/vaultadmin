@@ -85,6 +85,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             await FunctionsController.checkInternetConnectivity(context);
         if (network) {
           final firebase = FirebaseController(context);
+
           await firebase.getUsersList();
 
           await firebase.getGuardsList();

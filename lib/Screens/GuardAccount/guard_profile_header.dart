@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -26,11 +25,13 @@ class AccountHeader extends StatelessWidget {
         AppServices.addHeight(15.h),
         ClipRRect(
             borderRadius: BorderRadius.circular(1000.r),
-            child: CachedNetworkImage(
-                imageUrl: providerDetails.profileImage,
-                height: 90.sp,
-                width: 90.sp,
-                fit: BoxFit.cover)),
+            child: Image.network(providerDetails.profileImage,
+                height: 90.sp, width: 90.sp, fit: BoxFit.cover)),
+        // CachedNetworkImage(
+        //     imageUrl: providerDetails.profileImage,
+        //     height: 90.sp,
+        //     width: 90.sp,
+        //     fit: BoxFit.cover)),
         AppServices.addHeight(10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

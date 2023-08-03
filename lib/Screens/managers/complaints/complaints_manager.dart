@@ -28,7 +28,8 @@ class _ComplaintsManagerState extends State<ComplaintsManager> {
     final db = Provider.of<AppDataController>(context);
     final complaints = db.getAllComplaints
         .where((element) =>
-            element.status.name == widget.status &&
+            element.status.name.toLowerCase().trim() ==
+                widget.status.toLowerCase().trim() &&
             (widget.complaintBy == "all"
                 ? true
                 : element.complaintBy == widget.complaintBy))
@@ -47,8 +48,8 @@ class _ComplaintsManagerState extends State<ComplaintsManager> {
                     itemBuilder: (context, i) {
                       final data = complaints[i];
                       return InkWell(
-                        onTap: () => AppServices.pushTo(
-                            context, ComplaintDetailsView(data: data)),
+                        onTap: () => AppServices.pushAndReplace(
+                            ComplaintDetailsView(data: data), context),
                         child: Container(
                           margin: EdgeInsets.symmetric(
                               vertical: 8.sp, horizontal: 10.sp),

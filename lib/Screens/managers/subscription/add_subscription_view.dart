@@ -6,9 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/managers/subscription/add_Plan.dart';
 import 'package:valt_security_admin_panel/Screens/managers/subscription/sub_difference_model_tile.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
-import 'package:valt_security_admin_panel/components/expanded_btn.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
-import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/controllers/snackbar_controller.dart';
@@ -16,6 +14,8 @@ import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import 'package:valt_security_admin_panel/helpers/style_sheet.dart';
 
 import '../../../components/Subscription/subscription_form.dart';
+import '../../../components/expanded_btn.dart';
+import '../../../components/loaders/on_view_loader.dart';
 
 class AddSubscriptionView extends StatefulWidget {
   // bool isEDit =false;
@@ -156,45 +156,52 @@ class _AddSubscriptionViewState extends State<AddSubscriptionView> {
                     ),
                     Consumer<AppDataController>(
                         builder: (context, value, child) {
-                      return Container(
-                        width: AppServices.getScreenWidth(context),
-                        decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
-                            borderRadius: BorderRadius.circular(10.r)),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            value.getSubDifference.isEmpty
-                                ? const SizedBox()
-                                : ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: value.getSubDifference.length,
-                                    itemBuilder: (context, index) {
-                                      return SubDifferenceModelTile(
-                                          data: value.getSubDifference[index]);
-                                    },
+                      return Column(
+                        children: [
+                          value.getSubDifference.isEmpty
+                              ? const SizedBox()
+                              : Container(
+                                  width: AppServices.getScreenWidth(context),
+                                  decoration: BoxDecoration(
+                                      color: AppColors.whiteColor,
+                                      borderRadius:
+                                          BorderRadius.circular(10.r)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            value.getSubDifference.length,
+                                        itemBuilder: (context, index) {
+                                          return SubDifferenceModelTile(
+                                              data: value
+                                                  .getSubDifference[index]);
+                                        },
+                                      ),
+                                      // Consumer<AppDataController>(
+                                      //   builder: (context, value, child) {
+                                      //     if (value.getSubDifference.isEmpty) {
+                                      //       return const SizedBox();
+                                      //     } else {
+                                      //       return
+                                      //     }
+                                      //   },
+                                      // ),
+                                    ],
                                   ),
-                            // Consumer<AppDataController>(
-                            //   builder: (context, value, child) {
-                            //     if (value.getSubDifference.isEmpty) {
-                            //       return const SizedBox();
-                            //     } else {
-                            //       return
-                            //     }
-                            //   },
-                            // ),
-                            AppServices.addHeight(50.h),
-                            value.appLoading
-                                ? const OnViewLoader()
-                                : ButtonOneExpanded(
-                                    onPressed: () {
-                                      onSave(context);
-                                    },
-                                    btnText: "Save")
-                          ],
-                        ),
+                                ),
+                          AppServices.addHeight(50.h),
+                          value.appLoading
+                              ? const OnViewLoader()
+                              : ButtonOneExpanded(
+                                  onPressed: () {
+                                    onSave(context);
+                                  },
+                                  btnText: "Save")
+                        ],
                       );
                     }),
                   ]),

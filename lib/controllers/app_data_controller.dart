@@ -78,9 +78,9 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
-  updateProviderRatings(String id, double rating) {
+  updateProviderRatings(String id, String rating) {
     int i = _providerList.indexWhere((element) => element.uid == id);
-    _providerList[i].rating = rating;
+    _providerList[i].promotion = rating;
     notifyListeners();
   }
 
@@ -160,6 +160,11 @@ class AppDataController extends ChangeNotifier {
   addNewComplaint(ComplaintsClass complaint) {
     _complaints.add(complaint);
     notifyListeners();
+  }
+
+  updateComplaintStatus(String id, ComplaintStatus status) {
+    var i = _complaints.indexWhere((element) => element.id == id);
+    _complaints[i].status = status;
   }
 
 /* all services List */
@@ -374,6 +379,4 @@ class AppDataController extends ChangeNotifier {
     _payments = payments;
     notifyListeners();
   }
-
- 
 }

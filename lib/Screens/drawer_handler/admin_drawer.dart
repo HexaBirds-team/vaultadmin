@@ -6,7 +6,7 @@ import 'package:valt_security_admin_panel/Screens/login.dart';
 import 'package:valt_security_admin_panel/Screens/managers/Announcements/announcement.dart';
 import 'package:valt_security_admin_panel/Screens/managers/Announcements/manage_offers.dart';
 import 'package:valt_security_admin_panel/Screens/managers/banners/manage_banners.dart';
-import 'package:valt_security_admin_panel/Screens/managers/service_areas.dart';
+import 'package:valt_security_admin_panel/Screens/managers/service_area/service_areas.dart';
 import 'package:valt_security_admin_panel/Screens/managers/service_manager.dart';
 import 'package:valt_security_admin_panel/Screens/managers/transactions/transactions_view.dart';
 import 'package:valt_security_admin_panel/controllers/app_settings_controller.dart';

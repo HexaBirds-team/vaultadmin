@@ -215,7 +215,7 @@ class FunctionsController {
     return days;
   }
 
-  static String timeConversion(String time) {
+  static String timeConversion(String time, String type) {
     var splittedTime = time.split("to");
     var now = DateTime.now();
     var time1 = DateTime(
@@ -232,7 +232,7 @@ class FunctionsController {
         int.parse(splittedTime.last.split(":").last.split(" ").first));
     String convertedTime =
         "${DateFormat("hh:mm a").format(time1)} to ${DateFormat("hh:mm a").format(time2)}";
-    return convertedTime;
+    return type == "Shift" ? time : convertedTime;
   }
 }
 

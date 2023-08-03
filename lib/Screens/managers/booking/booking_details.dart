@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -83,39 +82,43 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                           borderRadius: BorderRadius.circular(10.r)),
                       tileColor: AppColors.blackColor.withOpacity(0.07),
                       leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(500.r),
-                        child: userData.image == ""
-                            ? Shimmer.fromColors(
-                                baseColor:
-                                    AppColors.blackColor.withOpacity(0.1),
-                                highlightColor:
-                                    AppColors.blackColor.withOpacity(0.02),
-                                child: Container(
+                          borderRadius: BorderRadius.circular(500.r),
+                          child: userData.image == ""
+                              ? Shimmer.fromColors(
+                                  baseColor:
+                                      AppColors.blackColor.withOpacity(0.1),
+                                  highlightColor:
+                                      AppColors.blackColor.withOpacity(0.02),
+                                  child: Container(
+                                    height: 50.sp,
+                                    width: 50.sp,
+                                    decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppColors.blackColor),
+                                  ),
+                                )
+                              : Image.network(userData.image,
                                   height: 50.sp,
                                   width: 50.sp,
-                                  decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.blackColor),
-                                ),
-                              )
-                            : CachedNetworkImage(
-                                placeholder: (context, url) =>
-                                    Shimmer.fromColors(
-                                      baseColor:
-                                          AppColors.blackColor.withOpacity(0.1),
-                                      highlightColor: AppColors.blackColor
-                                          .withOpacity(0.02),
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: AppColors.blackColor),
-                                      ),
-                                    ),
-                                imageUrl: userData.image,
-                                height: 50.sp,
-                                width: 50.sp,
-                                fit: BoxFit.cover),
-                      ),
+                                  fit: BoxFit.cover)
+                          // CachedNetworkImage(
+                          //     placeholder: (context, url) =>
+                          //         Shimmer.fromColors(
+                          //           baseColor:
+                          //               AppColors.blackColor.withOpacity(0.1),
+                          //           highlightColor: AppColors.blackColor
+                          //               .withOpacity(0.02),
+                          //           child: Container(
+                          //             decoration: const BoxDecoration(
+                          //                 shape: BoxShape.circle,
+                          //                 color: AppColors.blackColor),
+                          //           ),
+                          //         ),
+                          //     imageUrl: userData.image,
+                          //     height: 50.sp,
+                          //     width: 50.sp,
+                          //     fit: BoxFit.cover),
+                          ),
                       title: Text(userData.username,
                           style: GetTextTheme.sf16_bold),
                       subtitle:
@@ -166,7 +169,8 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                     : AppServices.formatDate(
                                         myBooking!.reportingDate.toString()),
                                 style: GetTextTheme.sf16_medium),
-                            Text("Shift : ${myBooking!.reportingTime}",
+                            Text(
+                                "${myBooking!.reportingTime.contains("Day") || myBooking!.reportingTime.contains("Night") ? "Shift" : "Hours"} : ${myBooking!.reportingTime}",
                                 style: GetTextTheme.sf14_regular),
                             AppServices.addHeight(20.h),
                             Row(
@@ -230,32 +234,37 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                                       tileColor: AppColors.blackColor
                                           .withOpacity(0.07),
                                       leading: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(500.r),
-                                        child: CachedNetworkImage(
-                                            placeholder: (context, url) =>
-                                                Shimmer.fromColors(
-                                                  baseColor: AppColors
-                                                      .blackColor
-                                                      .withOpacity(0.1),
-                                                  highlightColor: AppColors
-                                                      .blackColor
-                                                      .withOpacity(0.02),
-                                                  child: Container(
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: AppColors
-                                                                .blackColor),
-                                                  ),
-                                                ),
-                                            imageUrl:
-                                                profile.profileImage.toString(),
-                                            height: 50.sp,
-                                            width: 50.sp,
-                                            fit: BoxFit.cover),
-                                      ),
+                                          borderRadius:
+                                              BorderRadius.circular(500.r),
+                                          child: Image.network(
+                                              profile.profileImage.toString(),
+                                              height: 50.sp,
+                                              width: 50.sp,
+                                              fit: BoxFit.cover)
+                                          // CachedNetworkImage(
+                                          //     placeholder: (context, url) =>
+                                          //         Shimmer.fromColors(
+                                          //           baseColor: AppColors
+                                          //               .blackColor
+                                          //               .withOpacity(0.1),
+                                          //           highlightColor: AppColors
+                                          //               .blackColor
+                                          //               .withOpacity(0.02),
+                                          //           child: Container(
+                                          //             decoration:
+                                          //                 const BoxDecoration(
+                                          //                     shape:
+                                          //                         BoxShape.circle,
+                                          //                     color: AppColors
+                                          //                         .blackColor),
+                                          //           ),
+                                          //         ),
+                                          //     imageUrl:
+                                          //         profile.profileImage.toString(),
+                                          //     height: 50.sp,
+                                          //     width: 50.sp,
+                                          //     fit: BoxFit.cover),
+                                          ),
                                       title: Row(
                                         children: [
                                           Text(profile.name.toString(),

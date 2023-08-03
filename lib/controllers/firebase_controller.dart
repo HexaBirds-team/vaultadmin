@@ -443,7 +443,9 @@ class FirebaseController {
       final snapshot = await FirestoreApiReference.complaintsMsgPath(id).get();
       if (snapshot.docs.isNotEmpty) {
         messages = snapshot.docs.map((e) => e.data()).toList();
-      } else {}
+
+        // print(messages);
+      }
     } on FirebaseException catch (e) {
       MySnackBar.error(context, e.message.toString());
     } on SocketException {

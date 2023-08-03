@@ -154,7 +154,7 @@ class ProvidersInformationClass {
   bool isGunAvailable, isBlocked, isVerified;
   String latitude, longitude;
   List<dynamic> tokens;
-  double rating;
+  String promotion;
   ProvidersInformationClass(
       this.uid,
       this.name,
@@ -169,7 +169,7 @@ class ProvidersInformationClass {
       this.latitude,
       this.experience,
       this.longitude,
-      this.rating,
+      this.promotion,
       this.isApproved,
       this.createdAt,
       this.tokens,
@@ -199,7 +199,8 @@ class ProvidersInformationClass {
                 ? ""
                 : json["Location"].toString().split(",").last,
         experience = json['Experience'].toString(),
-        rating = double.parse(json['Ratings'].toString()),
+        promotion =
+            json['Promotion'] == null ? "basic" : json['Promotion'].toString(),
         isApproved = GuardApprovalStatus.values.firstWhere(
             (element) => element.name == json['isApproved'].toString()),
         createdAt = json['CreatedAt'].toString(),
@@ -295,6 +296,7 @@ class BookingsClass {
       bookingDuration,
       bookingCategory,
       bookingCategoryImg,
+      paymentId,
       userId;
   DateTime bookingTime;
   List<String> guards;
@@ -312,6 +314,7 @@ class BookingsClass {
       this.userId,
       this.guards,
       this.bookingId,
+      this.paymentId,
       this.price,
       this.lat,
       this.bookingTime,
@@ -326,7 +329,8 @@ class BookingsClass {
         type = json['BookingType'].toString(),
         paymentStatus = json['PaymentStatus'].toString(),
         reportingDate = json['ReportingDate'].toString(),
-        reportingTime = json['ReportingTime'].toString(),
+        reportingTime = FunctionsController.timeConversion(
+            json['ReportingTime'].toString(), json['DutyType']),
         userId = json['UserId'].toString(),
         guards = json['GuardId'] == null
             ? []
@@ -334,6 +338,7 @@ class BookingsClass {
         bookingId = json['BookingId'].toString(),
         lat = double.parse(json['LatLng'].toString().split(",").first),
         lng = double.parse(json['LatLng'].toString().split(",").last),
+        paymentId = json['PaymentId'].toString(),
         bookingDuration = json['BookingDuration'].toString(),
         bookingCategory = json['BookingCategory'].toString(),
         bookingTime = DateTime.parse(json['CreatedAt'].toString()),

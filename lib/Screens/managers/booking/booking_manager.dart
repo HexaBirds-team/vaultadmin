@@ -46,28 +46,35 @@ class _BookingManagerState extends State<BookingManager> {
       appBar: AppBar(
           title: const Text("Manage Bookings"),
           actions: [
-            PopupMenuButton(
-                initialValue: status,
-                icon: const Icon(Icons.filter_alt),
-                onSelected: (v) {
-                  setState(() {
-                    status = v;
-                  });
-                },
-                itemBuilder: (context) {
-                  return BookingStatus.values
-                      .map((e) => PopupMenuItem(value: e, child: Text(e.name)))
-                      .toList();
-                })
+            db.getBookings.isEmpty
+                ? const SizedBox()
+                : PopupMenuButton(
+                    initialValue: status,
+                    icon: const Icon(Icons.filter_alt),
+                    onSelected: (v) {
+                      setState(() {
+                        status = v;
+                      });
+                    },
+                    itemBuilder: (context) {
+                      return BookingStatus.values
+                          .map((e) =>
+                              PopupMenuItem(value: e, child: Text(e.name)))
+                          .toList();
+                    })
           ],
-          bottom: PreferredSize(
-              preferredSize: Size(AppServices.getScreenWidth(context), 45.h),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: SearchField(
-                    hint: "Search by Booking Number..",
-                    onSearch: (v) => {setState(() => searchValue = v.trim())}),
-              ))),
+          bottom: db.getBookings.isEmpty
+              ? null
+              : PreferredSize(
+                  preferredSize:
+                      Size(AppServices.getScreenWidth(context), 45.h),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: SearchField(
+                        hint: "Search by Booking Number..",
+                        onSearch: (v) =>
+                            {setState(() => searchValue = v.trim())}),
+                  ))),
       body: SafeArea(
           child: bookings.isEmpty
               ? status != BookingStatus.all &&

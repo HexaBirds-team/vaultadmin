@@ -4,15 +4,16 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:valt_security_admin_panel/components/custom_appbar.dart';
+import 'package:valt_security_admin_panel/Screens/managers/service_area/add_service_area.dart';
+import 'package:valt_security_admin_panel/Screens/managers/service_area/edit_service_area.dart';
+import 'package:valt_security_admin_panel/components/drop_down_btn.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
-import 'package:valt_security_admin_panel/components/pop_ups/add_service_area_dialog.dart';
-import 'package:valt_security_admin_panel/components/pop_ups/edit_service_area_dialog.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
+import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
 
-import '../../controllers/stream_controller.dart';
-import '../../helpers/style_sheet.dart';
+import '../../../controllers/stream_controller.dart';
+import '../../../helpers/style_sheet.dart';
 
 class ServiceAreaManager extends StatefulWidget {
   const ServiceAreaManager({Key? key}) : super(key: key);
@@ -40,25 +41,43 @@ class _ServiceAreaManagerState extends State<ServiceAreaManager> {
   //   setState(() {});
   // }
 
+  String searchValue = "All";
+
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
-    final serviceArea = db.getserviceArea;
+    final serviceArea = searchValue == "All"
+        ? db.getserviceArea
+        : db.getserviceArea
+            .where((element) =>
+                element.city.trim().toLowerCase() ==
+                searchValue.trim().toLowerCase())
+            .toList();
     return Scaffold(
-      appBar: customAppBar(
-          autoLeading: true,
-          context: context,
-          title: const Text("Manage Service Area"),
-          action: [
-            IconButton(
-                onPressed: () => showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) => StatefulBuilder(
-                        builder: (context, state) =>
-                            const AddServiceAreaDialog())),
-                icon: const Icon(Icons.add))
-          ]),
+      appBar: AppBar(
+        title: const Text("Manage Service Area"),
+        actions: [
+          IconButton(
+              onPressed: () =>
+                  AppServices.pushTo(context, AddServiceAreaView()),
+              icon: const Icon(Icons.add))
+        ],
+        bottom: PreferredSize(
+            preferredSize: Size(AppServices.getScreenWidth(context), 50.h),
+            child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: AppDropDownButton(
+                    items: [
+                      "All",
+                      ...db.getserviceArea.map((e) {
+                        var a = e.city.split("");
+                        a[0] = a[0].toUpperCase();
+                        return a.join(); 
+                      }).toSet().toList()
+                    ],
+                    dropDownValue: searchValue,
+                    onChange: (v) => setState(() => searchValue = v)))),
+      ),
       body: SafeArea(
           child: ListView.builder(
               itemCount: serviceArea.length,
@@ -71,10 +90,8 @@ class _ServiceAreaManagerState extends State<ServiceAreaManager> {
                     serviceArea[i].city,
                   ),
                   trailing: IconButton(
-                      onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => EditServiceAreaDialog(
-                              serviceData: serviceArea[i])),
+                      onPressed: () => AppServices.pushTo(context,
+                          EditServiceAreaView(serviceData: serviceArea[i])),
                       splashRadius: 20.sp,
                       icon: ImageGradient(
                           image: AppIcons.editIcon,

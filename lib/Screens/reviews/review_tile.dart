@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,11 +25,13 @@ class ReviewsTile extends StatelessWidget {
             children: [
               ClipRRect(
                   borderRadius: BorderRadius.circular(1000.r),
-                  child: CachedNetworkImage(
-                      imageUrl: review.profileImage,
-                      height: 45.sp,
-                      width: 45.sp,
-                      fit: BoxFit.cover)),
+                  child: Image.network(review.profileImage,
+                      height: 45.sp, width: 45.sp, fit: BoxFit.cover)),
+              // CachedNetworkImage(
+              //     imageUrl: review.profileImage,
+              //     height: 45.sp,
+              //     width: 45.sp,
+              //     fit: BoxFit.cover)),
               AppServices.addWidth(20.w),
               Expanded(
                 child: Column(

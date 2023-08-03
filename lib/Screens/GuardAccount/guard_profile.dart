@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -17,12 +16,12 @@ import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 
 import '../../components/custom_appbar.dart';
 import '../../components/expanded_btn.dart';
+import '../../components/pop_ups/guard_promote_dialog.dart';
 import '../../controllers/notification_controller.dart';
 import '../../helpers/icons_and_images.dart';
 import '../../helpers/style_sheet.dart';
 import '../../models/app_models.dart';
 import '../../models/enums.dart';
-import 'package:rating_dialog/rating_dialog.dart';
 
 class GuardProfileView extends StatefulWidget {
   bool showEditOptions;
@@ -95,26 +94,9 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             title: const SizedBox(),
             autoLeading: true,
             action: [
-              guard.isApproved == GuardApprovalStatus.pending
-                  ? PopupMenuButton(
-                      iconSize: 30.sp,
-                      padding: const EdgeInsets.all(0),
-                      onSelected: (value) async {
-                        if (value == "approve") {
-                          await approveGuard();
-                        } else {
-                          await AuthController()
-                              .rejectProfile(guard.uid, guard, context);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                            const PopupMenuItem(
-                                value: "approve", child: Text("Approve")),
-                            const PopupMenuItem(
-                                value: "reject", child: Text("Reject")),
-                          ])
-                  : const SizedBox(),
-              widget.showEditOptions
+              widget.showEditOptions &&
+                      widget.providerDetails.isApproved !=
+                          GuardApprovalStatus.pending
                   ? IconButton(
                       splashRadius: 25,
                       onPressed: () async {
@@ -249,11 +231,15 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10.r),
-                                          child: CachedNetworkImage(
-                                              imageUrl: document.image,
+                                          child: Image.network(document.image,
                                               height: 45.sp,
                                               width: 60.sp,
                                               fit: BoxFit.cover),
+                                          // CachedNetworkImage(
+                                          //     imageUrl: document.image,
+                                          //     height: 45.sp,
+                                          //     width: 60.sp,
+                                          //     fit: BoxFit.cover),
                                         ),
                                       ),
                                 AppServices.addWidth(10.w),
@@ -289,7 +275,11 @@ class _GuardProfileViewState extends State<GuardProfileView> {
             AppServices.addHeight(20.h),
             loading
                 ? const OnViewLoader()
-                : (documents.isEmpty || !isChanged
+                : ((guard.isApproved == GuardApprovalStatus.pending &&
+                            documents.isNotEmpty &&
+                            validDocuments.length == documents.length) ||
+                        documents.isEmpty ||
+                        !isChanged
                     ? const SizedBox()
                     : ButtonOneExpanded(
                         onPressed: () {
@@ -298,7 +288,11 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                               ? updateDocStatus(guard, documents)
                               : null;
                         },
-                        btnText: "Update Documents",
+                        btnText:
+                            guard.isApproved == GuardApprovalStatus.pending &&
+                                    invalidDocuments.isNotEmpty
+                                ? "Raise Objection"
+                                : "Update Documents",
                         showBorder: true,
                         disableGradient: true,
                         btnTextColor: true,
@@ -312,33 +306,65 @@ class _GuardProfileViewState extends State<GuardProfileView> {
                             : AppColors.greyColor,
                       )),
             AppServices.addHeight(20.h),
-            ButtonOneExpanded(
-              onPressed: () {
-                final dialog = RatingDialog(
-                    initialRating: guard.rating,
-                    enableComment: false,
-                    title: Text(guard.name,
-                        textAlign: TextAlign.center,
-                        style: GetTextTheme.sf26_bold),
-                    submitButtonText: "Submit",
-                    image: CircleAvatar(
-                      radius: 50.r,
-                      backgroundColor: AppColors.whiteColor,
-                      backgroundImage: NetworkImage(guard.profileImage),
-                    ),
-                    starSize: 35.sp,
-                    message: Text("Set the ratings for this Security Guard",
-                        textAlign: TextAlign.center,
-                        style: GetTextTheme.sf16_medium),
-                    onSubmitted: (v) async {
-                      await FirestoreApiReference.guardApi(guard.uid)
-                          .update({"Ratings": v.rating});
-                      db.updateProviderRatings(guard.uid, v.rating);
-                    });
-                showDialog(context: context, builder: (context) => dialog);
-              },
-              btnText: "Promote",
-            ),
+            (guard.isApproved == GuardApprovalStatus.approved)
+                ? ButtonOneExpanded(
+                    onPressed: () {
+                      showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (context) =>
+                              PromoteGuardDialog(guard: guard));
+                    },
+                    btnText: "Promote",
+                  )
+                : (guard.isApproved == GuardApprovalStatus.pending &&
+                        invalidDocuments.isEmpty)
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ButtonOneExpanded(
+                              onPressed: () {
+                                FancyDialogController()
+                                    .approveGuardDialog(
+                                        context, () => approveGuard())
+                                    .show();
+                              },
+                              btnText: "Approve"),
+                          AppServices.addHeight(10.h),
+                          ButtonOneExpanded(
+                            onPressed: () {
+                              FancyDialogController()
+                                  .rejectGuardDialog(
+                                      context, () => rejectGuard(guard))
+                                  .show();
+                              // rejectGuard(guard);
+                            },
+                            btnText: "Reject",
+                            btnColor: AppColors.grey100,
+                            enableColor: true,
+                            disableGradient: true,
+                            btnTextClr: AppColors.blackColor,
+                            btnTextColor: true,
+                          ),
+                        ],
+                      )
+                    // PopupMenuButton(
+                    //     iconSize: 30.sp,
+                    //     padding: const EdgeInsets.all(0),
+                    //     onSelected: (value) async {
+                    //       if (value == "approve") {
+                    //         await approveGuard();
+                    //       } else {
+                    //         await rejectGuard(guard);
+                    //       }
+                    //     },
+                    //     itemBuilder: (context) => [
+                    //           const PopupMenuItem(
+                    //               value: "approve", child: Text("Approve")),
+                    //           const PopupMenuItem(
+                    //               value: "reject", child: Text("Reject")),
+                    //         ])
+                    : const SizedBox(),
             AppServices.addHeight(20.h),
           ],
         )),
@@ -397,6 +423,7 @@ class _GuardProfileViewState extends State<GuardProfileView> {
           documents[i].status = DocumentState.invalid;
         }
       }
+      await rejectGuard(guard, sendNotification: false);
     }
 
     if (validDocuments.isNotEmpty) {
@@ -436,5 +463,11 @@ class _GuardProfileViewState extends State<GuardProfileView> {
           .update({"isVerified": true});
     }
     setState(() {});
+  }
+
+  rejectGuard(ProvidersInformationClass guard,
+      {bool sendNotification = true}) async {
+    await AuthController().rejectProfile(guard.uid, guard, context,
+        sendNotification: sendNotification);
   }
 }

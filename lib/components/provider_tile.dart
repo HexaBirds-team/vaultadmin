@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../controllers/widget_creator.dart';
 import '../helpers/base_getters.dart';
 import '../helpers/style_sheet.dart';
 
@@ -32,14 +31,17 @@ class _ProviderTileState extends State<ProviderTile> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            height: 80.sp,
-            width: 80.sp,
-            decoration: WidgetDecoration.circularContainerDecoration_1(context),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(200),
-                child: WidgetImplimentor()
-                    .addNetworkImage(url: widget.provider.profileImage)),
-          ),
+              height: 80.sp,
+              width: 80.sp,
+              decoration:
+                  WidgetDecoration.circularContainerDecoration_1(context),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(200),
+                  child: Image.network(widget.provider.profileImage,
+                      fit: BoxFit.cover))
+              //  WidgetImplimentor()
+              //     .addNetworkImage(url: widget.provider.profileImage)),
+              ),
           AppServices.addWidth(15.w),
           Expanded(
               child: SizedBox(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/components/search_textfield.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/helpers/base_getters.dart';
@@ -32,10 +33,20 @@ class _TransactionsViewState extends State<TransactionsView> {
     setState(() {});
   }
 
+  String searchValue = "";
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
-    final transactions = db.getPayments;
+    final transactions = searchValue.isEmpty
+        ? db.getPayments
+        : db.getPayments
+            .where((element) => element.paymentId
+                .split("_")
+                .last
+                .trim()
+                .toLowerCase()
+                .startsWith(searchValue.trim().toLowerCase()))
+            .toList();
     transactions.sort((a, b) => b.createdOn.compareTo(a.createdOn));
     return Scaffold(
       appBar: AppBar(
@@ -69,7 +80,15 @@ class _TransactionsViewState extends State<TransactionsView> {
                       style: GetTextTheme.sf12_medium,
                     )),
             AppServices.addWidth(20.w)
-          ]),
+          ],
+          bottom: PreferredSize(
+              preferredSize: Size(AppServices.getScreenWidth(context), 60.h),
+              child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w)
+                      .copyWith(bottom: 10.h),
+                  child: SearchField(
+                      hint: "Search by transaction id....",
+                      onSearch: (v) => setState(() => searchValue = v))))),
       body: SafeArea(
           child: transactions.isEmpty
               ? RefreshIndicator.adaptive(
@@ -141,7 +160,11 @@ class _TransactionsViewState extends State<TransactionsView> {
                                                       .sf12_regular
                                                       .copyWith(
                                                           color: AppColors
-                                                              .greyColor))
+                                                              .greyColor)),
+                                              Text(
+                                                  "Transaction Id : ${transaction.paymentId.split("_").last}",
+                                                  style:
+                                                      GetTextTheme.sf12_regular)
                                             ],
                                           ),
                                         ),

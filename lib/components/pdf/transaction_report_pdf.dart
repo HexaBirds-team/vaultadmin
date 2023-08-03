@@ -119,7 +119,7 @@ class TransactionReportApi {
                 ]),
               ]),
               Table(children: [
-                ...List.generate(10, (i) {
+                ...List.generate(data.length < 10 ? data.length : 10, (i) {
                   return customTableRow(data[i], fontBold, db);
                 })
               ])

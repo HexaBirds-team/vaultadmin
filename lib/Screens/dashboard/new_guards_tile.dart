@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
 
-import '../../controllers/widget_creator.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
 
@@ -42,12 +41,14 @@ class NewGuardsTile extends StatelessWidget {
                     AspectRatio(
                       aspectRatio: 1.35.sp,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10.r),
-                            topRight: Radius.circular(10.r)),
-                        child: WidgetImplimentor().addNetworkImage(
-                            url: profile.profileImage, fit: BoxFit.cover),
-                      ),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10.r),
+                              topRight: Radius.circular(10.r)),
+                          child: Image.network(profile.profileImage,
+                              fit: BoxFit.cover)
+                          //  WidgetImplimentor().addNetworkImage(
+                          //     url: profile.profileImage, fit: BoxFit.cover),
+                          ),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
+import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/models/enums.dart';
@@ -12,7 +13,6 @@ import '../../../helpers/style_sheet.dart';
 import '../../components/expanded_btn.dart';
 import '../../components/loaders/full_screen_loader.dart';
 import '../../controllers/auth_controller.dart';
-import '../../controllers/widget_creator.dart';
 import '../../helpers/base_getters.dart';
 
 class AdminRequestManagerView extends StatefulWidget {
@@ -55,7 +55,7 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                   : PopupMenuButton(
                       initialValue: "",
                       onSelected: (value) => _authController.approveAllProfile(
-                          requests.map((e) => e.uid).toList(), context),
+                          requests.toList(), context),
                       itemBuilder: (context) => [
                             const PopupMenuItem(
                                 value: "approveAll",
@@ -109,13 +109,18 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                           height: 80,
                                           width: 80,
                                           child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.r),
-                                              child: WidgetImplimentor()
-                                                  .addNetworkImage(
-                                                      url: profile
-                                                          .profileImage,
-                                                      fit: BoxFit.cover))),
+                                            borderRadius:
+                                                BorderRadius.circular(10.r),
+                                            child: Image.network(
+                                                profile.profileImage,
+                                                fit: BoxFit.cover),
+                                            //   CachedNetworkImage(
+                                            // imageUrl:
+                                            //     profile.profileImage,
+                                            // fit: BoxFit.cover,
+                                            // placeholder: (context, url) =>
+                                            //     BoxShimmerView())
+                                          )),
                                       AppServices.addWidth(15.w),
                                       Expanded(
                                         child: Column(
@@ -123,12 +128,11 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(profile.name,
-                                                style:
-                                                    GetTextTheme.sf18_bold),
+                                                style: GetTextTheme.sf18_bold),
                                             AppServices.addHeight(5.h),
                                             Text(profile.address,
-                                                style: GetTextTheme
-                                                    .sf12_regular),
+                                                style:
+                                                    GetTextTheme.sf12_regular),
                                             AppServices.addHeight(5.h),
                                             Text(
                                                 "qualification : ${profile.qualification}",
@@ -151,12 +155,17 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                           child: SizedBox(
                                               child: ButtonOneExpanded(
                                                   showBorder: true,
-                                                  onPressed: () async =>
-                                                      await _authController
-                                                          .rejectProfile(
-                                                              profile.uid,
-                                                              profile,
-                                                              context),
+                                                  onPressed: () =>
+                                                      FancyDialogController()
+                                                          .rejectGuardDialog(
+                                                        context,
+                                                        () async =>
+                                                            await _authController
+                                                                .rejectProfile(
+                                                                    profile.uid,
+                                                                    profile,
+                                                                    context),
+                                                      ).show(),
                                                   btnText: "Reject",
                                                   enableColor: true,
                                                   disableGradient: true,
@@ -169,12 +178,20 @@ class _AdminRequestManagerViewState extends State<AdminRequestManagerView> {
                                       Expanded(
                                           child: SizedBox(
                                               child: ButtonOneExpanded(
-                                                  onPressed: () async =>
-                                                      await _authController
-                                                          .approveProfile(
-                                                              profile.uid,
-                                                              profile,
-                                                              context),
+                                                  onPressed: () =>
+                                                      FancyDialogController()
+                                                          .approveGuardDialog(
+                                                              context,
+                                                              () async {
+                                                        await _authController
+                                                            .approveProfile(
+                                                                profile.uid,
+                                                                profile,
+                                                                context);
+                                                        await _authController
+                                                            .approveDocuments(
+                                                                profile.uid);
+                                                      }).show(),
                                                   btnText: "Approve"))),
                                     ],
                                   )

@@ -1,11 +1,9 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
-import 'package:valt_security_admin_panel/components/shimmers/box_shimmer.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 import 'package:valt_security_admin_panel/helpers/icons_and_images.dart';
@@ -102,15 +100,17 @@ class _UserProfileViewState extends State<UserProfileView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Align(
-              alignment: Alignment.center,
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(1000.r),
-                  child: CachedNetworkImage(
-                      imageUrl: widget.user.image,
-                      height: 120.sp,
-                      width: 120.sp,
-                      fit: BoxFit.cover)),
-            ),
+                alignment: Alignment.center,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(1000.r),
+                    child: Image.network(widget.user.image,
+                        height: 120.sp, width: 120.sp, fit: BoxFit.cover))
+                //  CachedNetworkImage(
+                //     imageUrl: widget.user.image,
+                //     height: 120.sp,
+                //     width: 120.sp,
+                //     fit: BoxFit.cover)),
+                ),
             AppServices.addHeight(25.h),
             detailTile("Username", user.username),
             const Divider(),
@@ -178,14 +178,20 @@ class _UserProfileViewState extends State<UserProfileView> {
                                       : ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10.r),
-                                          child: CachedNetworkImage(
-                                              imageUrl: document.image,
+                                          child: Image.network(document.image,
                                               height: 45.sp,
                                               width: 60.sp,
-                                              placeholder: (context, url) =>
-                                                  BoxShimmerView(),
-                                              fit: BoxFit.cover),
-                                        ),
+                                              // placeholder: (context, url) =>
+                                              //     BoxShimmerView(),
+                                              fit: BoxFit.cover)
+                                          // CachedNetworkImage(
+                                          //     imageUrl: document.image,
+                                          //     height: 45.sp,
+                                          //     width: 60.sp,
+                                          //     placeholder: (context, url) =>
+                                          //         BoxShimmerView(),
+                                          //     fit: BoxFit.cover),
+                                          ),
                                   AppServices.addWidth(10.w),
                                 ],
                               ),

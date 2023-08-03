@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/Screens/managers/booking/booking_details.dart';
@@ -30,13 +29,15 @@ class NewBookingsTile extends StatelessWidget {
             Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(10.r),
-                  child: CachedNetworkImage(
-                      imageUrl: AppNetWorkImages.guard,
-                      height: 70.h,
-                      width: 70.h,
-                      fit: BoxFit.cover),
-                ),
+                    borderRadius: BorderRadius.circular(10.r),
+                    child: Image.network(AppNetWorkImages.guard,
+                        height: 70.h, width: 70.h, fit: BoxFit.cover)
+                    // CachedNetworkImage(
+                    //     imageUrl: AppNetWorkImages.guard,
+                    //     height: 70.h,
+                    //     width: 70.h,
+                    //     fit: BoxFit.cover),
+                    ),
                 AppServices.addWidth(10.w),
                 Expanded(
                   child: Column(

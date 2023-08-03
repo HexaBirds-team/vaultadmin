@@ -6,7 +6,6 @@ import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 
 import '../../components/pop_ups/add_category_dialog.dart';
 import '../../controllers/app_data_controller.dart';
-import '../../controllers/widget_creator.dart';
 import '../../helpers/base_getters.dart';
 import '../../helpers/style_sheet.dart';
 
@@ -77,13 +76,15 @@ class _AdminCategoryManagerState extends State<AdminCategoryManager> {
                             AspectRatio(
                               aspectRatio: 1.2,
                               child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10.r),
-                                    topRight: Radius.circular(10.r)),
-                                child: WidgetImplimentor().addNetworkImage(
-                                    url: categoryList[i].image,
-                                    fit: BoxFit.cover),
-                              ),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10.r),
+                                      topRight: Radius.circular(10.r)),
+                                  child: Image.network(categoryList[i].image,
+                                      fit: BoxFit.cover)
+                                  // WidgetImplimentor().addNetworkImage(
+                                  //     url: categoryList[i].image,
+                                  //     fit: BoxFit.cover),
+                                  ),
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(

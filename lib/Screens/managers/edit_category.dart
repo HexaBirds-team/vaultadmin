@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -175,11 +174,13 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(5.r),
                         child: _pickedFile == null
-                            ? CachedNetworkImage(
-                                imageUrl: widget.categoryClass.image,
-                                height: 70.h,
-                                width: 70.w,
-                              )
+                            ? Image.network(widget.categoryClass.image,
+                                height: 70.h, width: 70.w)
+                            // CachedNetworkImage(
+                            //     imageUrl: widget.categoryClass.image,
+                            //     height: 70.h,
+                            //     width: 70.w,
+                            //   )
                             : Image.file(File(_pickedFile!.path),
                                 height: 70.h, width: 70.w),
                       ),
