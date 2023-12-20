@@ -764,4 +764,22 @@ class FirebaseController {
     //   }
     // });
   }
+
+  reactivateOffer(String id, String expiryDate) async {
+    var now = DateTime.now();
+    try {
+      await database.ref("Offers/$id").update(
+          {"ExpiryDate": expiryDate, "createdAt": now.toIso8601String()});
+      db().reactivateOffer(id, expiryDate, now.toIso8601String());
+      AppServices.popView(context);
+      MySnackBar.success(context, "Offer Reactivated successfully");
+    } on FirebaseException catch (e) {
+      MySnackBar.error(
+          context, "Offers update firebase error :: ${e.message.toString()}");
+    } on SocketException {
+      MySnackBar.info(context, "Internet Error");
+    } catch (e) {
+      MySnackBar.error(context, "offers update error :: ${e.toString()}");
+    }
+  }
 }

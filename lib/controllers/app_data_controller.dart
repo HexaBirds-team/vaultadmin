@@ -122,6 +122,15 @@ class AppDataController extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateObjection(String profileId) {
+    int index = _providerList.indexWhere((element) => element.uid == profileId);
+    // print(index);
+    index == 0
+        ? _providerList.first.isApproved = GuardApprovalStatus.objection
+        : _providerList[index].isApproved = GuardApprovalStatus.objection;
+    notifyListeners();
+  }
+
 // user handler
   List<UserInformationClass> _users = [];
   List<UserInformationClass> get getAllUsers => _users;
@@ -268,6 +277,13 @@ class AppDataController extends ChangeNotifier {
 
   setOffers(List<OfferClass> offers) {
     _offers = offers;
+    notifyListeners();
+  }
+
+  reactivateOffer(String id, String expiryDate, String createdAt) {
+    int i = _offers.indexWhere((element) => element.id == id);
+    _offers[i].createdAt = DateTime.parse(createdAt);
+    _offers[i].expiryDate = expiryDate;
     notifyListeners();
   }
 

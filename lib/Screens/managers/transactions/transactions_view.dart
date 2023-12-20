@@ -62,33 +62,38 @@ class _TransactionsViewState extends State<TransactionsView> {
                         child: CircularProgressIndicator.adaptive(
                           backgroundColor: AppColors.whiteColor,
                         )))
-                : TextButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) {
-                            return const DownloadTranReportDialog();
-                          });
-                    },
-                    style: TextButton.styleFrom(
-                      // padding: EdgeInsets.symmetric(vertical: 2.h),
-                      foregroundColor: AppColors.whiteColor,
-                    ),
-                    child: Text(
-                      "Download\nReport",
-                      style: GetTextTheme.sf12_medium,
-                    )),
+                : transactions.isEmpty
+                    ? const SizedBox()
+                    : TextButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) {
+                                return const DownloadTranReportDialog();
+                              });
+                        },
+                        style: TextButton.styleFrom(
+                          // padding: EdgeInsets.symmetric(vertical: 2.h),
+                          foregroundColor: AppColors.whiteColor,
+                        ),
+                        child: Text(
+                          "Download\nReport",
+                          style: GetTextTheme.sf12_medium,
+                        )),
             AppServices.addWidth(20.w)
           ],
-          bottom: PreferredSize(
-              preferredSize: Size(AppServices.getScreenWidth(context), 60.h),
-              child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w)
-                      .copyWith(bottom: 10.h),
-                  child: SearchField(
-                      hint: "Search by transaction id....",
-                      onSearch: (v) => setState(() => searchValue = v))))),
+          bottom: transactions.isEmpty
+              ? null
+              : PreferredSize(
+                  preferredSize:
+                      Size(AppServices.getScreenWidth(context), 60.h),
+                  child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w)
+                          .copyWith(bottom: 10.h),
+                      child: SearchField(
+                          hint: "Search by transaction id....",
+                          onSearch: (v) => setState(() => searchValue = v))))),
       body: SafeArea(
           child: transactions.isEmpty
               ? RefreshIndicator.adaptive(

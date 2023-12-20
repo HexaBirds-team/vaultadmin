@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:valt_security_admin_panel/components/custom_appbar.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
+import 'package:valt_security_admin_panel/components/pop_ups/offer_reactivate_dialog.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
 
@@ -28,10 +29,41 @@ class _OfferManagerState extends State<OfferManager> {
     setState(() {});
   }
 
+  isOfferActive(String expiryDate) {
+    DateTime expiredAt = DateTime.parse(expiryDate);
+    DateTime now = DateTime.now();
+    return expiredAt.difference(now).inHours > 0;
+  }
+
+  String filterBy = "all";
+
+  filterOffers(String filterBy, AppDataController db) {
+    switch (filterBy) {
+      case "active":
+        return db.getOffers.where((element) {
+          bool isActive = isOfferActive(element.expiryDate);
+          return isActive && !element.isDisabled;
+        }).toList();
+
+      case "disabled":
+        return db.getOffers.where((element) => element.isDisabled).toList();
+
+      case "expired":
+        return db.getOffers.where((element) {
+          bool isActive = isOfferActive(element.expiryDate);
+          return !isActive;
+        }).toList();
+
+      default:
+        return db.getOffers;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
-    final offers = db.getOffers;
+    final offers = filterOffers(filterBy, db);
+    // isOfferActive("2023-08-10T00:00:00.000");
     return Scaffold(
         appBar: customAppBar(
             context: context,
@@ -45,7 +77,20 @@ class _OfferManagerState extends State<OfferManager> {
                           width: 25,
                           child: CircularProgressIndicator.adaptive()))
                   : const SizedBox(),
-              AppServices.addWidth(20.w)
+              AppServices.addWidth(20.w),
+              PopupMenuButton(
+                  initialValue: filterBy,
+                  icon: const Icon(Icons.filter_alt),
+                  onSelected: (v) => setState(() => filterBy = v),
+                  itemBuilder: (context) => [
+                        const PopupMenuItem(value: "all", child: Text("All")),
+                        const PopupMenuItem(
+                            value: "active", child: Text("Active")),
+                        const PopupMenuItem(
+                            value: "disabled", child: Text("Disabled")),
+                        const PopupMenuItem(
+                            value: "expired", child: Text("Expired")),
+                      ])
             ]),
         body: offers.isEmpty
             ? RefreshIndicator.adaptive(
@@ -70,18 +115,18 @@ class _OfferManagerState extends State<OfferManager> {
                   children: [
                     ...List.generate(offers.length, (index) {
                       var offer = offers[index];
-
+                      bool isActive = isOfferActive(offer.expiryDate);
                       return Container(
                         margin: EdgeInsets.only(bottom: 12.h),
                         padding: EdgeInsets.all(10.sp),
                         decoration:
                             WidgetDecoration.containerDecoration_1(context)
                                 .copyWith(
-                                    color: offer.isDisabled
+                                    color: offer.isDisabled || !isActive
                                         ? AppColors.redColor.withOpacity(0.1)
                                         : AppColors.whiteColor,
                                     border: Border.all(
-                                        color: offer.isDisabled
+                                        color: offer.isDisabled || !isActive
                                             ? AppColors.redColor
                                             : AppColors.blackColor
                                                 .withOpacity(0.1))),
@@ -92,6 +137,7 @@ class _OfferManagerState extends State<OfferManager> {
                             Row(
                               children: [
                                 Container(
+                                  alignment: Alignment.center,
                                   padding: EdgeInsets.all(8.sp),
                                   height: 50.h,
                                   width: 50.w,
@@ -99,11 +145,10 @@ class _OfferManagerState extends State<OfferManager> {
                                       gradient: AppColors.appGradientColor,
                                       borderRadius:
                                           BorderRadius.circular(10.r)),
-                                  child: FittedBox(
-                                    child: Text("${offer.discount}%",
-                                        style: const TextStyle(
-                                            color: AppColors.whiteColor)),
-                                  ),
+                                  child: Text(
+                                      "${offer.isRupeesDiscount ? AppServices.getCurrencySymbol : ""}${offer.discount}${offer.isRupeesDiscount ? "" : "%"}",
+                                      style: GetTextTheme.sf18_bold.copyWith(
+                                          color: AppColors.whiteColor)),
                                 ),
                                 AppServices.addWidth(10.w),
                                 Expanded(
@@ -150,32 +195,54 @@ class _OfferManagerState extends State<OfferManager> {
                             AppServices.addHeight(10.h),
                             Row(
                               children: [
-                                Expanded(
-                                  child: ButtonOneExpanded(
-                                      onPressed: () {
-                                        offer.isDisabled
-                                            ? FirebaseController(context)
-                                                .updateOfferIsDisabled(
-                                                    false, offer.id)
-                                            : FancyDialogController()
-                                                .disableConfirmationDialog(
-                                                    context, () {
-                                                FirebaseController(context)
-                                                    .updateOfferIsDisabled(
-                                                        true, offer.id);
-                                              }).show();
-                                      },
-                                      btnText: offer.isDisabled
-                                          ? "Enable"
-                                          : "Disable",
-                                      borderColor: AppColors.greyColor,
-                                      btnColor: AppColors.transparent,
-                                      enableColor: true,
-                                      btnTextColor: true,
-                                      btnTextClr: AppColors.blackColor,
-                                      showBorder: true,
-                                      disableGradient: true),
-                                ),
+                                isActive
+                                    ? Expanded(
+                                        child: ButtonOneExpanded(
+                                            onPressed: () {
+                                              offer.isDisabled
+                                                  ? FirebaseController(context)
+                                                      .updateOfferIsDisabled(
+                                                          false, offer.id)
+                                                  : FancyDialogController()
+                                                      .disableConfirmationDialog(
+                                                          context, () {
+                                                      FirebaseController(
+                                                              context)
+                                                          .updateOfferIsDisabled(
+                                                              true, offer.id);
+                                                    }).show();
+                                            },
+                                            btnText: offer.isDisabled
+                                                ? "Enable"
+                                                : "Disable",
+                                            borderColor: AppColors.greyColor
+                                                .withOpacity(0.6),
+                                            btnColor: AppColors.transparent,
+                                            enableColor: true,
+                                            btnTextColor: true,
+                                            btnTextClr: AppColors.blackColor,
+                                            showBorder: true,
+                                            disableGradient: true),
+                                      )
+                                    : Expanded(
+                                        child: ButtonOneExpanded(
+                                            onPressed: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      OfferReactivateDialog(
+                                                          id: offer.id));
+                                            },
+                                            btnText: "Re-activate",
+                                            borderColor: AppColors.greyColor
+                                                .withOpacity(0.6),
+                                            btnColor: AppColors.transparent,
+                                            enableColor: true,
+                                            btnTextColor: true,
+                                            btnTextClr: AppColors.blackColor,
+                                            showBorder: true,
+                                            disableGradient: true),
+                                      ),
                                 AppServices.addWidth(10.w),
                                 Expanded(
                                     child: ButtonOneExpanded(

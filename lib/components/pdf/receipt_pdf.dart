@@ -4,12 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart';
+import 'package:printing/printing.dart';
 import 'package:valt_security_admin_panel/components/pdf/pdf_file_handle_api.dart';
 
 import '../../app_config.dart';
 import '../../helpers/base_getters.dart';
 import '../../models/app_models.dart';
-import 'package:printing/printing.dart';
 
 class PdfInvoiceApi {
   static Future<File> generate(BookingsClass booking) async {

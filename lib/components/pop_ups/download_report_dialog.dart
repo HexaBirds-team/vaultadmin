@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/components/text_field_primary.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/app_functions.dart';
@@ -114,12 +115,15 @@ class _DownloadTranReportDialogState extends State<DownloadTranReportDialog> {
                         btnTextColor: true,
                         btnTextClr: AppColors.blackColor)),
                 AppServices.addWidth(10.w),
-                Expanded(
-                    child: ButtonOneExpanded(
-                        onPressed: () async {
-                          onDownload();
-                        },
-                        btnText: "Download")),
+                Consumer<AppDataController>(
+                    builder: (context, data, child) => data.appLoading
+                        ? const OnViewLoader()
+                        : Expanded(
+                            child: ButtonOneExpanded(
+                                onPressed: () async {
+                                  onDownload();
+                                },
+                                btnText: "Download"))),
               ],
             )
           ],
@@ -133,6 +137,7 @@ class _DownloadTranReportDialogState extends State<DownloadTranReportDialog> {
     DateTime endDate;
 
     final db = Provider.of<AppDataController>(context, listen: false);
+    db.setLoader(true);
     var transactions = db.getPayments;
 
     if (dropdownvalue == "Recent") {
@@ -176,6 +181,7 @@ class _DownloadTranReportDialogState extends State<DownloadTranReportDialog> {
         DateFormat("dd/MM/yyyy").format(endDate),
         db);
     AppServices.popView(context);
-    PdfFileHandlerApi.openFile(file);
+    PdfFileHandlerApi.openFile(file, db);
+    // db.setLoader(false);
   }
 }

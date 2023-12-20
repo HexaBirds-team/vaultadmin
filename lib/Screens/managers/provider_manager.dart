@@ -9,20 +9,73 @@ import '../../components/provider_tile.dart';
 import '../../helpers/base_getters.dart';
 import '../GuardAccount/guard_profile.dart';
 
-class AdminProviderManager extends StatelessWidget {
+class AdminProviderManager extends StatefulWidget {
   const AdminProviderManager({super.key});
+
+  @override
+  State<AdminProviderManager> createState() => _AdminProviderManagerState();
+}
+
+class _AdminProviderManagerState extends State<AdminProviderManager> {
+  String filteredValue = "all";
+  filterProviders(AppDataController db) {
+    final providersList = db.getAllProviders
+        .where((e) => e.isApproved != GuardApprovalStatus.pending)
+        .toList();
+    switch (filteredValue) {
+      case "approved":
+        return providersList
+            .where((element) =>
+                (element.isApproved == GuardApprovalStatus.approved) &&
+                !element.isBlocked)
+            .toList();
+      case "rejected":
+        return providersList
+            .where((element) =>
+                (element.isApproved == GuardApprovalStatus.rejected) &&
+                !element.isBlocked)
+            .toList();
+      case "objection":
+        return providersList
+            .where((element) =>
+                (element.isApproved == GuardApprovalStatus.objection) &&
+                !element.isBlocked)
+            .toList();
+      case "blocked":
+        return providersList.where((element) => element.isBlocked).toList();
+
+      default:
+        return providersList;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<AppDataController>(context);
-    final providersList = db.getAllProviders
-        .where((e) =>
-            e.isApproved == GuardApprovalStatus.approved ||
-            e.isApproved == GuardApprovalStatus.rejected)
-        .toList();
+    final providersList = filterProviders(db);
     return Scaffold(
       appBar: AppBar(
         title: Text("Manage Providers", style: GetTextTheme.sf20_regular),
+        actions: [
+          PopupMenuButton(
+              initialValue: filteredValue,
+              onSelected: (v) => setState(() => filteredValue = v),
+              icon: const Icon(Icons.filter_alt),
+              itemBuilder: (context) => [
+                    const PopupMenuItem(value: "all", child: Text("All")),
+                    ...GuardApprovalStatus.values.where((element) {
+                      return element.name != GuardApprovalStatus.pending.name;
+                    }).map((e) {
+                      var text = e.name.split("");
+                      text[0] = text[0].toUpperCase();
+
+                      return PopupMenuItem(
+                          value: e.name, child: Text(text.join()));
+                    }).toList(),
+                    const PopupMenuItem(
+                        value: "blocked", child: Text("Blocked"))
+                  ])
+        ],
       ),
       body: SafeArea(
           child: Column(

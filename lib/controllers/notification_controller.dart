@@ -113,58 +113,58 @@ class NotificationController {
 /* send notification function handler */
 
 // notification after profile approval of guard
-  approveProfileNotification(ProvidersInformationClass guard) async {
-    Map<String, dynamic> data = {
-      "title": "Approval Accepted",
-      "body": "Your profile has been accepted by admin.",
-      "route": "/Dashboard",
-      "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "approved",
-      "receiver": guard.uid,
-      "isAdmin": false
-    };
-    for (var token in guard.tokens) {
-      await NotificationController()
-          .sendFCM(data, token.split("?deviceId").first);
-    }
-    await NotificationController().uploadNotification("Notifications", data);
-  }
+  // approveProfileNotification(ProvidersInformationClass guard) async {
+  //   Map<String, dynamic> data = {
+  //     "title": "Approval Accepted",
+  //     "body": "Your profile has been accepted by admin.",
+  //     "route": "/Dashboard",
+  //     "createdAt": DateTime.now().toIso8601String(),
+  //     "notificationType": "approved",
+  //     "receiver": guard.uid,
+  //     "isAdmin": false
+  //   };
+  //   for (var token in guard.tokens) {
+  //     await NotificationController()
+  //         .sendFCM(data, token.split("?deviceId").first);
+  //   }
+  //   await NotificationController().uploadNotification("Notifications", data);
+  // }
 
 // notification after rejection of guard profile
-  rejectProfileNotification(ProvidersInformationClass guard) async {
-    Map<String, dynamic> data = {
-      "title": "Approval Rejected",
-      "body": "Your account approval request has been rejected by the Admin.",
-      "route": "/Documents",
-      "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "reject",
-      "receiver": guard.uid,
-      "isAdmin": false
-    };
-    for (var token in guard.tokens) {
-      await NotificationController()
-          .sendFCM(data, token.split("?deviceId").first);
-    }
-    await NotificationController().uploadNotification("Notifications", data);
-  }
+  // rejectProfileNotification(ProvidersInformationClass guard) async {
+  //   Map<String, dynamic> data = {
+  //     "title": "Approval Rejected",
+  //     "body": "Your account approval request has been rejected by the Admin.",
+  //     "route": "/Documents",
+  //     "createdAt": DateTime.now().toIso8601String(),
+  //     "notificationType": "reject",
+  //     "receiver": guard.uid,
+  //     "isAdmin": false
+  //   };
+  //   for (var token in guard.tokens) {
+  //     await NotificationController()
+  //         .sendFCM(data, token.split("?deviceId").first);
+  //   }
+  //   await NotificationController().uploadNotification("Notifications", data);
+  // }
 
 // document invalid notification function
-  guardDocInvalidNotification(ProvidersInformationClass guard) async {
-    Map<String, dynamic> data = {
-      "title": "Invalid KYC documents",
-      "body":
-          "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
-      "route": "/Documents",
-      "createdAt": DateTime.now().toIso8601String(),
-      "notificationType": "document",
-      "receiver": guard.uid
-    };
-    for (var token in guard.tokens) {
-      await NotificationController()
-          .sendFCM(data, token.split("?deviceId").first);
-    }
-    NotificationController().uploadNotification("Notifications", data);
-  }
+  // guardDocInvalidNotification(ProvidersInformationClass guard) async {
+  //   Map<String, dynamic> data = {
+  //     "title": "Invalid KYC documents",
+  //     "body":
+  //         "Some of your KYC documents are marked as invalid. Please update your documents to complete the KYC process.",
+  //     "route": "/Documents",
+  //     "createdAt": DateTime.now().toIso8601String(),
+  //     "notificationType": "document",
+  //     "receiver": guard.uid
+  //   };
+  //   for (var token in guard.tokens) {
+  //     await NotificationController()
+  //         .sendFCM(data, token.split("?deviceId").first);
+  //   }
+  //   NotificationController().uploadNotification("Notifications", data);
+  // }
 
   // payment refund notification
   paymentRefundNotification(

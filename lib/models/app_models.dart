@@ -382,7 +382,10 @@ class NotificationModel {
         isAdmin = json['isAdmin'] == null
             ? false
             : json['isAdmin'].toString() == "true",
-        time = DateTime.parse(json['createdAt'].toString());
+        time = json['createdAt'].toString().contains("T")
+            ? DateTime.parse(json['createdAt'].toString())
+            : DateTime.fromMillisecondsSinceEpoch(
+                int.parse(json['createdAt'].toString()));
 }
 
 class BannersClass {
@@ -417,7 +420,8 @@ class ReviewsModel {
 class OfferClass {
   String id, title, description, receiver, expiryDate, offerCode, discount;
   DateTime createdAt;
-  bool isDisabled, isPromoCode;
+
+  bool isDisabled, isPromoCode, isRupeesDiscount;
   OfferClass(
       this.id,
       this.title,
@@ -428,7 +432,8 @@ class OfferClass {
       this.discount,
       this.createdAt,
       this.isPromoCode,
-      this.isDisabled);
+      this.isDisabled,
+      this.isRupeesDiscount);
   OfferClass.fromJson(Map<Object?, Object?> json, this.id)
       : title = json['title'].toString(),
         description = json['body'].toString(),
@@ -438,6 +443,7 @@ class OfferClass {
         isPromoCode = json['isPromoCode'].toString() == "true",
         offerCode =
             json['OfferCode'] == null ? "" : json['OfferCode'].toString(),
+        isRupeesDiscount = json['isRupeesDiscount'].toString() == "true",
         isDisabled = json['isDisabled'] == null
             ? false
             : json['isDisabled'].toString() == "true",

@@ -14,6 +14,7 @@ import 'package:valt_security_admin_panel/splash.dart';
 import 'app_config.dart';
 import 'helpers/app_theme.dart';
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print(message.messageId);
 }

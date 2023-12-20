@@ -470,7 +470,8 @@ class _CreateAnnouncementState extends State<CreateAnnouncement> {
       "OfferCode": offerCode.text,
       "discount": _discountController.text,
       "route": "/Offer",
-      "notificationType": "offers"
+      "notificationType": "offers",
+      "isRupeesDiscount": discountInRupees
     };
     final db = Provider.of<AppDataController>(context, listen: false);
 

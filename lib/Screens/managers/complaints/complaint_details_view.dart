@@ -328,7 +328,10 @@ class _ComplaintDetailsViewState extends State<ComplaintDetailsView> {
                                   var now = DateTime.now().toIso8601String();
                                   Map<String, dynamic> data = {
                                     "msg": message,
-                                    "sentOn": now
+                                    "sentOn": now,
+                                    "token": widget.data.complaintBy == "user"
+                                        ? user.first.token
+                                        : guard.first.tokens,
                                   };
                                   if (message.isNotEmpty) {
                                     setState(() {

@@ -8,10 +8,10 @@ enum DocumentState {
   invalid,
 }
 
-enum BookingStatus { all, accepted, completed, cancelled }
+enum BookingStatus { all, accepted, completed, cancelled, active }
 
 enum AnnouncementType { announcement, offer }
 
 enum AnnouncementReceiverType { user, guard }
 
-enum GuardApprovalStatus { pending, approved, rejected }
+enum GuardApprovalStatus { pending, approved, rejected, objection }

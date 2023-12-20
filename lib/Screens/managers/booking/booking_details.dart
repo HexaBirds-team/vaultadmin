@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:valt_security_admin_panel/Screens/GuardAccount/guard_profile.dart';
 import 'package:valt_security_admin_panel/components/expanded_btn.dart';
+import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
 import 'package:valt_security_admin_panel/components/pdf/pdf_file_handle_api.dart';
 import 'package:valt_security_admin_panel/components/pdf/receipt_pdf.dart';
 import 'package:valt_security_admin_panel/components/shimmers/booking_details_shimmer.dart';
@@ -135,15 +136,17 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                     AppServices.addHeight(10.h),
                     Container(
                         padding: EdgeInsets.all(15.sp),
-                        decoration: BoxDecoration(
-                            color: AppColors.whiteColor,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: AppColors.blackColor.withOpacity(0.2),
-                                  offset: const Offset(0, 0),
-                                  blurRadius: 4)
-                            ],
-                            borderRadius: BorderRadius.circular(10.r)),
+                        decoration:
+                            WidgetDecoration.containerDecoration_1(context),
+                        // BoxDecoration(
+                        //     color: AppColors.whiteColor,
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //           color: AppColors.blackColor.withOpacity(0.2),
+                        //           offset: const Offset(0, 0),
+                        //           blurRadius: 4)
+                        //     ],
+                        //     borderRadius: BorderRadius.circular(10.r)),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,16 +319,21 @@ class _BookingDetailsViewState extends State<BookingDetailsView> {
                             ],
                           ),
                     AppServices.addHeight(40.h),
-                    ButtonOneExpanded(
-                        onPressed: () async {
-                          final file =
-                              await PdfInvoiceApi.generate(widget.booking);
-                          PdfFileHandlerApi.openFile(file);
-                        },
-                        // AppServices.pushTo(
-                        //     context, ReceiptView(booking: myBooking!)),
-                        btnText: "View Receipt"),
-                    widget.booking.bookingStatus == BookingStatus.cancelled.name
+                    Consumer<AppDataController>(
+                        builder: (context, data, child) => data.appLoading
+                            ? const Center(child: OnViewLoader())
+                            : ButtonOneExpanded(
+                                onPressed: () async {
+                                  data.setLoader(true);
+                                  final file = await PdfInvoiceApi.generate(
+                                      widget.booking);
+                                  PdfFileHandlerApi.openFile(file, data);
+                                },
+                                // AppServices.pushTo(
+                                //     context, ReceiptView(booking: myBooking!)),
+                                btnText: "View Receipt")),
+                    widget.booking.bookingStatus.toLowerCase() ==
+                            BookingStatus.cancelled.name
                         ? TextButton.icon(
                             style: TextButton.styleFrom(
                                 foregroundColor: AppColors.primary1),

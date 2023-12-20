@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:valt_security_admin_panel/models/app_models.dart';
+import 'package:valt_security_admin_panel/models/enums.dart';
 
 import '../helpers/base_getters.dart';
 import '../helpers/style_sheet.dart';
@@ -50,17 +51,39 @@ class _ProviderTileState extends State<ProviderTile> {
               children: [
                 Row(
                   children: [
-                    Flexible(
-                        child: Text(widget.provider.name,
-                            style: GetTextTheme.sf18_bold)),
-                    AppServices.addWidth(4.w),
-                    widget.provider.isVerified
-                        ? Icon(
-                            Icons.verified,
-                            size: 18.sp,
-                            color: AppColors.blueColor,
-                          )
-                        : const SizedBox()
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Flexible(
+                              child: Text(widget.provider.name,
+                                  style: GetTextTheme.sf18_bold)),
+                          AppServices.addWidth(4.w),
+                          widget.provider.isVerified
+                              ? Icon(
+                                  Icons.verified,
+                                  size: 18.sp,
+                                  color: AppColors.blueColor,
+                                )
+                              : const SizedBox()
+                        ],
+                      ),
+                    ),
+                    Text(
+                      widget.provider.isBlocked
+                          ? "Blocked"
+                          : widget.provider.isApproved.name.replaceFirst(
+                              widget.provider.isApproved.name[0],
+                              widget.provider.isApproved.name[0].toUpperCase()),
+                      style: GetTextTheme.sf14_medium.copyWith(
+                          color: widget.provider.isBlocked ||
+                                  widget.provider.isApproved ==
+                                      GuardApprovalStatus.rejected
+                              ? AppColors.redColor
+                              : widget.provider.isApproved ==
+                                      GuardApprovalStatus.objection
+                                  ? AppColors.yellowColor
+                                  : AppColors.greenColor),
+                    )
                   ],
                 ),
                 AppServices.addHeight(6.h),

@@ -8,6 +8,7 @@ import 'package:valt_security_admin_panel/Screens/managers/image_view.dart';
 import 'package:valt_security_admin_panel/components/fancy_popus/awesome_dialogs.dart';
 import 'package:valt_security_admin_panel/components/gradient_components/gradient_image.dart';
 import 'package:valt_security_admin_panel/components/loaders/on_view_loader.dart';
+import 'package:valt_security_admin_panel/components/pop_ups/add_objection_comment_dialog.dart';
 import 'package:valt_security_admin_panel/controllers/app_data_controller.dart';
 import 'package:valt_security_admin_panel/controllers/auth_controller.dart';
 import 'package:valt_security_admin_panel/controllers/firebase_controller.dart';
@@ -17,7 +18,6 @@ import 'package:valt_security_admin_panel/helpers/base_getters.dart';
 import '../../components/custom_appbar.dart';
 import '../../components/expanded_btn.dart';
 import '../../components/pop_ups/guard_promote_dialog.dart';
-import '../../controllers/notification_controller.dart';
 import '../../helpers/icons_and_images.dart';
 import '../../helpers/style_sheet.dart';
 import '../../models/app_models.dart';
@@ -414,7 +414,6 @@ class _GuardProfileViewState extends State<GuardProfileView> {
         .toList();
 
     if (invalidDocuments.isNotEmpty) {
-      await NotificationController().guardDocInvalidNotification(guard);
       for (var doc in invalidDocuments) {
         if (!updatedDocuments.any((element) => element.id == doc)) {
           await AuthController().updateDocumentStatus(
@@ -423,7 +422,14 @@ class _GuardProfileViewState extends State<GuardProfileView> {
           documents[i].status = DocumentState.invalid;
         }
       }
-      await rejectGuard(guard, sendNotification: false);
+      await AuthController().profileObjection(
+        guard,
+        context,
+      );
+
+      showDialog(
+          context: context,
+          builder: (context) => AddObjectionCommentDialog(id: guard.uid));
     }
 
     if (validDocuments.isNotEmpty) {
@@ -438,7 +444,10 @@ class _GuardProfileViewState extends State<GuardProfileView> {
     }
 
     if (validDocuments.length == docs.length) {
-      FirestoreApiReference.guardApi(guard.uid).update({"isVerified": true});
+      FirestoreApiReference.guardApi(guard.uid).update({"isVerified": true,
+        "isApproved": GuardApprovalStatus.approved.name
+      });
+      // FirestoreApiReference.guardApi(guard.uid).update({"isApproved": GuardApprovalStatus.approved.name});
     }
     isChanged = false;
 
@@ -467,7 +476,6 @@ class _GuardProfileViewState extends State<GuardProfileView> {
 
   rejectGuard(ProvidersInformationClass guard,
       {bool sendNotification = true}) async {
-    await AuthController().rejectProfile(guard.uid, guard, context,
-        sendNotification: sendNotification);
+    await AuthController().rejectProfile(guard.uid, guard, context);
   }
 }

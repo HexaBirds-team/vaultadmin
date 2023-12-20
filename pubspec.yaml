@@ -46,7 +46,13 @@ dependencies:
   cached_network_image: ^3.2.3
   location: ^4.4.0
   geocoding: ^2.1.0
-  animated_snack_bar: ^0.3.0
+    // Function to check Internet available or not
+  static Future<bool> checkInternetConnectivity(context) async {
+    bool result = await InternetConnectionChecker().hasConnection;
+
+    return result;
+  }
+
   pie_chart: ^5.3.2
   shared_preferences: ^2.0.20
   firebase_storage: ^11.0.16
